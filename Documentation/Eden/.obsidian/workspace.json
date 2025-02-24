@@ -1,0 +1,189 @@
+{
+  "main": {
+    "id": "06f9cf41609d1970",
+    "type": "split",
+    "children": [
+      {
+        "id": "516357801ac88d03",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3e457e12ba1576e1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Eden/Description.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Description"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e191a9cafd7a655a",
+    "type": "split",
+    "children": [
+      {
+        "id": "b16b6c9d63b4ab3e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "45f819fcc20869cc",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "31366b21dfbb589e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "5ac1517999f6a144",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "10860bbe7c031f9c",
+    "type": "split",
+    "children": [
+      {
+        "id": "4066769b6a526721",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "032ded9265118118",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Eden/Description.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Description"
+            }
+          },
+          {
+            "id": "c4c28f20b21d6be4",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Eden/Description.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Description"
+            }
+          },
+          {
+            "id": "dda06a88c3376d54",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "74d491655ddeac51",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Eden/Description.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Description"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "3e457e12ba1576e1",
+  "lastOpenFiles": [
+    "Eden/TODO.md",
+    "Eden/Description.md",
+    "Eden/Whitepaper.md",
+    "Eden/Parser/Pratt Parser.md",
+    "Eden/Parser/Parser.md",
+    "Eden/Parser/TODO.md",
+    "Eden/Parser/Errors.md",
+    "Eden/Lexer/Lexer.md",
+    "Eden/Lexer/TODO.md",
+    "Eden/Abstract Syntax Tree/AST.md",
+    "Eden/Abstract Syntax Tree",
+    "Eden/Lexer",
+    "Eden/Parser",
+    "Welcome.md",
+    "Eden"
+  ]
+}

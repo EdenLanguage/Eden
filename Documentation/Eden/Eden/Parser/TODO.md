@@ -1,0 +1,4 @@
+- [ ] Refactor [[Pratt Parser]] implementation because it is not clear what is going on.
+- [ ] Refactor [[Errors]] printing.
+- [ ] Implement some way to dump [[AST]] to JSON format and save in file. On top of that it would be great to print it to console but in a nice way.
+- [ ] 

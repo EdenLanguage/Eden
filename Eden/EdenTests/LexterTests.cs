@@ -84,7 +84,7 @@ namespace EdenTests
             List<Token> expected = new List<Token>()
             {
                 new Token(TokenType.Var, "var"),
-                new Token(TokenType.Keyword, "int"),
+                new Token(TokenType.VarType, "int"),
                 new Token(TokenType.Indentifier, "zmienna"),
                 new Token(TokenType.Assign, "="),
                 new Token(TokenType.Number, "5"),
@@ -114,11 +114,11 @@ namespace EdenTests
             List<Token> expected = new List<Token>()
             {
                 new Token(TokenType.Keyword, "function"),
-                new Token(TokenType.Keyword, "int"),
+                new Token(TokenType.VarType, "int"),
                 new Token(TokenType.Indentifier, "Calculator"),
                 new Token(TokenType.LeftParenthesis, "("),
                 new Token(TokenType.Var, "var"),
-                new Token(TokenType.Keyword, "int"),
+                new Token(TokenType.VarType, "int"),
                 new Token(TokenType.Indentifier, "A"),
                 new Token(TokenType.RightParenthesis, ")"),
                 new Token(TokenType.LeftBracket, "{"),
@@ -151,7 +151,7 @@ namespace EdenTests
             List<Token> expected = new List<Token>()
             {
                 new Token(TokenType.Var, "var"),
-                new Token(TokenType.Keyword, "int"),
+                new Token(TokenType.VarType, "int"),
                 new Token(TokenType.Indentifier, "result"),
                 new Token(TokenType.Assign, "="),
                 new Token(TokenType.Indentifier, "Calculator"),

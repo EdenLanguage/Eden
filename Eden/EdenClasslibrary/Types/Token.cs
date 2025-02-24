@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EdenClasslibrary.Types
@@ -23,6 +25,7 @@ namespace EdenClasslibrary.Types
         ExclemationMark,
         Plus,
         Minus,
+        Star,
         Comma,
         Semicolon,
         LeftParenthesis,
@@ -32,6 +35,7 @@ namespace EdenClasslibrary.Types
         Function,
         Var,
         VarType,
+        Int,
     }
 
     public class Token
@@ -42,6 +46,16 @@ namespace EdenClasslibrary.Types
         public Token()
         {
 
+        }
+
+        public string ToJSON()
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Converters = { new JsonStringEnumConverter() }
+            };
+            return JsonSerializer.Serialize(this, options);
         }
 
         public bool CanParseNextToken()

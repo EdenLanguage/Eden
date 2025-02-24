@@ -1,0 +1,6 @@
+- [ ] [[Lexer]]
+- [ ] [[Parser]]
+- [ ] [[AST]]
+- [ ] [[REPL]]
+- [ ] [[File parsing]]
+- [ ] 
