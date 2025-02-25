@@ -1,0 +1,4 @@
+Var Bool flaga = False;
+Var Int counter = 1024;
+Var Float pi = 3.14;
+Var String name = "Jaworek";

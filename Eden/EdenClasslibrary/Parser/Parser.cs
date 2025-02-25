@@ -38,6 +38,7 @@ namespace EdenClasslibrary.Parser
         public Parser()
         {
             lexer = new Lexer();
+            lexer.SetInput(string.Empty);
             // This one needs to be changed to root of AST tree node type.
             _ast = new BlockStatement();
             _errors = new List<string>();
@@ -52,8 +53,8 @@ namespace EdenClasslibrary.Parser
             Precedence[TokenType.Minus] = EvaluationOrder.Sum;
             Precedence[TokenType.Star] = EvaluationOrder.Product;
 
-            RegisterPrefix(TokenType.Indentifier, ParseIdentifier);
-            RegisterPrefix(TokenType.Number, ParseInt);
+            RegisterPrefix(TokenType.Identifier, ParseIdentifier);
+            //RegisterPrefix(TokenType.Number, ParseInt);
 
             RegisterInfix(TokenType.Plus, ParseBinaryExpression);
             RegisterInfix(TokenType.Star, ParseBinaryExpression);
@@ -100,7 +101,7 @@ namespace EdenClasslibrary.Parser
         {
             Identifier id = new Identifier();
             id.Token = CurrentToken;
-            id.Value = CurrentToken.Value;
+            id.Value = CurrentToken.LiteralValue;
             return id;
         }
 
@@ -110,7 +111,7 @@ namespace EdenClasslibrary.Parser
             id.Token = CurrentToken;
 
             int parsed = 0;
-            bool couldParse = int.TryParse(CurrentToken.Value, out parsed);
+            bool couldParse = int.TryParse(CurrentToken.LiteralValue, out parsed);
 
             id.Value = parsed;
             return id;
@@ -129,7 +130,7 @@ namespace EdenClasslibrary.Parser
         public BlockStatement Parse(string code)
         {
             lexer = new Lexer();
-            lexer.Input = code;
+            lexer.SetInput(code);
 
             _ast = new BlockStatement();
 
@@ -141,12 +142,11 @@ namespace EdenClasslibrary.Parser
                 // Now check what is the token and execute branch. For example 'VariableStatement' etc...
                 switch (CurrentToken.Keyword)
                 {
-                    case TokenType.Var:
-                    case TokenType.VarType:
+                    case TokenType.VariableType:
                         statement = ParseVariableStatement();
                         break;
                     case TokenType.Keyword:
-                        switch (CurrentToken.Value)
+                        switch (CurrentToken.LiteralValue)
                         {
                             case "return":
                                 statement = ParseReturnStatement();
@@ -238,7 +238,7 @@ namespace EdenClasslibrary.Parser
         {
             ReturnStatement returnStatement = new ReturnStatement();
 
-            if(CurrentToken.Keyword != TokenType.Keyword && CurrentToken.Value != "return")
+            if(CurrentToken.Keyword != TokenType.Keyword && CurrentToken.LiteralValue != "return")
             {
                 _errors.Add($"return token expected but got '{CurrentToken}'");
                 EatStatement();
@@ -276,7 +276,7 @@ namespace EdenClasslibrary.Parser
             // Example: 'var int variable = 10'
             VariableStatement variableStatement = new VariableStatement();
             
-            if(CurrentToken.Keyword != TokenType.Var)
+            if(CurrentToken.Keyword != TokenType.VariableType)
             {
                 _errors.Add($"var keyword expected but got '{CurrentToken.Keyword}'");
                 EatStatement();

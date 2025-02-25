@@ -10,15 +10,14 @@ namespace EdenClasslibrary.Types
     {
         static string[] LanguageKeyword = new string[]
         {
-            "var",
-            "function",
-            "int",
-            "return",
-            "if",
-            "else",
-            "bool",
-            "true",
-            "false"
+            "Var",
+            "Function",
+            "Return",
+            "If",
+            "Else",
+            "Structure",
+            "True",
+            "False"
         };
 
         public static TokenType ToTokenType(string keyword)
@@ -26,18 +25,31 @@ namespace EdenClasslibrary.Types
             TokenType type = TokenType.Keyword;
             switch (keyword)
             {
-                case "var": type = TokenType.Var; break;
-                case "int":
-                case "bool":
-                    type = TokenType.VarType; break;
-                default: type = TokenType.Keyword; break;
+                case "Var": 
+                case "If": 
+                case "Else": 
+                case "Function": 
+                case "Return": 
+                case "Structure": 
+                    type = TokenType.Keyword; break;
+                case "Int":
+                case "Float":
+                case "Bool":
+                case "String":
+                    type = TokenType.VariableType; break;
+                case "True":
+                case "False":
+                    type = TokenType.Bool; break;
+                case "^":
+                    type = TokenType.Power; break;
+                default: type = TokenType.Illegal; break;
             }
             return type;
         }
 
         public static bool IsKeyword(string keyword)
         {
-            return LanguageKeyword.Contains(keyword);
+            return LanguageKeyword.Contains(keyword) || Variables.IsVariableType(keyword);
         }
     }
 }

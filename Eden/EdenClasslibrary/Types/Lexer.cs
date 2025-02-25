@@ -1,67 +1,158 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 namespace EdenClasslibrary.Types
 {
     public class Lexer
     {
-        public string Input {  get; set; }
-        public int ReadPosition {  get; set; }
-        public int NextReadPosition {  get; set; }
-        public char CurrentChar {  get; set; }
+        private string _filename;
+
+        private string _input;
+
+        private int _readPosition;
+        private int _nextReadPosition;
+        private char _currentChar;
+
+        //  Helper variables
+        private int _currentLine;               // Current line index.
+        private int _currentLinePosition;       // Position of currently parsed character.
 
         public Lexer()
         {
-            Input = string.Empty;
-            ReadPosition = 0;
-            NextReadPosition = 1;
-            CurrentChar = '\0';
+            _filename = string.Empty;
+            _input = string.Empty;
+            _readPosition = 0;
+            _nextReadPosition = 1;
+            _currentChar = '\0';
+            _currentLine = 0;
+        }
+
+        public void SetInput(string input)
+        {
+            ClearLexer();
+            _input = input;
+        }
+
+        public void LoadFile(string filePath)
+        {
+            bool fileExists = File.Exists(filePath);
+            if (fileExists == true)
+            {
+                try
+                {
+                    _input = File.ReadAllText(filePath);
+                    _filename = filePath;
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Increments current line pointer.
+        /// </summary>
+        public void IncrementLinePointer()
+        {
+            _currentLine++;
+        }
+
+        /// <summary>
+        /// Increments pointer of the current character in line.
+        /// </summary>
+        public void IncrementLineReadPositionPointer()
+        {
+            _currentLinePosition++;
+        }
+
+        public void ClearCurrentLinePosition()
+        {
+            _currentLinePosition = 0;
+        }
+
+        public void ClearLexer()
+        {
+            _input = string.Empty;
+            _currentLine = 0;
+            _currentLinePosition = 0;
+            _readPosition = 0;
+            _nextReadPosition = 1;
+            _currentChar = '\0';
+        }
+
+        /// <summary>
+        /// Parse whole input.
+        /// </summary>
+        /// <returns>Input as tokens</returns>
+        public Token[] Tokenize()
+        {
+            List<Token> tokens = new List<Token>();
+            Token currentToken = new Token();
+
+            do
+            {
+                currentToken = NextToken();
+                tokens.Add(currentToken);
+            } while (currentToken.IsValidAndNotEof());
+
+            ClearLexer();
+            return tokens.ToArray();
         }
 
         public void SkipWhitespaces()
         {
-            while(CurrentChar == ' ' || CurrentChar == '\r' || CurrentChar == '\t' || CurrentChar == '\n')
+            /*  What can we eat?
+             *  \n (new line) - should be eaten and current line should be incremented.
+             *  \r (carriage return) - it is used in Mac and windows with \n so i tkink i will skip it for now.
+             *  \t (tab) - w.e.
+             */
+            bool canEat = IsCurrentCharacterEatable();
+            while (canEat == true)
             {
+                char currChar = ReadCurrentCharacter();
                 NextCharacter();
+                if (currChar == '\n')
+                {
+                    IncrementLinePointer();
+                    ClearCurrentLinePosition();
+                }
+                canEat = IsCurrentCharacterEatable();
             }
         }
 
         public void NextCharacter()
         {
-            if(NextReadPosition >= Input.Length)
+            if (_nextReadPosition >= _input.Length)
             {
-                CurrentChar = '\0';
+                _currentChar = '\0';
             }
             else
             {
-                CurrentChar = Input[NextReadPosition];
+                _currentChar = _input[_nextReadPosition];
             }
-            ReadPosition = NextReadPosition;
-            NextReadPosition++;
+            IncrementLineReadPositionPointer();
+            _readPosition = _nextReadPosition;
+            _nextReadPosition++;
         }
 
-        public void ReadCurrentCharacter()
+        public char ReadCurrentCharacter()
         {
-            if(ReadPosition < Input.Length)
+            if (_readPosition < _input.Length)
             {
-                CurrentChar = Input[ReadPosition];
+                _currentChar = _input[_readPosition];
             }
             else
             {
-                CurrentChar = '\0';
+                _currentChar = '\0';
             }
+            return _currentChar;
         }
 
         public char PeekNextCharacter()
         {
-            if(NextReadPosition < Input.Length)
+            if (_nextReadPosition < _input.Length)
             {
-                return Input[NextReadPosition];
+                return _input[_nextReadPosition];
             }
             else
             {
@@ -69,132 +160,283 @@ namespace EdenClasslibrary.Types
             }
         }
 
-        public List<Token> Tokenize()
+        public bool IsNextCharacterEatable()
         {
-            List<Token> tokens = new List<Token>();
-
-            Token currentToken = new Token();
-            ReadCurrentCharacter();
-
-            do
+            char nextChar = PeekNextCharacter();
+            if (nextChar == '\n' || nextChar == '\t' || nextChar == '\r' || nextChar == ' ')
             {
-                currentToken = NextToken();
-                tokens.Add(currentToken);
-            } while(currentToken.CanParseNextToken());
+                return true;
+            }
+            else return false;
+        }
 
-            return tokens;
+        public bool IsCurrentCharacterEatable()
+        {
+            char nextChar = ReadCurrentCharacter();
+            if (nextChar == '\n' || nextChar == '\t' || nextChar == '\r' || nextChar == ' ')
+            {
+                return true;
+            }
+            else return false;
         }
 
         public bool IsPotentianIdentifier()
         {
-            if (char.IsLetter(CurrentChar)) return true;
+            if (char.IsLetter(_currentChar)) return true;
             return false;
         }
 
         public bool CanTakeNextCharacter()
         {
-            if (NextReadPosition < Input.Length && char.IsLetter(Input[NextReadPosition])) return true;
+            if (_nextReadPosition < _input.Length && char.IsLetter(_input[_nextReadPosition])) return true;
             return false;
         }
 
-        public bool IsNumber()
+        /// <summary>
+        /// Check whether next character is '"'
+        /// </summary>
+        /// <returns></returns>
+        public bool IsNextCharStringToken()
         {
-            if(char.IsNumber(CurrentChar)) return true;
+            return PeekNextCharacter() == '"';
+        }
+
+        public bool IsCurrentCharStringToken()
+        {
+            return ReadCurrentCharacter() == '"';
+        }
+
+        public bool IsNextCharNumber()
+        {
+            return char.IsNumber(PeekNextCharacter());
+        }
+
+        public bool IsCurrentCharNumber()
+        {
+            if (char.IsNumber(_currentChar)) return true;
             return false;
         }
 
+        /// <summary>
+        /// Reads input literal till it finds non matching token. Then it stops. This operation 'eats' next character in input.
+        /// </summary>
+        /// <returns></returns>
         public string ReadInputNumber()
         {
             string inputNumber = string.Empty;
-            do
+
+            bool canTakeNextChar = true;
+            while (canTakeNextChar)
             {
-                inputNumber += CurrentChar;
-                NextCharacter();
-            } while (IsNumber());
+                inputNumber += _currentChar;
+
+                canTakeNextChar = IsNextCharNumber();
+                if (canTakeNextChar == true)
+                {
+                    NextCharacter();
+                }
+            }
             return inputNumber;
         }
 
+        /// <summary>
+        /// Reads input literal for Int and Float types.
+        /// </summary>
+        /// <returns></returns>
+        public string ReadInputNumberLiteral()
+        {
+            bool firstDigitIsNumber = true;
+            bool commaEncountered = false;
+            string inputNumber = string.Empty;
+
+            bool keepParsing = true;
+
+            bool isNextCharNumber = true;
+            bool isNextCharComa = false;
+
+            while (keepParsing)
+            {
+                inputNumber += _currentChar;
+
+                //  ',' will never be first character because this function reacts on number.
+                if (_currentChar == '.')
+                {
+                    commaEncountered = true;
+                }
+
+                isNextCharNumber = IsNextCharNumber();
+                isNextCharComa = PeekNextCharacter() == '.';
+                // 10000000,
+
+                keepParsing = IsNextCharNumber() || (inputNumber.EndsWith('.') && IsNextCharNumber()) || (commaEncountered == false && PeekNextCharacter() == '.');
+
+                if ((isNextCharNumber == true || (isNextCharComa && commaEncountered == false)) && keepParsing)
+                {
+                    NextCharacter();
+                }
+
+            }
+            return inputNumber;
+        }
+
+
+        /// <summary>
+        /// Reads input literal till it finds non matching token. Then it stops. This operation 'eats' next character in input.
+        /// </summary>
+        /// <returns></returns>
         public string ReadInputLiteral()
         {
             bool canTakeNextChar = true;
             string inputLiteral = string.Empty;
             while (canTakeNextChar == true)
             {
-                inputLiteral += CurrentChar;
+                inputLiteral += _currentChar;
                 canTakeNextChar = CanTakeNextCharacter();
-                NextCharacter();
-            } 
+                if (canTakeNextChar == true)
+                {
+                    NextCharacter();
+                }
+            }
             return inputLiteral;
         }
 
-        public Token CreateNewToken(TokenType type, char value)
+        public string ReadStringLiteral()
+        {
+            int metStrSymbol = 0;
+            bool currCharStringToken = false;
+            string stringLiteral = string.Empty;
+
+            while (currCharStringToken == false)
+            {
+                stringLiteral += _currentChar;
+                currCharStringToken = IsCurrentCharStringToken();
+                if (currCharStringToken == true)
+                {
+                    if (metStrSymbol > 0)
+                    {
+                        // If '\"' was encountered twice break.
+                        return stringLiteral;
+                    }
+                    else
+                    {
+                        currCharStringToken = false;
+                        metStrSymbol++;
+                    }
+                }
+                NextCharacter();
+            }
+            return stringLiteral;
+        }
+
+        public bool IsValidStringLiteral(string literal)
+        {
+            if (literal != null && literal.StartsWith('\"') && literal.EndsWith('\"')) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Creates new 'Token' from current character.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public Token CreateNewToken(TokenType type)
         {
             Token toker = new Token();
-            toker.SetAttributes(type, value);
-            NextCharacter();
+
+            int tokenInLineBegPtr = _currentLinePosition;
+
+            toker.SetAttributes(type, _currentChar, _currentLine, tokenInLineBegPtr, _filename);
             return toker;
         }
 
+
+        /// <summary>
+        /// Creates new 'Token' from literal parsed value.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public Token CreateNewToken(TokenType type, string value)
         {
             Token toker = new Token();
-            toker.SetAttributes(type, value);
-            NextCharacter();
+
+            int tokenInLineBegPtr = _currentLinePosition - (value.Length - 1);
+
+            toker.SetAttributes(type, value, _currentLine, tokenInLineBegPtr, _filename);
             return toker;
         }
 
+        /// <summary>
+        /// Forwards parsing, generates new token.
+        /// </summary>
+        /// <returns></returns>
         public Token NextToken()
         {
-            Token token = new Token();
+            Token nextToken = new Token();
 
-            //NextCharacter();
-            SkipWhitespaces();
             ReadCurrentCharacter();
+            SkipWhitespaces();
 
             char nextCharacter = PeekNextCharacter();
-            switch (CurrentChar)
+
+            switch (_currentChar)
             {
-                case '+': token = CreateNewToken(TokenType.Plus, CurrentChar); break;
-                case '-': token = CreateNewToken(TokenType.Minus, CurrentChar); break;
+                case '+': nextToken = CreateNewToken(TokenType.Plus); break;
+                case '-': nextToken = CreateNewToken(TokenType.Minus); break;
                 case '!':
                     switch (nextCharacter)
                     {
                         case '=':
-                            token = CreateNewToken(TokenType.Inequal, "!=");
+                            nextToken = CreateNewToken(TokenType.Inequal, "!=");
+                            // This is looking forward. So in case there is matching character. It should 'eat' this next one as well.
                             NextCharacter();
                             break;
                         default:
-                            token = CreateNewToken(TokenType.ExclemationMark, CurrentChar);
+                            nextToken = CreateNewToken(TokenType.ExclemationMark);
                             break;
                     }
                     break;
                 case '=':
                     switch (nextCharacter)
                     {
-                        case '=': 
-                            token = CreateNewToken(TokenType.Equal, "==");
+                        case '=':
+                            nextToken = CreateNewToken(TokenType.Equal, "==");
                             NextCharacter();
                             break;
-                        default: 
-                            token = CreateNewToken(TokenType.Assign, CurrentChar); 
+                        default:
+                            nextToken = CreateNewToken(TokenType.Assign);
                             break;
                     }
                     break;
-                case ',': token = CreateNewToken(TokenType.Comma, CurrentChar); break;
-                case ';': token = CreateNewToken(TokenType.Semicolon, CurrentChar); break;
-                case '(': token = CreateNewToken(TokenType.LeftParenthesis, CurrentChar); break;
-                case ')': token = CreateNewToken(TokenType.RightParenthesis, CurrentChar); break;
-                case '{': token = CreateNewToken(TokenType.LeftBracket, CurrentChar); break;
-                case '}': token = CreateNewToken(TokenType.RightBracket, CurrentChar); break;
+                case ',': nextToken = CreateNewToken(TokenType.Comma); break;
+                case '.': nextToken = CreateNewToken(TokenType.Dot); break;
+                case ';': nextToken = CreateNewToken(TokenType.Semicolon); break;
+                case '^': nextToken = CreateNewToken(TokenType.Power); break;
+                case '(': nextToken = CreateNewToken(TokenType.LeftParenthesis); break;
+                case ')': nextToken = CreateNewToken(TokenType.RightParenthesis); break;
+                case '{': nextToken = CreateNewToken(TokenType.LeftBracket); break;
+                case '}': nextToken = CreateNewToken(TokenType.RightBracket); break;
+                case '"':
+                    string stringLiteral = ReadStringLiteral();
+                    bool isValidStringLiteral = IsValidStringLiteral(stringLiteral);
+                    if (isValidStringLiteral == true)
+                    {
+                        nextToken = CreateNewToken(TokenType.String, stringLiteral);
+                    }
+                    else
+                    {
+                        nextToken = CreateNewToken(TokenType.Illegal, stringLiteral);
+                    }
+                    break;
                 case '<':
                     switch (nextCharacter)
                     {
                         case '=':
-                            token = CreateNewToken(TokenType.LesserOrEqual, "<=");
+                            nextToken = CreateNewToken(TokenType.LesserOrEqual, "<=");
                             NextCharacter();
                             break;
                         default:
-                            token = CreateNewToken(TokenType.LeftArrow, CurrentChar);
+                            nextToken = CreateNewToken(TokenType.LeftArrow);
                             break;
                     }
                     break;
@@ -202,55 +444,78 @@ namespace EdenClasslibrary.Types
                     switch (nextCharacter)
                     {
                         case '=':
-                            token = CreateNewToken(TokenType.GreaterOrEqual, ">=");
+                            nextToken = CreateNewToken(TokenType.GreaterOrEqual, ">=");
                             NextCharacter();
                             break;
                         default:
-                            token = CreateNewToken(TokenType.RightArrow, CurrentChar);
+                            nextToken = CreateNewToken(TokenType.RightArrow);
                             break;
                     }
                     break;
-                case '\0': token = CreateNewToken(TokenType.Eof, CurrentChar); break;
+                case '\0': nextToken = CreateNewToken(TokenType.Eof); break;
                 default:
                     bool isIdentifier = IsPotentianIdentifier();
-                    if(isIdentifier == true)
+                    if (isIdentifier == true)
                     {
                         string inputLiteral = ReadInputLiteral();
                         bool isKeyword = Keyword.IsKeyword(inputLiteral);
-                        if(isKeyword == true)
+                        if (isKeyword == true)
                         {
                             TokenType type = Keyword.ToTokenType(inputLiteral);
-                            token.SetAttributes(type, inputLiteral);
+                            nextToken = CreateNewToken(type, inputLiteral);
                         }
                         else
                         {
-                            token.SetAttributes(TokenType.Indentifier, inputLiteral);
+                            nextToken = CreateNewToken(TokenType.Identifier, inputLiteral);
                         }
                     }
-                    else if (IsNumber())
+                    else if (IsCurrentCharNumber())
                     {
-                        string inputLiteral = ReadInputNumber();
-                        int convertedNumber = 0;
-                        bool couldConvert = int.TryParse(inputLiteral, out convertedNumber);
+                        //  This function is handling numbers. So Int and Float should be parsable.
+                        string inputLiteral = ReadInputNumberLiteral();
+                        double convertedNumber = 0;
+                        bool couldConvertToDouble = double.TryParse(inputLiteral, CultureInfo.InvariantCulture, out convertedNumber);
 
-                        if(couldConvert == true)
+                        //  If contains '.' then it could be double
+                        if (inputLiteral.Contains('.'))
                         {
-                            token.SetAttributes(TokenType.Number, inputLiteral);
+                            if (couldConvertToDouble == true)
+                            {
+                                if (inputLiteral.EndsWith('.'))
+                                {
+                                    inputLiteral = inputLiteral.Replace(".", "");
+                                }
+                                nextToken = CreateNewToken(TokenType.Float, inputLiteral);
+                            }
+                            else
+                            {
+                                nextToken = CreateNewToken(TokenType.Illegal, inputLiteral);
+                            }
                         }
                         else
                         {
-                            token.SetAttributes(TokenType.Illegal, inputLiteral);
+                            int literalAsInt = 0;
+                            bool couldConvertToInt = int.TryParse(inputLiteral, out literalAsInt);
+                            if (couldConvertToInt)
+                            {
+                                nextToken = CreateNewToken(TokenType.Int, inputLiteral);
+                            }
+                            else
+                            {
+                                nextToken = CreateNewToken(TokenType.Illegal, inputLiteral);
+                            }
                         }
                     }
                     else
                     {
-                        token.SetAttributes(TokenType.Illegal, CurrentChar);
+                        nextToken = CreateNewToken(TokenType.Illegal);
                     }
                     break;
             }
 
+            NextCharacter();
 
-            return token;
+            return nextToken;
         }
     }
 }

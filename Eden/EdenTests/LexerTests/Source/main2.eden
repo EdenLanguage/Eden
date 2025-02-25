@@ -1,0 +1,4 @@
+Function Bool IsGreater(Var Int A, Var Int B){
+	If(A > B) Return True;
+	Else Return False;
+};
