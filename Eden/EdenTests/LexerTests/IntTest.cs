@@ -2,7 +2,7 @@
 
 namespace EdenTests.LexerTests
 {
-    public class Int
+    public class IntTest
     {
 
         [Fact]
