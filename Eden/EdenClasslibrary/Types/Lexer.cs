@@ -300,6 +300,11 @@ namespace EdenClasslibrary.Types
             return inputLiteral;
         }
 
+        /// <summary>
+        /// Makes token out of string literal. Requires refactoring.
+        /// </summary>
+        /// <returns></returns>
+        [Obsolete("This function requires refactoring!!!")]
         public string ReadStringLiteral()
         {
             int metStrSymbol = 0;
@@ -412,6 +417,8 @@ namespace EdenClasslibrary.Types
                 case '.': nextToken = CreateNewToken(TokenType.Dot); break;
                 case ';': nextToken = CreateNewToken(TokenType.Semicolon); break;
                 case '^': nextToken = CreateNewToken(TokenType.Power); break;
+                case '*': nextToken = CreateNewToken(TokenType.Star); break;
+                case '/': nextToken = CreateNewToken(TokenType.Slash); break;
                 case '(': nextToken = CreateNewToken(TokenType.LeftParenthesis); break;
                 case ')': nextToken = CreateNewToken(TokenType.RightParenthesis); break;
                 case '{': nextToken = CreateNewToken(TokenType.LeftBracket); break;
@@ -514,6 +521,8 @@ namespace EdenClasslibrary.Types
             }
 
             NextCharacter();
+
+            if (nextToken.Keyword == TokenType.Illegal) throw new Exception($"Lexer encountered illegal token: {nextToken.PrintTokenDetails()}");
 
             return nextToken;
         }

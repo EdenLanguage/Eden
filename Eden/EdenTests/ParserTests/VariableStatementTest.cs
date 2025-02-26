@@ -1,79 +1,116 @@
 ﻿using EdenClasslibrary.Parser;
+using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenTests.Utility;
+using Xunit.Abstractions;
 
 namespace EdenTests.ParserTests
 {
-    public class VariableStatementTest
+    public class VariableStatementTest : ConsoleWriter
     {
+        public VariableStatementTest(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
+
         [Fact]
-        public void Statement_1()
+        public void CorrectStatements()
         {
-            //string code = "var int zmienna = 10;";
+            const int testCount = 6;
 
-            //Parser parser = new Parser();
-            //parser.Parse(code);
+            string[] codes = new string[testCount]
+            {
+                "Var Int counter = 10;",
+                "Var Bool flaga = True;",
+                "Var String name = \"Pratt\";",
+                "Var Float pi = 3.14;",
+                "Var Int sum = counter + 5 - licznik * 10;",
+                "Var Float funcCall = 3.14 * zmienna / 2;",
+            };
 
-            //Assert.Equal(parser.AST.Statements.Length, 1);
-            //Assert.Equal(parser.Errors.Length, 0);
+            string[] expectedIDs = new string[testCount]
+            {
+                "counter",
+                "flaga",
+                "name",
+                "pi",
+                "sum",
+                "funcCall",
+            };
+
+            string[] expectedExpressions = new string[testCount]
+            {
+                "10",
+                "True",
+                "Pratt",
+                "3.14",
+                "((counter+5)-(licznik*10))",
+                "((3.14*zmienna)/2)",
+            };
+
+            Parser parser = new Parser();
+
+            string code = string.Empty;
+            string expectedID = string.Empty;
+            string expectedExpression = string.Empty;
+
+            for (int i = 0; i < testCount; i++)
+            {
+                code = codes[i];
+                expectedID = expectedIDs[i];
+                expectedExpression = expectedExpressions[i];
+
+                parser = new Parser();
+                BlockStatement ast = parser.Parse(code);
+
+                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Errors.Length, 0);
+                Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+
+                VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+                
+                // ID
+                string actualID = vds.Identifier.Name;
+                Log.WriteLine($"{expectedID} <- ExpectedID");
+                Log.WriteLine($"{actualID} <- ActualID");
+                Assert.Equal(actualID, expectedID);
+
+                // Expression
+                string actualExp = vds.Expression.ParenthesesPrint();
+                Log.WriteLine($"{expectedExpression} <- ExpectedExp");
+                Log.WriteLine($"{actualExp} <- ActualExp");
+                Assert.Equal(actualExp, expectedExpression);
+            }
         }
 
         [Fact]
-        public void Statement_2()
+        public void InvalidStatements()
         {
-            //string code =
-            //    "var int zmienna = 10;" +
-            //    "var int counter = 0;" +
-            //    "var int minuser = 20;";
+            const int testCount = 6;
 
-            //Parser parser = new Parser();
-            //parser.Parse(code);
+            string[] codes = new string[testCount]
+            {
+                "Var Intcounter = 10;",
+                "Var Bool 4flaga = True;",
+                "Var Strig name = \"Pratt\";",
+                "var Float pi = 3.14;",
+                "Var Int sum = counter5 - licznik * 10;",
+                "Var Float funcCall = 3.14 * zmienna / 2",
+            };
 
-            //Assert.Equal(parser.AST.Statements.Length, 3);
-            //Assert.Equal(parser.Errors.Length, 0);
-        }
+            Parser parser = new Parser();
 
+            string code = string.Empty;
+            string expectedID = string.Empty;
+            string expectedExpression = string.Empty;
 
-        [Fact]
-        public void Statement_3()
-        {
-            //string code =
-            //    "var bool flag = false;";
-            //Parser parser = new Parser();
-            //parser.Parse(code);
+            for (int i = 0; i < testCount; i++)
+            {
+                code = codes[i];
 
-            //string json = parser.Statements.Serialize();
+                parser = new Parser();
+                BlockStatement ast = parser.Parse(code);
 
-            //Assert.Equal(parser.AST.Statements.Length, 1);
-            //Assert.Equal(parser.Errors.Length, 0);
-        }
-
-        [Fact]
-        public void Statement_4()
-        {
-            //string code =
-            //    "var zmienna = 10;" +
-            //    "int counter = 0;" +
-            //    "var int minuser = ;" +
-            //    "var int counter = 120;";
-
-            //Parser parser = new Parser();
-            //parser.Parse(code);
-
-            //Assert.Equal(parser.AST.Statements.Length, 1);
-            //Assert.Equal(parser.Errors.Length, 3);
-        }
-
-        [Fact]
-        public void Statement_5()
-        {
-            //string code =
-            //    "var int zmienna = 10;" +
-            //    "int counter = 0";
-
-            //Parser parser = new Parser();
-            //parser.Parse(code);
-
-            //Assert.Equal(parser.AST.Statements.Length, 1);
-            //Assert.Equal(parser.Errors.Length, 1);
+                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Errors.Length, 1);
+                Assert.True(parser.AbstractSyntaxTree.Statements[0] is InvalidStatement);
+            }
         }
     }
 }
