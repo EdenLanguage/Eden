@@ -1,0 +1,31 @@
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [master ]
+  workflow_dispatch:  # Ręczne uruchomienie pipline'u
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout brancha
+      - uses: actions/checkout@v4
+      # Pobranie .NET SDK
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v4.3.0
+        with:
+          dotnet-version: 8.0.x
+      # Restora zalezności z projektu
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: Eden
+      # Build projektu
+      - name: Build
+        run: dotnet build --no-restore
+        working-directory: Eden
+      # Uruchomienie testow
+      - name: Tests
+        run: dotnet test
+        working-directory: Eden
+       
