@@ -1,0 +1,1 @@
+Although tests were refactored. I had to disable 'Parser' tests to not throw errors because there is still lacking code regarding parsing Expressions.

@@ -1,8 +1,9 @@
 ﻿using EdenClasslibrary.Types;
+using EdenTests.Utility;
 
 namespace EdenTests.LexerTests
 {
-    public class FromFile
+    public class FileTest : FileTester
     {
         #region From '*.eden' file
         [Fact]
@@ -233,15 +234,6 @@ namespace EdenTests.LexerTests
                 Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
                 Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
             }
-        }
-        #endregion
-        #region Helper methods
-        public static string GetTestFilesDirectory()
-        {
-            string executionLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-            string testsDir = executionLocation.Substring(0, executionLocation.IndexOf("EdenTests"));
-            string sourceDir = Path.Combine(new string[] { testsDir, "EdenTests", "LexerTests", "Source" });
-            return sourceDir;
         }
         #endregion
     }
