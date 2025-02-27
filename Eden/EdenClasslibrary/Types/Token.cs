@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace EdenClasslibrary.Types
@@ -83,9 +84,27 @@ namespace EdenClasslibrary.Types
             return Keyword != TokenType.Illegal;
         }
 
+        public bool IsSemicolon()
+        {
+            return Keyword == TokenType.Semicolon;
+        }
+
         public bool IsNotEof()
         {
             return Keyword != TokenType.Eof;
+        }
+
+        public string PrintTokenDetails()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("{");
+            sb.AppendLine($"/tKeyword: {Keyword}");
+            sb.AppendLine($"/tLine: {Line}");
+            sb.AppendLine($"/tStart position: {TokenStartingLinePosition}");
+            sb.AppendLine($"/tEnd position: {TokenEndingLinePosition}");
+            sb.AppendLine($"/tFilename: {Filename}");
+            sb.AppendLine("}");
+            return sb.ToString();
         }
 
         public bool IsValidAndNotEof()
@@ -134,11 +153,28 @@ namespace EdenClasslibrary.Types
             return Keyword == TokenType.Assign;
         }
 
+        /// <summary>
+        /// Indicates whether we can evaluate expression with this token as the first.
+        /// </summary>
+        /// <returns></returns>
+        public bool CanEvaluateExpression()
+        {
+            return Keyword != TokenType.VariableType && Keyword != TokenType.Keyword;
+        }
+
         public bool IsVariableType()
         {
             bool goodKeyword = Keyword == TokenType.VariableType;
             bool isType = Variables.IsVariableType(LiteralValue);
             return goodKeyword && isType;
+        }
+
+        public static Token RootToken
+        {
+            get
+            {
+                return new Token(TokenType.Identifier, "Root");
+            }
         }
     }
 }
