@@ -11,5 +11,7 @@
             NodeToken = token;
         }
         public abstract override string ToString();
+        public abstract string ToAST(int indent = 0);
+        public abstract string ToPrettyAST(int indent = 0);
     }
 }

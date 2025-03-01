@@ -1,4 +1,6 @@
-﻿using Pastel;
+﻿using EdenClasslibrary.Utility;
+using Pastel;
+using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
@@ -28,9 +30,40 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             //return result;
         }
 
+        public override string ToAST(int indent = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(BinaryExpression)} {{");
+            sb.AppendLine($"{Common.IndentCreator(indent+1)}Left {{");
+            sb.AppendLine($"{Left.ToAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent+1)}}},");
+            sb.AppendLine($"{Common.IndentCreator(indent+1)}Right {{");
+            sb.AppendLine($"{Right.ToAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent+1)}}}");
+            sb.Append($"{Common.IndentCreator(indent)}}}");
+            string toStr = sb.ToString();
+            return toStr;
+        }
+
         public override string ParenthesesPrint()
         {
             return $"({Left.ParenthesesPrint()}{NodeToken.LiteralValue}{Right.ParenthesesPrint()})";
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(BinaryExpression).Pastel(Color.Orange)} {{");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Left {{");
+            sb.AppendLine($"{Left.ToPrettyAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}},");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Operator: {NodeToken.LiteralValue}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Right {{");
+            sb.AppendLine($"{Right.ToPrettyAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}}");
+            sb.Append($"{Common.IndentCreator(indent)}}}");
+            string toStr = sb.ToString();
+            return toStr;
         }
     }
 }

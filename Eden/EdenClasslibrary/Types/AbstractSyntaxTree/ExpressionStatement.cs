@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using EdenClasslibrary.Utility;
+using System;
+using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
@@ -23,6 +25,16 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public override string Print()
         {
             return Expression.ParenthesesPrint();
+        }
+
+        public override string ToAST(int indents = 0)
+        {
+            return $"{Common.IndentCreator(indents + 1)}Expression: {Expression.ToAST(indents + 1)}";
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            return $"{Common.IndentCreator(indent + 1)}Expression: {Expression.ToPrettyAST(indent + 1)}";
         }
     }
 }

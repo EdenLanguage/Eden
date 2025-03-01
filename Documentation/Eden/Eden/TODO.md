@@ -1,6 +1,6 @@
 - [ ] [[Lexer]]
 - [ ] [[Parser]]
-- [ ] [[AST]]
+- [ ] [[AST - Abstract Syntax Tree]]
 - [ ] [[REPL]]
 - [ ] [[File parsing]]
 - [ ] [[Tests]]

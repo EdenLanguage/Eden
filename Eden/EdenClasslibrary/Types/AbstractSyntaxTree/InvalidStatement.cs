@@ -11,6 +11,16 @@
             return "Parser encountered invalid statement!";
         }
 
+        public override string ToAST(int indents = 0)
+        {
+            return "Parser encountered invalid statement!";
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            return "Parser encountered invalid statement!";
+        }
+
         public override string ToString()
         {
             return "Parser encountered invalid statement!";
