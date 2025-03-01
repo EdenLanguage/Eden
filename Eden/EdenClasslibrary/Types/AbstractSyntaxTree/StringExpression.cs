@@ -1,4 +1,8 @@
-﻿namespace EdenClasslibrary.Types.AbstractSyntaxTree
+﻿using EdenClasslibrary.Utility;
+using Pastel;
+using System.Drawing;
+
+namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
     public class StringExpression : Expression
     {
@@ -21,6 +25,16 @@
         public override string ToString()
         {
             return Value;
+        }
+
+        public override string ToAST(int indents = 0)
+        {
+            return $"{nameof(StringExpression)}: \"{Value}\"";
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            return $"{Common.IndentCreator(indent)}{"String".Pastel(Color.DeepSkyBlue)}: \"{Value}\"";
         }
     }
 }

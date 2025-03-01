@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using EdenClasslibrary.Utility;
+using Pastel;
+using System.Drawing;
+using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
@@ -25,11 +28,11 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("{");
+            sb.AppendLine("Block {");
 
             foreach(Statement statement in _statements)
             {
-                sb.AppendLine($"\tStatement: {statement.ToString()}");
+                sb.AppendLine($"\t{statement.ToString()}");
             }
             
             sb.AppendLine("}");
@@ -45,6 +48,36 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
                 sb.AppendLine(statement.Print());
             }
             return sb.ToString();
+        }
+
+        public override string ToAST(int indents = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Common.IndentCreator(indents)}{nameof(BlockStatement)} {{");
+
+            foreach (Statement statement in _statements)
+            {
+                sb.AppendLine($"{statement.ToAST(indents + 1)}");
+            }
+
+            sb.AppendLine("}");
+            string result = sb.ToString();
+            return result;
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Common.IndentCreator(indent)}{"Block".Pastel(Color.Orange)} {{");
+
+            foreach (Statement statement in _statements)
+            {
+                sb.AppendLine($"{statement.ToPrettyAST(indent + 1)}");
+            }
+
+            sb.AppendLine("}");
+            string result = sb.ToString();
+            return result;
         }
     }
 }

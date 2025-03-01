@@ -1,4 +1,7 @@
-﻿namespace EdenClasslibrary.Types.AbstractSyntaxTree
+﻿using Pastel;
+using System.Drawing;
+
+namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
     public class BoolExpresion : Expression
     {
@@ -22,6 +25,16 @@
         public override string ToString()
         {
             return $"{Value}";
+        }
+
+        public override string ToAST(int indents = 0)
+        {
+            return $"{nameof(BoolExpresion)}: {Value}";
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            return $"{nameof(BoolExpresion).Pastel(Color.Orange)}: {Value}";
         }
     }
 }

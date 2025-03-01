@@ -1,4 +1,6 @@
-﻿using Pastel;
+﻿using EdenClasslibrary.Utility;
+using Pastel;
+using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
@@ -32,6 +34,16 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public override string ParenthesesPrint()
         {
             return $"{Value}";
+        }
+
+        public override string ToAST(int indents = 0)
+        {
+            return $"{Common.IndentCreator(indents)}{nameof(IntExpression)}: {Value}";
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            return $"{Common.IndentCreator(indent)}{"Int".Pastel(Color.DeepSkyBlue)}: {Value}";
         }
     }
 }

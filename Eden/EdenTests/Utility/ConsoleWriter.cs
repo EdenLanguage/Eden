@@ -1,4 +1,6 @@
-﻿using Xunit.Abstractions;
+﻿using Pastel;
+using System.Drawing;
+using Xunit.Abstractions;
 
 namespace EdenTests.Utility
 {
@@ -8,6 +10,13 @@ namespace EdenTests.Utility
         public ConsoleWriter(ITestOutputHelper consoleWriter)
         {
             Log = consoleWriter;
+        }
+
+        public void PrintTestName(string testname)
+        {
+            Console.WriteLine("|------------------------------------|");
+            Console.WriteLine(testname.Pastel(Color.Green));
+            Console.WriteLine("|------------------------------------|\n");
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using EdenClasslibrary.Utility;
+using Pastel;
+using System.Drawing;
+using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
@@ -18,10 +21,10 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("{");
-            sb.AppendLine($"\tType: {Type.ToString()}");
-            sb.AppendLine($"\tIdentifier: {Identifier.ToString()}");
-            sb.AppendLine($"\tExpression: {Expression.ToString()}");
+            sb.AppendLine($"{nameof(VariableDeclarationStatement)} {{");
+            sb.AppendLine($"\t{Type.ToAST()},");
+            sb.AppendLine($"\t{Identifier.ToString()},");
+            sb.AppendLine($"\t{Expression.ToString()}");
             sb.AppendLine("}");
             string result = sb.ToString();
             return result;
@@ -30,6 +33,30 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public override string Print()
         {
             return $"{Type.ParenthesesPrint()} {Identifier.ParenthesesPrint} {Expression.ParenthesesPrint()}";
+        }
+
+        public override string ToAST(int indents = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Common.IndentCreator(indents)}{nameof(VariableDeclarationStatement)} {{");
+            sb.AppendLine($"{Type.ToAST(indents + 1)},");
+            sb.AppendLine($"{Identifier.ToAST(indents + 1)},");
+            sb.AppendLine($"{Expression.ToAST(indents + 1)}");
+            sb.Append($"{Common.IndentCreator(indents)}}}");
+            string result = sb.ToString();
+            return result;
+        }
+
+        public override string ToPrettyAST(int indent = 0)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Common.IndentCreator(indent)}{"Variable".Pastel(Color.Orange)} {{");
+            sb.AppendLine($"{Type.ToPrettyAST(indent + 1)},");
+            sb.AppendLine($"{Identifier.ToPrettyAST(indent + 1)},");
+            sb.AppendLine($"{Expression.ToPrettyAST(indent + 1)}");
+            sb.Append($"{Common.IndentCreator(indent)}}}");
+            string result = sb.ToString();
+            return result;
         }
     }
 }
