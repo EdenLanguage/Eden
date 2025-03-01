@@ -82,7 +82,7 @@ namespace EdenTests.LexerTests
             List<Token> expected = new List<Token>()
             {
                 // First line
-                new Token(TokenType.Keyword, "Function"),
+                new Token(TokenType.Function, "Function"),
                 new Token(TokenType.VariableType, "Bool"),
                 new Token(TokenType.Identifier, "IsGreater"),
                 new Token(TokenType.LeftParenthesis, "("),
@@ -97,7 +97,7 @@ namespace EdenTests.LexerTests
                 new Token(TokenType.LeftBracket, "{"),
 
                 // Second line
-                new Token(TokenType.Keyword, "If"),
+                new Token(TokenType.If, "If"),
                 new Token(TokenType.LeftParenthesis, "("),
                 new Token(TokenType.Identifier, "A"),
                 new Token(TokenType.RightArrow, ">"),
@@ -108,7 +108,7 @@ namespace EdenTests.LexerTests
                 new Token(TokenType.Semicolon, ";"),
 
                 // Third line
-                new Token(TokenType.Keyword, "Else"),
+                new Token(TokenType.Else, "Else"),
                 new Token(TokenType.Keyword, "Return"),
                 new Token(TokenType.Bool, "False"),
                 new Token(TokenType.Semicolon, ";"),
@@ -147,7 +147,7 @@ namespace EdenTests.LexerTests
             List<Token> expected = new List<Token>()
             {
                 // First line
-                new Token(TokenType.Keyword, "Function"),
+                new Token(TokenType.Function, "Function"),
                 new Token(TokenType.VariableType, "Bool"),
                 new Token(TokenType.Identifier, "PowOfTwo"),
                 new Token(TokenType.LeftParenthesis, "("),
@@ -169,7 +169,7 @@ namespace EdenTests.LexerTests
                 new Token(TokenType.Semicolon, ";"),
 
                 // Forth line
-                new Token(TokenType.Keyword, "Function"),
+                new Token(TokenType.Function, "Function"),
                 new Token(TokenType.VariableType, "Bool"),
                 new Token(TokenType.Identifier, "PowOfThree"),
                 new Token(TokenType.LeftParenthesis, "("),

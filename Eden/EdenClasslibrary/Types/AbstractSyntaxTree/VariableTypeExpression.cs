@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Utility;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
 using System.Reflection;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class VariableTypeExpression : Expression
+    public class VariableTypeExpression : Expression, IPrintable
     {
         public string Type
         {
@@ -20,13 +21,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         }
         public override string ToString()
         {
-            return Type;
-            //StringBuilder sb = new StringBuilder();
-            //sb.AppendLine("{");
-            //sb.AppendLine($"\tType: {Type.ToString()}");
-            //sb.AppendLine("}");
-            //string result = sb.ToString();
-            //return result;
+            return PrettyPrint();
         }
 
         public override string ParenthesesPrint()
@@ -34,14 +29,19 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return $"{Type}";
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
         {
-            return $"{Common.IndentCreator(indents)}Type: {Type}";
+            return PrettyPrintAST();
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrintAST(int indent = 0)
         {
             return $"{Common.IndentCreator(indent)}{"Type".Pastel(Color.Green)}: {Type}";
+        }
+
+        public string PrettyPrint(int indents = 0)
+        {
+            return $"{Common.IndentCreator(indents)}{Type}";
         }
     }
 }

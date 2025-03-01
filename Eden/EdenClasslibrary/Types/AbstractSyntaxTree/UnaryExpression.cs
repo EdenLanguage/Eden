@@ -1,11 +1,20 @@
-﻿using Pastel;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
+using Pastel;
 using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class UnaryExpression : Expression
+    public class UnaryExpression : Expression, IPrintable
     {
+        public Token Prefix
+        {
+            get
+            {
+                return NodeToken;
+            }
+        }
         public Expression Expression { get; set; }
         public UnaryExpression(Token token) : base(token)
         {
@@ -30,27 +39,27 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public override string ToString()
         {
-            return EvaluatePrint();
+            return PrettyPrint();
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
+        {
+            return PrettyPrintAST();
+        }
+
+        public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{nameof(UnaryExpression)} {{");
-            sb.AppendLine($"\t{Expression.ToAST()}");
-            sb.AppendLine("}");
+            //sb.AppendLine($"{nameof(UnaryExpression).Pastel(Color.Orange)} {{");
+            //sb.AppendLine($"\t{Expression.ToPrettyAST()}");
+            //sb.AppendLine("}");
             string toStr = sb.ToString();
             return toStr;
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrint(int indents = 0)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{nameof(UnaryExpression).Pastel(Color.Orange)} {{");
-            sb.AppendLine($"\t{Expression.ToPrettyAST()}");
-            sb.AppendLine("}");
-            string toStr = sb.ToString();
-            return toStr;
+            return $"{Common.IndentCreator(indents)}{Prefix.LiteralValue}{Expression}";
         }
     }
 }

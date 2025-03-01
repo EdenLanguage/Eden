@@ -1,10 +1,9 @@
-﻿using EdenClasslibrary.Utility;
-using System;
-using System.Text;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class ExpressionStatement : Statement
+    public class ExpressionStatement : Statement, IPrintable
     {
         public Expression Expression { get; set; }
         public ExpressionStatement(Token token) : base(token)
@@ -13,13 +12,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public override string ToString()
         {
-            return Expression.ToString();
-            //StringBuilder sb = new StringBuilder();
-            //sb.AppendLine("{");
-            //sb.AppendLine($"\tExpression: {Expression.ToString()}");
-            //sb.AppendLine("}");
-            //string result = sb.ToString();
-            //return result;
+            return PrettyPrint();
         }
 
         public override string Print()
@@ -27,14 +20,20 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return Expression.ParenthesesPrint();
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
         {
-            return $"{Common.IndentCreator(indents + 1)}Expression: {Expression.ToAST(indents + 1)}";
+            return PrettyPrintAST();
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrintAST(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent + 1)}Expression: {Expression.ToPrettyAST(indent + 1)}";
+            //return $"{Expression.ToPrettyAST(indent)}";
+            return "";
+        }
+
+        public string PrettyPrint(int indents = 0)
+        {
+            return $"{(Expression as IPrintable).PrettyPrint()};";
         }
     }
 }

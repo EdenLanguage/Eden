@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Utility;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
 using System.Text;
@@ -9,7 +10,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
     /// Variable declaration expression. Example:
     ///     'Var Int counter = 50;'
     /// </summary>
-    public class VariableDeclarationStatement : Statement
+    public class VariableDeclarationStatement : Statement, IPrintable
     {
         public VariableTypeExpression Type { get; set; }
         public IdentifierExpression Identifier { get; set; }
@@ -20,14 +21,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{nameof(VariableDeclarationStatement)} {{");
-            sb.AppendLine($"\t{Type.ToAST()},");
-            sb.AppendLine($"\t{Identifier.ToString()},");
-            sb.AppendLine($"\t{Expression.ToString()}");
-            sb.AppendLine("}");
-            string result = sb.ToString();
-            return result;
+            return PrettyPrint();
         }
 
         public override string Print()
@@ -35,26 +29,31 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return $"{Type.ParenthesesPrint()} {Identifier.ParenthesesPrint} {Expression.ParenthesesPrint()}";
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
+        {
+            return PrettyPrintAST();
+        }
+
+        public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{Common.IndentCreator(indents)}{nameof(VariableDeclarationStatement)} {{");
-            sb.AppendLine($"{Type.ToAST(indents + 1)},");
-            sb.AppendLine($"{Identifier.ToAST(indents + 1)},");
-            sb.AppendLine($"{Expression.ToAST(indents + 1)}");
-            sb.Append($"{Common.IndentCreator(indents)}}}");
+            //sb.AppendLine($"{Common.IndentCreator(indent)}{"Variable".Pastel(Color.Orange)} {{");
+            //sb.AppendLine($"{Type.ToPrettyAST(indent + 1)},");
+            //sb.AppendLine($"{Identifier.ToPrettyAST(indent + 1)},");
+            //sb.AppendLine($"{Expression.ToPrettyAST(indent + 1)}");
+            //sb.Append($"{Common.IndentCreator(indent)}}}");
             string result = sb.ToString();
             return result;
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrint(int indents = 0)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{Common.IndentCreator(indent)}{"Variable".Pastel(Color.Orange)} {{");
-            sb.AppendLine($"{Type.ToPrettyAST(indent + 1)},");
-            sb.AppendLine($"{Identifier.ToPrettyAST(indent + 1)},");
-            sb.AppendLine($"{Expression.ToPrettyAST(indent + 1)}");
-            sb.Append($"{Common.IndentCreator(indent)}}}");
+            sb.Append($"{Common.IndentCreator(indents)}Var");
+            sb.Append($" {Type.PrettyPrint()}");
+            sb.Append($" {Identifier.PrettyPrint()}");
+            sb.Append($" = ");
+            sb.Append($"{(Expression as IPrintable).PrettyPrint()};");
             string result = sb.ToString();
             return result;
         }

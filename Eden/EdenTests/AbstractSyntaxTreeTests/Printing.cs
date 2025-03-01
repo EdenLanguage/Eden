@@ -28,7 +28,7 @@ namespace EdenTests.AbstractSyntaxTreeTests
 
             Console.WriteLine($"Input data: {input}");
             Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToPrettyAST()}");
+            Console.WriteLine($"{ast.ToASTFormat()}");
             Console.WriteLine("|------------------------------------|\n");
         }
 
@@ -51,7 +51,7 @@ namespace EdenTests.AbstractSyntaxTreeTests
 
             Console.WriteLine($"Input data: {input}");
             Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToPrettyAST()}");
+            Console.WriteLine($"{ast.ToASTFormat()}");
             Console.WriteLine("|------------------------------------|\n");
         }
 
@@ -74,7 +74,7 @@ namespace EdenTests.AbstractSyntaxTreeTests
 
             Console.WriteLine($"Input data: {input}");
             Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToPrettyAST()}");
+            Console.WriteLine($"{ast.ToASTFormat()}");
             Console.WriteLine("|------------------------------------|\n");
         }
 
@@ -98,7 +98,7 @@ namespace EdenTests.AbstractSyntaxTreeTests
 
             Console.WriteLine($"Input data: {input}");
             Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToPrettyAST()}");
+            Console.WriteLine($"{ast.ToASTFormat()}");
             Console.WriteLine("|------------------------------------|\n");
         }
     }

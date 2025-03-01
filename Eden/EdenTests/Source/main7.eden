@@ -1,0 +1,5 @@
+add(5, 5*10);
+delete(True);
+update(3.14, 1/2);
+UpdateUser("Jarek", 10);
+Add(Evaluate(5,10), Multiply(10, 3.14), devide(2));

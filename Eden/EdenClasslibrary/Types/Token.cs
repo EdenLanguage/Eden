@@ -11,6 +11,11 @@ namespace EdenClasslibrary.Types
         Eof,                // \0
         Identifier,        // Variable name, function name
         Keyword,            // Language specific name like: 'for', 'foreach', 'Function', 'Var' ...
+        Function,
+        Var,
+        If,
+        Else,
+        Return,
         VariableType,       // 'Int', 'Float' ...
 
         //  Operators
@@ -72,13 +77,17 @@ namespace EdenClasslibrary.Types
 
         public override string ToString()
         {
+            return $"{Keyword} : {LiteralValue}";
+        }
+
+        public string ToJSON()
+        {
             var options = new JsonSerializerOptions
             {
                 Converters = { new JsonStringEnumConverter() }
             };
             return JsonSerializer.Serialize(this, options);
         }
-
         public bool IsValid()
         {
             return Keyword != TokenType.Illegal;
@@ -146,6 +155,18 @@ namespace EdenClasslibrary.Types
             TokenStartingLinePosition = startPos;
             TokenEndingLinePosition = startPos;    // Same as starting because 'char' type has 1 length. So Start is equal to begining.
             Filename = filename;
+        }
+
+        public bool IsType(TokenType token)
+        {
+            if(Keyword == token)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool IsAssignType()

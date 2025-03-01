@@ -1,9 +1,15 @@
-﻿namespace EdenClasslibrary.Types.AbstractSyntaxTree
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
+
+namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class InvalidStatement : Statement
+    public class InvalidStatement : Statement, IPrintable
     {
-        public InvalidStatement(Token token) : base(token)
+        public InvalidStatement(Token token) : base(token) { }
+
+        public string PrettyPrint(int indents = 0)
         {
+            return $"{Common.IndentCreator(indents)}Invalid statement!";
         }
 
         public override string Print()
@@ -11,19 +17,19 @@
             return "Parser encountered invalid statement!";
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
         {
-            return "Parser encountered invalid statement!";
+            return PrettyPrintAST();
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrintAST(int indent = 0)
         {
             return "Parser encountered invalid statement!";
         }
 
         public override string ToString()
         {
-            return "Parser encountered invalid statement!";
+            return PrettyPrint();
         }
     }
 }

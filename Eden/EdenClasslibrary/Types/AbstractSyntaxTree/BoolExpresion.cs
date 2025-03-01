@@ -1,9 +1,11 @@
-﻿using Pastel;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
+using Pastel;
 using System.Drawing;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class BoolExpresion : Expression
+    public class BoolExpresion : Expression, IPrintable
     {
         public bool Value
         {
@@ -24,17 +26,22 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public override string ToString()
         {
-            return $"{Value}";
+            return PrettyPrint();
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
         {
-            return $"{nameof(BoolExpresion)}: {Value}";
+            return PrettyPrintAST();
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrintAST(int indent = 0)
         {
             return $"{nameof(BoolExpresion).Pastel(Color.Orange)}: {Value}";
+        }
+
+        public string PrettyPrint(int indents = 0)
+        {
+            return $"{Common.IndentCreator(indents)}{Value}";
         }
     }
 }

@@ -4,7 +4,8 @@
     {
         Lowest,
         Equals,
-        LesserGreater,
+        Logical,
+        Comparison,
         Sum,
         Product,
         Prefix,

@@ -1,12 +1,13 @@
-﻿using EdenClasslibrary.Utility;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using System.Xml.Linq;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class ReturnStatement : Statement
+    public class ReturnStatement : Statement, IPrintable
     {
         public Expression Expression { get; set; }
         public ReturnStatement(Token token) : base(token)
@@ -14,13 +15,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         }
         public override string ToString()
         {
-            return Expression.ToString();
-            //StringBuilder sb = new StringBuilder();
-            //sb.AppendLine("{");
-            //sb.AppendLine($"\tExpression: {Expression.ToString()}");
-            //sb.AppendLine("}");
-            //string result = sb.ToString();
-            //return result;
+            return PrettyPrint();
         }
 
         public override string Print()
@@ -28,22 +23,28 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return Expression.ParenthesesPrint();
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{Common.IndentCreator(indents)}{nameof(ReturnStatement)} {{");
-            sb.AppendLine($"{Expression.ToAST(indents+1)}");
-            sb.Append($"{Common.IndentCreator(indents)}}}");
-            string result = sb.ToString();
-            return result;
+            return PrettyPrintAST();
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrintAST(int indent = 0)
+        {
+            //StringBuilder sb = new StringBuilder();
+            //sb.AppendLine($"{Common.IndentCreator(indent)}{"Return".Pastel(Color.Orange)} {{");
+            //sb.AppendLine($"{Expression.ToPrettyAST(indent + 1)}");
+            //sb.Append($"{Common.IndentCreator(indent)}}}");
+            //string result = sb.ToString();
+            //return result;
+            return "";
+        }
+
+        public string PrettyPrint(int indents = 0)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{Common.IndentCreator(indent)}{"Return".Pastel(Color.Orange)} {{");
-            sb.AppendLine($"{Expression.ToPrettyAST(indent + 1)}");
-            sb.Append($"{Common.IndentCreator(indent)}}}");
+            sb.Append($"{Common.IndentCreator(indents)}Return");
+            sb.Append($" {(Expression as IPrintable).PrettyPrint()}");
+            sb.Append(";");
             string result = sb.ToString();
             return result;
         }

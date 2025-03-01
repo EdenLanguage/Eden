@@ -1,0 +1,3 @@
+Function Bool PowOfTwo(Var Int A){
+	Return A*A;
+};
