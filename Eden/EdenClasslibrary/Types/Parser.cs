@@ -1,7 +1,8 @@
 ﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.Enums;
-using System.Diagnostics;
+using System.Diagnostics.Tracing;
+using System.Reflection;
 
 namespace EdenClasslibrary.Parser
 {
@@ -28,7 +29,7 @@ namespace EdenClasslibrary.Parser
             }
         }
         #endregion
-        
+
         #region Constructor
         public Parser()
         {
@@ -50,14 +51,24 @@ namespace EdenClasslibrary.Parser
             _binaryMapping = new Dictionary<TokenType, Func<Expression, Expression>>();
             _precedenceMapping = new Dictionary<TokenType, Precedence>();
 
-            _precedenceMapping[TokenType.Equal] = Precedence.Equals;
-            _precedenceMapping[TokenType.Equal] = Precedence.Equals;
+            // TODO: Implement logical like &&, ||
+            _precedenceMapping[TokenType.Bool] = Precedence.Logical;
+
+            // == !=
+            _precedenceMapping[TokenType.Inequal] = Precedence.Comparison;
+            _precedenceMapping[TokenType.Equal] = Precedence.Comparison;
+
+            // + -
             _precedenceMapping[TokenType.Plus] = Precedence.Sum;
             _precedenceMapping[TokenType.Minus] = Precedence.Sum;
-            _precedenceMapping[TokenType.Bool] = Precedence.Product;    //TODO: Find out what sould be precendese for logical type!
+
+            // * / %
             _precedenceMapping[TokenType.Star] = Precedence.Product;
             _precedenceMapping[TokenType.Slash] = Precedence.Product;
 
+            _precedenceMapping[TokenType.LeftParenthesis] = Precedence.Call;
+
+            RegisterUnaryMapping(TokenType.If, ParseIfExpression);
             RegisterUnaryMapping(TokenType.Identifier, ParseIdentifierExpression);
             RegisterUnaryMapping(TokenType.Int, ParseIntExpression);
             RegisterUnaryMapping(TokenType.Float, ParseFloatExpression);
@@ -65,11 +76,17 @@ namespace EdenClasslibrary.Parser
             RegisterUnaryMapping(TokenType.Bool, ParseBoolExpression);
             RegisterUnaryMapping(TokenType.Minus, ParseUnaryExpression);
             RegisterUnaryMapping(TokenType.Plus, ParseUnaryExpression);
+            RegisterUnaryMapping(TokenType.LeftParenthesis, ParseGroupedExpression);
+            RegisterUnaryMapping(TokenType.ExclemationMark, ParseUnaryExpression);
+            RegisterUnaryMapping(TokenType.Function, ParseFunctionExpression);
 
             RegisterBinaryMapping(TokenType.Plus, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Minus, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Star, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Slash, ParseBinaryExpression);
+            RegisterBinaryMapping(TokenType.Inequal, ParseBinaryExpression);
+            RegisterBinaryMapping(TokenType.Equal, ParseBinaryExpression);
+            RegisterBinaryMapping(TokenType.LeftParenthesis, ParseCallExpression);
             #endregion
         }
         #endregion
@@ -83,55 +100,33 @@ namespace EdenClasslibrary.Parser
         public BlockStatement Parse(string code)
         {
             _lexer.SetInput(code);
+            _ast = ParseBlockStatement();
+            return _ast;
+        }
 
-            _ast = new BlockStatement(Token.RootToken);
+        public BlockStatement ParseFile(string path)
+        {
+            string sourceCode = GetSource(path);
 
-            LoadNextToken();
-
-            while (CurrentToken.Keyword != TokenType.Eof && CurrentToken.Keyword != TokenType.Illegal)
-            {
-                Statement statement = null;
-                switch (CurrentToken.Keyword)
-                {
-                    case TokenType.VariableType:
-                        statement = ParseInvalidStatement();
-                        break;
-                    case TokenType.Keyword:
-                        switch (CurrentToken.LiteralValue)
-                        {
-                            case "Return":
-                                statement = ParseReturnStatement();
-                                break;
-                            case "Var":
-                                statement = ParseVariableStatement();
-                                break;
-                            default:
-                                statement = ParseKeywordStatement();
-                                break;
-                        }
-                        break;
-                    default:
-                        statement = ParseExpressionStatement();
-                        if(CurrentToken.Keyword != TokenType.Semicolon && CurrentToken.Keyword != TokenType.Eof)
-                        {
-                            _errors.Add($"There was en error while parsing expression from line:'{statement.NodeToken.Line}' and column:'{statement.NodeToken.TokenStartingLinePosition}'");
-                            statement = new InvalidStatement(statement.NodeToken);
-                            EatStatement();
-                        }
-                        break;
-                }
-
-                if (statement != null)
-                {
-                    _ast.AddStatement(statement);
-                }
-            }
-
+            _lexer.SetInput(sourceCode);
+            _ast = ParseBlockStatement();
             return _ast;
         }
         #endregion
 
         #region Helper methods
+        private string GetSource(string path)
+        {
+            if (File.Exists(path))
+            {
+                return File.ReadAllText(path);
+            }
+            else
+            {
+                return "";
+            }
+        }
+
         private Precedence CurrentTokenEvaluationOrder()
         {
             if (_precedenceMapping.ContainsKey(CurrentToken.Keyword))
@@ -223,6 +218,21 @@ namespace EdenClasslibrary.Parser
             return unaryExpression;
         }
 
+        private Expression ParseGroupedExpression()
+        {
+            Token token = CurrentToken;
+            Precedence currentEvalOrder = CurrentTokenEvaluationOrder();
+
+            LoadNextToken();
+            Expression exp = ParseExpression(Precedence.Lowest);
+
+
+            // This one 'eats' last ')' to close expression.
+            LoadNextToken();
+
+            return exp;
+        }
+
         private Expression ParseBinaryExpression(Expression left)
         {
             Token token = CurrentToken;
@@ -241,10 +251,113 @@ namespace EdenClasslibrary.Parser
             return binaryExpression;
         }
 
+        private Expression ParseCallExpression(Expression function)
+        {
+            if (!CurrentToken.IsType(TokenType.LeftParenthesis))
+            {
+                _errors.Add("LeftParanthesis expected!");
+                return null;
+            }
+            CallExpression callExp = new CallExpression(CurrentToken);
+            callExp.Function = function;
+            LoadNextToken();
+
+            while (!CurrentToken.IsType(TokenType.RightParenthesis) && !CurrentToken.IsType(TokenType.Eof))
+            {
+                Expression argumentExp = ParseExpression(Precedence.Lowest);
+                callExp.AddArgumentExpression(argumentExp);
+
+                //  Eat parsed token and ',' token
+                LoadNextToken();
+
+                if (!CurrentToken.IsType(TokenType.RightParenthesis))
+                {
+                    LoadNextToken();
+                }
+            }
+
+            return callExp;
+        }
+
         private Expression ParseIdentifierExpression()
         {
             IdentifierExpression id = new IdentifierExpression(CurrentToken);
             return id;
+        }
+
+        private Expression ParseFunctionExpression()
+        {
+            FunctionExpression functionExpression = new FunctionExpression(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.VariableType))
+            {
+                _errors.Add("Variable type expected");
+                return null;
+            }
+
+            functionExpression.Type = new VariableTypeExpression(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.Identifier))
+            {
+                _errors.Add("Identifier expected");
+                return null;
+            }
+
+            functionExpression.Name = new IdentifierExpression(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.LeftParenthesis))
+            {
+                _errors.Add($"{TokenType.LeftParenthesis} expected");
+                return null;
+            }
+            LoadNextToken();
+
+            while (!CurrentToken.IsType(TokenType.RightParenthesis))
+            {
+                Expression funcArgument = ParseVariableDefinitionExpression();
+                functionExpression.AddFuncArgument(funcArgument);
+
+                if (CurrentToken.IsType(TokenType.Comma) && !NextToken.IsType(TokenType.RightParenthesis))
+                {
+                    LoadNextToken();
+                }
+            }
+            //  Eat ')'
+            LoadNextToken();
+
+            functionExpression.Body = ParseBlockStatement();
+            LoadNextToken();
+
+            return functionExpression;
+        }
+
+        private Expression ParseVariableDefinitionExpression()
+        {
+            VariableDefinitionExpression variableDefinition = new VariableDefinitionExpression(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.VariableType))
+            {
+                _errors.Add("Variable type expected!");
+                return null;
+            }
+
+            variableDefinition.Type = new VariableTypeExpression(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.Identifier))
+            {
+                _errors.Add("Identifier expected!");
+                return null;
+            }
+
+            variableDefinition.Name = new IdentifierExpression(CurrentToken);
+            LoadNextToken();
+
+            return variableDefinition;
         }
 
         private Expression ParseFloatExpression()
@@ -273,21 +386,61 @@ namespace EdenClasslibrary.Parser
         #endregion
 
         #region Statements parsing methods
-        private VariableDeclarationStatement ParseKeywordStatement()
+        private Statement ParseStatement()
         {
-            return null;
+            Statement statement = null;
+            switch (CurrentToken.Keyword)
+            {
+                case TokenType.VariableType:
+                    statement = ParseInvalidStatement();
+                    break;
+                case TokenType.Keyword:
+                    switch (CurrentToken.LiteralValue)
+                    {
+                        case "Return":
+                            statement = ParseReturnStatement();
+                            break;
+                        case "Var":
+                            statement = ParseVariableStatement();
+                            break;
+                        default:
+                            statement = ParseExpressionStatement();
+                            break;
+                    }
+                    break;
+                default:
+                    statement = ParseExpressionStatement();
+                    ////if (CurrentToken.Keyword != TokenType.Semicolon && CurrentToken.Keyword != TokenType.Eof)
+                    //if (CurrentToken.Keyword != TokenType.Semicolon && CurrentToken.Keyword != TokenType.Eof)
+                    //{
+                    //    _errors.Add($"There was en error while parsing expression from line:'{statement.NodeToken.Line}' and column:'{statement.NodeToken.TokenStartingLinePosition}'");
+                    //    statement = new InvalidStatement(statement.NodeToken);
+                    //    EatStatement();
+                    //}
+                    break;
+            }
+            return statement;
         }
 
-        private ExpressionStatement ParseExpressionStatement()
+        private Statement ParseExpressionStatement()
         {
             ExpressionStatement statement = new ExpressionStatement(CurrentToken);
             statement.Expression = ParseExpression(Precedence.Lowest);
 
             if (NextToken.Keyword == TokenType.Semicolon)
             {
+                //  Eat last token of expression
                 LoadNextToken();
             }
 
+            if (!CurrentToken.IsType(TokenType.Semicolon))
+            {
+                _errors.Add("Semicolor expected!");
+                EatStatement();
+                return new InvalidStatement(CurrentToken);// TODO Implements error handling and invalid statement.
+            }
+
+            //  Eat ';'
             LoadNextToken();
 
             return statement;
@@ -338,6 +491,67 @@ namespace EdenClasslibrary.Parser
             returnStatement.Expression = expression;
 
             return returnStatement;
+        }
+
+        private Expression ParseIfExpression()
+        {
+            IfExpression ifExpression = new IfExpression(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.LeftParenthesis))
+            {
+                _errors.Add("LeftBracket token expected!");
+                return null;
+            }
+
+            //  Eat '('
+            LoadNextToken();
+            ifExpression.ConditionExpression = ParseExpression(Precedence.Lowest);
+
+            //  Eat ')'
+            LoadNextToken();
+            if (!CurrentToken.IsType(TokenType.RightParenthesis))
+            {
+                _errors.Add("LeftBracket token expected!");
+                return null;
+            }
+
+            LoadNextToken();
+            if (!CurrentToken.IsType(TokenType.LeftBracket))
+            {
+                _errors.Add("LeftBracket expected!");
+                return null;
+            }
+
+            ifExpression.FulfielldBlock = ParseBlockStatement();
+            LoadNextToken();
+
+            if (CurrentToken.IsType(TokenType.Else))
+            {
+                //  Eat 'Else' token
+                LoadNextToken();
+
+                ifExpression.AlternativeBlock = ParseBlockStatement();
+
+                //  Eat '}'
+                LoadNextToken();
+            }
+
+            return ifExpression;
+        }
+
+        private BlockStatement ParseBlockStatement()
+        {
+            BlockStatement block = new BlockStatement(CurrentToken);
+
+            LoadNextToken();
+            while (!CurrentToken.IsType(TokenType.RightBracket) && !CurrentToken.IsType(TokenType.Eof))
+            {
+                Statement statement = ParseStatement();
+                block.AddStatement(statement);
+            }
+
+            return block;
         }
 
         private Statement ParseVariableStatement()
@@ -419,7 +633,7 @@ namespace EdenClasslibrary.Parser
         private Func<Expression, Expression> GetBinaryFunc(TokenType type)
         {
             bool isDefined = _binaryMapping.ContainsKey(type);
-            if(isDefined == true)
+            if (isDefined == true)
             {
                 return _binaryMapping[type];
             }

@@ -1,6 +1,13 @@
 - [ ] [[Lexer]]
+	- [ ] Refactor.
 - [ ] [[Parser]]
+	- [ ] Before we start evaluating AST we should refactor whole thing.
+	- [ ] Add better errors handling with clear messages.
+	- [ ] Implement function calls.
 - [ ] [[AST - Abstract Syntax Tree]]
+	- [ ] Take one more look at printing AST.
 - [ ] [[REPL]]
+	- [ ] Implementation of REPL is not that important. Let us focus on parsing static files. And once this is completed. Go for REPL.
 - [ ] [[File parsing]]
-- [ ] [[Tests]]
+	- [ ] There should be easy way to parse file from [[Parser]] perspective.
+- [ ] [[Tests]] should include testing of all implemented features.

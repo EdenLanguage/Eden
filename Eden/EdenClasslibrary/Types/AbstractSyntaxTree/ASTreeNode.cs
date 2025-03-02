@@ -1,4 +1,8 @@
-﻿namespace EdenClasslibrary.Types.AbstractSyntaxTree
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using System.Reflection.Emit;
+using System.Security.Principal;
+
+namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
     /// <summary>
     /// Basic node of AbstractSyntaxTree
@@ -11,7 +15,5 @@
             NodeToken = token;
         }
         public abstract override string ToString();
-        public abstract string ToAST(int indent = 0);
-        public abstract string ToPrettyAST(int indent = 0);
     }
 }

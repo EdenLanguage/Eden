@@ -1,4 +1,6 @@
-﻿namespace EdenClasslibrary.Types.AbstractSyntaxTree
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+
+namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
     /// <summary>
     /// Base clas for expressions.
@@ -9,9 +11,7 @@
     /// </summary>
     public abstract class Expression : ASTreeNode
     {
-        protected Expression(Token token) : base(token)
-        {
-        }
+        protected Expression(Token token) : base(token) { }
 
         public abstract string ParenthesesPrint();
     }

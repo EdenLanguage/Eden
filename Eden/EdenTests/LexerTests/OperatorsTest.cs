@@ -86,7 +86,7 @@ namespace EdenTests.LexerTests
 
             List<Token> expected = new List<Token>()
             {
-                new Token(TokenType.Keyword, "If"),
+                new Token(TokenType.If, "If"),
                 new Token(TokenType.LeftParenthesis, "("),
                 new Token(TokenType.Identifier, "variable"),
                 new Token(TokenType.LesserOrEqual, "<="),

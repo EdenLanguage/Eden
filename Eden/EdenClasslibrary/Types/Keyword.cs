@@ -25,10 +25,10 @@ namespace EdenClasslibrary.Types
             TokenType type = TokenType.Keyword;
             switch (keyword)
             {
+                case "If": type = TokenType.If; break;
+                case "Else": type = TokenType.Else; break;
+                case "Function": type = TokenType.Function; break;
                 case "Var": 
-                case "If": 
-                case "Else": 
-                case "Function": 
                 case "Return": 
                 case "Structure": 
                     type = TokenType.Keyword; break;

@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using System.Reflection.Emit;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
@@ -11,7 +12,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public Statement(Token token) : base(token)
         {
         }
-
         public abstract string Print();
     }
 }

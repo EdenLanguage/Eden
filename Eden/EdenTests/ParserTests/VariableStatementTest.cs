@@ -112,5 +112,57 @@ namespace EdenTests.ParserTests
                 Assert.True(parser.AbstractSyntaxTree.Statements[0] is InvalidStatement);
             }
         }
+
+        [Fact]
+        public void ComplesStatements()
+        {
+            const int testCount = 1;
+
+            string[] inputCodes = new string[testCount]
+            {
+                "Var Int counter = (5*10)/2+2*(1/2);",
+            };
+
+            string[][] expectedOutputs = new string[][]
+            {
+                new string[]{ "Var", "Int", "counter", "(((5*10)/2)+(2*(1/2)))"},
+            };
+
+            Parser parser = new Parser();
+
+            string code = string.Empty;
+            string[] expected = new string[] { };
+
+            for (int i = 0; i < testCount; i++)
+            {
+                code = inputCodes[i];
+                expected = expectedOutputs[i];
+
+                parser = new Parser();
+                BlockStatement ast = parser.Parse(code);
+
+                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Errors.Length, 0);
+                Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+
+                VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+
+                // Type
+                VariableTypeExpression type = vds.Type;
+                Assert.NotNull(type);
+                Assert.Equal(type.Type, expected[1]);
+                
+                // Identifier
+                IdentifierExpression ie = vds.Identifier;
+                Assert.NotNull(ie);
+                Assert.Equal(ie.Name, expected[2]);
+
+                // Expression
+                Expression exp = vds.Expression;
+                Assert.NotNull(exp);
+                Assert.Equal(exp.ToString(), expected[3]);
+
+            }
+        }
     }
 }

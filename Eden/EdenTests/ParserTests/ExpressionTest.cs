@@ -220,5 +220,56 @@ namespace EdenTests.ParserTests
                 Assert.Equal(expected, actual);
             }
         }
+
+        [Fact]
+        public void Grouped()
+        {
+            const int testCount = 5;
+
+            string[] codes = new string[testCount]
+            {
+                "(5+5)*2;",
+                "5+5*2;",
+                "5==(5==True);",
+                "5==5==True;",
+                "(1+2)*(3+4);",
+            };
+
+            string[] expecteds = new string[testCount]
+            {
+                "((5+5)*2);",
+                "(5+(5*2));",
+                "(5==(5==True));",
+                "((5==5)==True);",
+                "((1+2)*(3+4));",
+            };
+
+            Parser parser = new Parser();
+
+            string code = string.Empty;
+            string expected = string.Empty;
+
+            for (int i = 0; i < testCount; i++)
+            {
+                code = codes[i];
+                expected = expecteds[i];
+
+                parser = new Parser();
+                BlockStatement ast = parser.Parse(code);
+
+                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Errors.Length, 0);
+
+                ExpressionStatement expressionStmnt = parser.AbstractSyntaxTree.Statements[0] as ExpressionStatement;
+                Assert.NotNull(expressionStmnt);
+
+                string actual = expressionStmnt.ToString();
+
+                Log.WriteLine($"{expected} <- Expected");
+                Log.WriteLine($"{actual} <- Actual");
+
+                Assert.Equal(expected, actual);
+            }
+        }
     }
 }

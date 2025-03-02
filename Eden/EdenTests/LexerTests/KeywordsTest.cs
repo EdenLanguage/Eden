@@ -44,7 +44,7 @@ namespace EdenTests.LexerTests
 
             List<Token> expected = new List<Token>()
             {
-                new Token(TokenType.Keyword, "Function"),
+                new Token(TokenType.Function, "Function"),
                 new Token(TokenType.VariableType, "Int"),
                 new Token(TokenType.Identifier, "Calculator"),
                 new Token(TokenType.LeftParenthesis, "("),
@@ -116,7 +116,7 @@ namespace EdenTests.LexerTests
 
             List<Token> expected = new List<Token>()
             {
-                new Token(TokenType.Keyword, "If"),
+                new Token(TokenType.If, "If"),
                 new Token(TokenType.LeftParenthesis, "("),
                 new Token(TokenType.Identifier, "counter"),
                 new Token(TokenType.Equal, "=="),
@@ -149,8 +149,8 @@ namespace EdenTests.LexerTests
             lexer.SetInput(code);
             List<Token> expected = new List<Token>()
             {
-                new Token(TokenType.Keyword, "Else"),
-                new Token(TokenType.Keyword, "If"),
+                new Token(TokenType.Else, "Else"),
+                new Token(TokenType.If, "If"),
                 new Token(TokenType.LeftParenthesis, "("),
                 new Token(TokenType.Identifier, "counter"),
                 new Token(TokenType.Equal, "=="),

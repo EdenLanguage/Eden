@@ -1,11 +1,12 @@
-﻿using EdenClasslibrary.Utility;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class IdentifierExpression : Expression
+    public class IdentifierExpression : Expression, IPrintable
     {
         public string Name
         {
@@ -20,13 +21,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public override string ToString()
         {
-            return Name;
-            //StringBuilder sb = new StringBuilder();
-            //sb.AppendLine("{");
-            //sb.AppendLine($"\tName: {Name.ToString().Pastel(ConsoleColor.Blue)}");
-            //sb.AppendLine("}");
-            //string result = sb.ToString();
-            //return result;
+            return PrettyPrint();
         }
 
         public override string ParenthesesPrint()
@@ -34,14 +29,19 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return $"{Name}";
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
         {
-            return $"{Common.IndentCreator(indents)}{nameof(IdentifierExpression)}: {Name}";
+            return PrettyPrintAST();
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrintAST(int indent = 0)
         {
             return $"{Common.IndentCreator(indent)}{"Identifier".Pastel(Color.Green)}: {Name}";
+        }
+
+        public string PrettyPrint(int indents = 0)
+        {
+            return $"{Common.IndentCreator(indents)}{Name}";
         }
     }
 }

@@ -1,11 +1,12 @@
-﻿using EdenClasslibrary.Utility;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class BlockStatement : Statement
+    public class BlockStatement : Statement, IPrintable
     {
         private List<Statement> _statements;
         public Statement[] Statements
@@ -27,17 +28,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Block {");
-
-            foreach(Statement statement in _statements)
-            {
-                sb.AppendLine($"\t{statement.ToString()}");
-            }
-            
-            sb.AppendLine("}");
-            string result = sb.ToString();
-            return result;
+            return PrettyPrint();
         }
 
         public override string Print()
@@ -50,32 +41,35 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return sb.ToString();
         }
 
-        public override string ToAST(int indents = 0)
+        public string ToASTFormat()
+        {
+            return PrettyPrintAST();
+        }
+
+        public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{Common.IndentCreator(indents)}{nameof(BlockStatement)} {{");
+            //sb.AppendLine($"{Common.IndentCreator(indent)}{"Block".Pastel(Color.Orange)} {{");
 
-            foreach (Statement statement in _statements)
-            {
-                sb.AppendLine($"{statement.ToAST(indents + 1)}");
-            }
+            //foreach (Statement statement in _statements)
+            //{
+            //    sb.AppendLine($"{statement.ToPrettyAST(indent + 1)}");
+            //}
 
-            sb.AppendLine("}");
+            //sb.AppendLine("}");
             string result = sb.ToString();
             return result;
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string PrettyPrint(int indents = 0)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"{Common.IndentCreator(indent)}{"Block".Pastel(Color.Orange)} {{");
 
             foreach (Statement statement in _statements)
             {
-                sb.AppendLine($"{statement.ToPrettyAST(indent + 1)}");
+                sb.AppendLine($"{(statement as IPrintable).PrettyPrint(indents)}");
             }
 
-            sb.AppendLine("}");
             string result = sb.ToString();
             return result;
         }

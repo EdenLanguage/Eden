@@ -1,10 +1,11 @@
-﻿using EdenClasslibrary.Utility;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class StringExpression : Expression
+    public class StringExpression : Expression, IPrintable
     {
         public string Value
         {
@@ -24,15 +25,20 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public override string ToString()
         {
-            return Value;
+            return PrettyPrint();
         }
 
-        public override string ToAST(int indents = 0)
+        public string PrettyPrint(int indents = 0)
         {
-            return $"{nameof(StringExpression)}: \"{Value}\"";
+            return $"{Common.IndentCreator(indents)}{Value}";
         }
 
-        public override string ToPrettyAST(int indent = 0)
+        public string ToASTFormat()
+        {
+            return PrettyPrintAST();
+        }
+
+        public string PrettyPrintAST(int indent = 0)
         {
             return $"{Common.IndentCreator(indent)}{"String".Pastel(Color.DeepSkyBlue)}: \"{Value}\"";
         }

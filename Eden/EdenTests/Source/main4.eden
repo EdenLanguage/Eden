@@ -1,0 +1,8 @@
+If(True){
+	Var Int counter = 0;
+	Var String name = "Jacek";
+}
+Else{
+	Var Int counter = 51;
+	Var String name = "Maciek";
+};
