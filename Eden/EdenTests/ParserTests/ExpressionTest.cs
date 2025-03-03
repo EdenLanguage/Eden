@@ -45,12 +45,12 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
 
-                ExpressionStatement expressionStmnt = parser.AbstractSyntaxTree.Statements[0] as ExpressionStatement;
+                ExpressionStatement expressionStmnt = parser.Program.Block.Statements[0] as ExpressionStatement;
                 Assert.NotNull(expressionStmnt);
 
                 string actual = expressionStmnt.Print();
@@ -92,12 +92,12 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
-                Assert.Equal(parser.Errors.Length, 0);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
+                Assert.Equal(parser.Errors.Length, 1);
 
-                InvalidStatement invExp = parser.AbstractSyntaxTree.Statements[0] as InvalidStatement;
+                InvalidStatement invExp = parser.Program.Block.Statements[0] as InvalidStatement;
                 Assert.NotNull(invExp);
 
                 string actual = invExp.Print();
@@ -143,12 +143,12 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
 
-                ExpressionStatement expressionStmnt = parser.AbstractSyntaxTree.Statements[0] as ExpressionStatement;
+                ExpressionStatement expressionStmnt = parser.Program.Block.Statements[0] as ExpressionStatement;
                 Assert.NotNull(expressionStmnt);
 
                 string actual = expressionStmnt.Print();
@@ -204,12 +204,12 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
 
-                ExpressionStatement expressionStmnt = parser.AbstractSyntaxTree.Statements[0] as ExpressionStatement;
+                ExpressionStatement expressionStmnt = parser.Program.Block.Statements[0] as ExpressionStatement;
                 Assert.NotNull(expressionStmnt);
 
                 string actual = expressionStmnt.Print();
@@ -255,12 +255,12 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
 
-                ExpressionStatement expressionStmnt = parser.AbstractSyntaxTree.Statements[0] as ExpressionStatement;
+                ExpressionStatement expressionStmnt = parser.Program.Block.Statements[0] as ExpressionStatement;
                 Assert.NotNull(expressionStmnt);
 
                 string actual = expressionStmnt.ToString();

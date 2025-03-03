@@ -36,15 +36,17 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();
-            //sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(BinaryExpression).Pastel(Color.Orange)} {{");
-            //sb.AppendLine($"{Common.IndentCreator(indent + 1)}Left {{");
-            //sb.AppendLine($"{Left.ToPrettyAST(indent + 2)}");
-            //sb.AppendLine($"{Common.IndentCreator(indent + 1)}}},");
-            //sb.AppendLine($"{Common.IndentCreator(indent + 1)}Operator: {NodeToken.LiteralValue}");
-            //sb.AppendLine($"{Common.IndentCreator(indent + 1)}Right {{");
-            //sb.AppendLine($"{Right.ToPrettyAST(indent + 2)}");
-            //sb.AppendLine($"{Common.IndentCreator(indent + 1)}}}");
-            //sb.Append($"{Common.IndentCreator(indent)}}}");
+
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(BinaryExpression)} {{");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Left {{");
+            sb.AppendLine($"{(Left as IPrintable).PrettyPrintAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}},");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Operator: {NodeToken.LiteralValue}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Right {{");
+            sb.AppendLine($"{(Right as IPrintable).PrettyPrintAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}}");
+            sb.Append($"{Common.IndentCreator(indent)}}}");
+
             string toStr = sb.ToString();
             return toStr;
         }

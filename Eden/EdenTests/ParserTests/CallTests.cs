@@ -14,11 +14,11 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            BlockStatement block = parser.ParseFile(executionLocation);
+            FileStatement block = parser.ParseFile(executionLocation);
             string AST = block.ToString();
 
             Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Statements.Length == 5);
+            Assert.True(block.Block.Statements.Length == 5);
         }
     }
 }

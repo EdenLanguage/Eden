@@ -2,6 +2,7 @@
 using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
+using System.Globalization;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
@@ -30,7 +31,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrint(int indents = 0)
         {
-            return $"{Common.IndentCreator(indents)}{Value}";
+            return $"{Common.IndentCreator(indents)}\"{Value}\"";
         }
 
         public string ToASTFormat()
@@ -40,7 +41,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent)}{"String".Pastel(Color.DeepSkyBlue)}: \"{Value}\"";
+            return $"{Common.IndentCreator(indent)}{nameof(StringExpression)} {{ \"{Value}\" }}";
         }
     }
 }

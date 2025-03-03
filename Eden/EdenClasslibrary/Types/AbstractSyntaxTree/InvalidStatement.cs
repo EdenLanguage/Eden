@@ -9,7 +9,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrint(int indents = 0)
         {
-            return $"{Common.IndentCreator(indents)}Invalid statement!";
+            return $"{Common.IndentCreator(indents)}Invalid statement: '{"statement"}'";
         }
 
         public override string Print()
@@ -24,7 +24,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return "Parser encountered invalid statement!";
+            return $"{Common.IndentCreator(indent)}{nameof(InvalidStatement)} {{ Invalid statement }};";
         }
 
         public override string ToString()

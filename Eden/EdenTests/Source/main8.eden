@@ -1,0 +1,14 @@
+Var int pajacyk = 5;
+var String imie = "5553";
+Var Stringasdasd = "Pawel";
+Var Int variable = 10
+Var String surname = "sdasd";
+
+Function Int Add(Var Int a, Var Int b){
+	Var Int =;
+	return a+b;
+};
+
+Function StringConcat(Var String arg){
+	return arg;
+};

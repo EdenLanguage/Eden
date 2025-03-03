@@ -20,15 +20,15 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            BlockStatement block = parser.Parse(input);
+            FileStatement block = parser.Parse(input);
             string ast = block.ToASTFormat();
 
             Console.WriteLine(ast);
 
-            Assert.True(block.Statements.Length == 1);
+            Assert.True(block.Block.Statements.Length == 1);
             Assert.True(parser.Errors.Length == 0);
 
-            ExpressionStatement es = block.Statements[0] as ExpressionStatement;
+            ExpressionStatement es = block.Block.Statements[0] as ExpressionStatement;
             Assert.NotNull(es);
 
             BinaryExpression be = es.Expression as BinaryExpression;
@@ -79,9 +79,9 @@ namespace EdenTests.ParserTests
                 expected = expectedData[i];
 
                 parser = new Parser();
-                BlockStatement block = parser.Parse(code);
+                FileStatement block = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
 
                 //  Setting up test like this doesn't make sense for now because parser doesn't take into account '(' symbols that are defining precedense of equation.

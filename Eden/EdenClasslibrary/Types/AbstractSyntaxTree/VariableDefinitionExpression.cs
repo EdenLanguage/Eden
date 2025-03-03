@@ -1,5 +1,6 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
 using EdenClasslibrary.Utility;
+using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
@@ -26,7 +27,15 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(VariableDefinitionExpression)} {{");
+            sb.AppendLine($"{(Type as IPrintable).PrettyPrintAST(indent + 1)},");
+            sb.AppendLine($"{(Name as IPrintable).PrettyPrintAST(indent + 1)}");
+            sb.Append($"{Common.IndentCreator(indent)}}}");
+
+            string result = sb.ToString();
+            return result;
         }
 
         public override string ToString()

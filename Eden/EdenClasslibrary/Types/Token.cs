@@ -60,12 +60,36 @@ namespace EdenClasslibrary.Types
         public string Filename { get; set; }
         #endregion
 
+        #region Constructor
         public Token()
         {
             LiteralValue = string.Empty;
             Filename = string.Empty;
         }
 
+        public Token(TokenType keyword, string value)
+        {
+            Keyword = keyword;
+            LiteralValue = value;
+            TokenStartingLinePosition = 1;
+            TokenEndingLinePosition = 1;
+            Line = 1;
+            Filename = string.Empty;
+        }
+
+        public Token(TokenType keyword, string value, int line, int startPos, string filename = "")
+        {
+            Keyword = keyword;
+            LiteralValue = value;
+            TokenStartingLinePosition = startPos;
+            TokenEndingLinePosition = startPos + value.Length - 1;
+            Line = line;
+            Filename = filename;
+        }
+        #endregion
+
+        #region Public
+        #endregion
         public bool Equals(Token other)
         {
             if (Keyword != other.Keyword || LiteralValue != other.LiteralValue || TokenStartingLinePosition != other.TokenStartingLinePosition || TokenEndingLinePosition != other.TokenEndingLinePosition || Line != other.Line || Filename != other.Filename)
@@ -121,21 +145,6 @@ namespace EdenClasslibrary.Types
             return IsValid() && IsNotEof();
         }
 
-        public Token(TokenType keyword, string value)
-        {
-            Keyword = keyword;
-            LiteralValue = value;
-        }
-
-        public Token(TokenType keyword, string value, int line, int startPos)
-        {
-            Keyword = keyword;
-            LiteralValue = value;
-            TokenStartingLinePosition = startPos;
-            TokenEndingLinePosition = startPos + value.Length - 1;
-            Line = line;
-            Filename = string.Empty;
-        }
 
         public void SetAttributes(TokenType keyword, string value, int line, int startPos, string filename)
         {
@@ -190,7 +199,7 @@ namespace EdenClasslibrary.Types
             return goodKeyword && isType;
         }
 
-        public static Token RootToken
+        public static Token ProgramRootToken
         {
             get
             {

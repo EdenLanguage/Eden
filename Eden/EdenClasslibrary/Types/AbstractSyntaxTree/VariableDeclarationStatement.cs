@@ -2,6 +2,7 @@
 using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
+using System.Reflection;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
@@ -37,11 +38,13 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();
-            //sb.AppendLine($"{Common.IndentCreator(indent)}{"Variable".Pastel(Color.Orange)} {{");
-            //sb.AppendLine($"{Type.ToPrettyAST(indent + 1)},");
-            //sb.AppendLine($"{Identifier.ToPrettyAST(indent + 1)},");
-            //sb.AppendLine($"{Expression.ToPrettyAST(indent + 1)}");
-            //sb.Append($"{Common.IndentCreator(indent)}}}");
+
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(VariableDeclarationStatement)} {{");
+            sb.AppendLine($"{(Type as IPrintable).PrettyPrintAST(indent + 1)},");
+            sb.AppendLine($"{(Identifier as IPrintable).PrettyPrintAST(indent + 1)},");
+            sb.AppendLine($"{(Expression as IPrintable).PrettyPrintAST(indent + 1)}");
+            sb.Append($"{Common.IndentCreator(indent)}}};");
+
             string result = sb.ToString();
             return result;
         }

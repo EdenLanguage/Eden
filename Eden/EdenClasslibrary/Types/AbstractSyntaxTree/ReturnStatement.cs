@@ -30,13 +30,14 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            //StringBuilder sb = new StringBuilder();
-            //sb.AppendLine($"{Common.IndentCreator(indent)}{"Return".Pastel(Color.Orange)} {{");
-            //sb.AppendLine($"{Expression.ToPrettyAST(indent + 1)}");
-            //sb.Append($"{Common.IndentCreator(indent)}}}");
-            //string result = sb.ToString();
-            //return result;
-            return "";
+            StringBuilder sb = new StringBuilder();
+         
+            sb.AppendLine($"{Common.IndentCreator(indent)}Return {{");
+            sb.AppendLine($"{(Expression as IPrintable).PrettyPrintAST(indent + 1)}");
+            sb.Append($"{Common.IndentCreator(indent)}}};");
+            
+            string result = sb.ToString();
+            return result;
         }
 
         public string PrettyPrint(int indents = 0)

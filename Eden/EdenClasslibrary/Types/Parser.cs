@@ -1,8 +1,8 @@
-﻿using EdenClasslibrary.Types;
+﻿using EdenClasslibrary.Errors;
+using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.Enums;
-using System.Diagnostics.Tracing;
-using System.Reflection;
+using System.Text;
 
 namespace EdenClasslibrary.Parser
 {
@@ -10,8 +10,8 @@ namespace EdenClasslibrary.Parser
     {
         #region Fields
         private readonly Lexer _lexer;
-        private BlockStatement _ast;
-        private List<string> _errors;
+        private FileStatement _program;
+        private ErrorsManager _errorsManager;
         private readonly Dictionary<TokenType, Func<Expression>> _unaryMapping;
         private readonly Dictionary<TokenType, Func<Expression, Expression>> _binaryMapping;
         private readonly Dictionary<TokenType, Precedence> _precedenceMapping;
@@ -20,12 +20,12 @@ namespace EdenClasslibrary.Parser
         #region Properties
         public Token NextToken { get; set; }
         public Token CurrentToken { get; set; }
-        public BlockStatement AbstractSyntaxTree { get { return _ast; } }
-        public string[] Errors
+        public FileStatement Program { get { return _program; } }
+        public Error[] Errors
         {
             get
             {
-                return _errors.ToArray();
+                return _errorsManager.Errors;
             }
         }
         #endregion
@@ -35,8 +35,8 @@ namespace EdenClasslibrary.Parser
         {
             _lexer = new Lexer();
             _lexer.SetInput(string.Empty);
-            _ast = new BlockStatement(Token.RootToken);
-            _errors = new List<string>();
+            _program = new FileStatement(Token.ProgramRootToken);
+            _errorsManager = new ErrorsManager();
 
             #region Pratt Parser mappings
             /*  These are mappings required for Pratt's parsing method.
@@ -97,20 +97,19 @@ namespace EdenClasslibrary.Parser
         /// </summary>
         /// <param name="code">Source code</param>
         /// <returns>Abstract syntax tree of input data</returns>
-        public BlockStatement Parse(string code)
+        public FileStatement Parse(string code)
         {
             _lexer.SetInput(code);
-            _ast = ParseBlockStatement();
-            return _ast;
+            _program = ParseFileStatement();
+            return _program;
         }
 
-        public BlockStatement ParseFile(string path)
+        public FileStatement ParseFile(string path)
         {
-            string sourceCode = GetSource(path);
-
-            _lexer.SetInput(sourceCode);
-            _ast = ParseBlockStatement();
-            return _ast;
+            //string sourceCode = GetSource(path);
+            _lexer.LoadFile(path);
+            _program = ParseFileStatement();
+            return _program;
         }
         #endregion
 
@@ -167,6 +166,19 @@ namespace EdenClasslibrary.Parser
                 CurrentToken = NextToken;
                 NextToken = _lexer.NextToken();
             }
+        }
+
+        public string PrintErrors()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach(Error error in Errors)
+            {
+                sb.Append(error);
+            }
+
+            string result = sb.ToString();
+            return result;
         }
         #endregion
 
@@ -255,8 +267,7 @@ namespace EdenClasslibrary.Parser
         {
             if (!CurrentToken.IsType(TokenType.LeftParenthesis))
             {
-                _errors.Add("LeftParanthesis expected!");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
             CallExpression callExp = new CallExpression(CurrentToken);
             callExp.Function = function;
@@ -292,8 +303,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.VariableType))
             {
-                _errors.Add("Variable type expected");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
 
             functionExpression.Type = new VariableTypeExpression(CurrentToken);
@@ -301,8 +311,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.Identifier))
             {
-                _errors.Add("Identifier expected");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
 
             functionExpression.Name = new IdentifierExpression(CurrentToken);
@@ -310,8 +319,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.LeftParenthesis))
             {
-                _errors.Add($"{TokenType.LeftParenthesis} expected");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
             LoadNextToken();
 
@@ -341,8 +349,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.VariableType))
             {
-                _errors.Add("Variable type expected!");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
 
             variableDefinition.Type = new VariableTypeExpression(CurrentToken);
@@ -350,8 +357,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.Identifier))
             {
-                _errors.Add("Identifier expected!");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
 
             variableDefinition.Name = new IdentifierExpression(CurrentToken);
@@ -383,6 +389,20 @@ namespace EdenClasslibrary.Parser
             IntExpression intExp = new IntExpression(CurrentToken);
             return intExp;
         }
+
+        private Expression ParseInvalidExpression(TokenType stopToken, ErrorType errorType)
+        {
+            InvalidExpression invExp = new InvalidExpression(CurrentToken);
+
+            _errorsManager.AppendError(errorType, CurrentToken);
+
+            while (!CurrentToken.IsType(stopToken))
+            {
+                LoadNextToken();
+            }
+
+            return invExp;
+        }
         #endregion
 
         #region Statements parsing methods
@@ -392,7 +412,7 @@ namespace EdenClasslibrary.Parser
             switch (CurrentToken.Keyword)
             {
                 case TokenType.VariableType:
-                    statement = ParseInvalidStatement();
+                    statement = ParseInvalidStatement(ErrorType.InvalidStatement, CurrentToken);
                     break;
                 case TokenType.Keyword:
                     switch (CurrentToken.LiteralValue)
@@ -422,6 +442,16 @@ namespace EdenClasslibrary.Parser
             return statement;
         }
 
+        private Statement ParseInvalidStatement(ErrorType errorType, Token invalidToken)
+        {
+            Statement statement = new InvalidStatement(invalidToken);
+
+            _errorsManager.AppendError(errorType, invalidToken);
+            EatStatement();
+
+            return statement;
+        }
+
         private Statement ParseExpressionStatement()
         {
             ExpressionStatement statement = new ExpressionStatement(CurrentToken);
@@ -435,25 +465,11 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.Semicolon))
             {
-                _errors.Add("Semicolor expected!");
-                EatStatement();
-                return new InvalidStatement(CurrentToken);// TODO Implements error handling and invalid statement.
+                return ParseInvalidStatement(ErrorType.InvalidToken, CurrentToken);
             }
 
             //  Eat ';'
             LoadNextToken();
-
-            return statement;
-        }
-
-        private InvalidStatement ParseInvalidStatement()
-        {
-            InvalidStatement statement = new InvalidStatement(CurrentToken);
-
-            while (CurrentToken.Keyword != TokenType.Eof)
-            {
-                LoadNextToken();
-            }
 
             return statement;
         }
@@ -464,17 +480,13 @@ namespace EdenClasslibrary.Parser
 
             if (CurrentToken.Keyword != TokenType.Keyword && CurrentToken.LiteralValue != "return")
             {
-                _errors.Add($"return token expected but got '{CurrentToken}'");
-                EatStatement();
-                return null;
+                return ParseInvalidStatement(ErrorType.InvalidToken, CurrentToken);
             }
             LoadNextToken();
 
             if (!CurrentToken.CanEvaluateExpression())
             {
-                _errors.Add($"There was an error while parsing expression. Cannot evaluate expression with '{CurrentToken.Keyword}' token, at line '{CurrentToken.Line}', column '{CurrentToken.TokenStartingLinePosition}'");
-                EatStatement();
-                return new InvalidStatement(returnStatement.NodeToken);
+                return ParseInvalidStatement(ErrorType.EvaluationError, CurrentToken);
             }
 
             Expression expression = ParseExpression(Precedence.Lowest);
@@ -482,9 +494,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsSemicolon())
             {
-                _errors.Add($"There was an erro while parsing expression. Expected '{TokenType.Semicolon}', actual '{CurrentToken.Keyword}', at line '{CurrentToken.Line}', column '{CurrentToken.TokenStartingLinePosition}'");
-                EatStatement();
-                return new InvalidStatement(returnStatement.NodeToken);
+                return ParseInvalidStatement(ErrorType.InvalidToken, CurrentToken);
             }
             LoadNextToken();
 
@@ -500,8 +510,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.LeftParenthesis))
             {
-                _errors.Add("LeftBracket token expected!");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
 
             //  Eat '('
@@ -512,15 +521,13 @@ namespace EdenClasslibrary.Parser
             LoadNextToken();
             if (!CurrentToken.IsType(TokenType.RightParenthesis))
             {
-                _errors.Add("LeftBracket token expected!");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
 
             LoadNextToken();
             if (!CurrentToken.IsType(TokenType.LeftBracket))
             {
-                _errors.Add("LeftBracket expected!");
-                return null;
+                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
             }
 
             ifExpression.FulfielldBlock = ParseBlockStatement();
@@ -554,6 +561,22 @@ namespace EdenClasslibrary.Parser
             return block;
         }
 
+        private FileStatement ParseFileStatement()
+        {
+            FileStatement file = new FileStatement(CurrentToken);
+            BlockStatement programBlock = new BlockStatement(CurrentToken);
+            file.Block = programBlock;
+
+            LoadNextToken();
+            while (!CurrentToken.IsType(TokenType.RightBracket) && !CurrentToken.IsType(TokenType.Eof))
+            {
+                Statement statement = ParseStatement();
+                programBlock.AddStatement(statement);
+            }
+
+            return file;
+        }
+
         private Statement ParseVariableStatement()
         {
             // Example: 'var int variable = 10'
@@ -561,9 +584,7 @@ namespace EdenClasslibrary.Parser
 
             if (CurrentToken.Keyword != TokenType.Keyword)
             {
-                _errors.Add($"var keyword expected but got '{CurrentToken.Keyword}'");
-                EatStatement();
-                return new InvalidStatement(CurrentToken);
+                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration, CurrentToken);
             }
 
             VariableTypeExpression variableTypeExp = null;
@@ -576,9 +597,7 @@ namespace EdenClasslibrary.Parser
             }
             else
             {
-                _errors.Add($"Expected variable type token but got '{CurrentToken.Keyword}'");
-                EatStatement();
-                return new InvalidStatement(CurrentToken);
+                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration, NextToken);
             }
 
             LoadNextToken();
@@ -591,9 +610,7 @@ namespace EdenClasslibrary.Parser
             }
             else
             {
-                _errors.Add($"Expected assignment token but got '{CurrentToken}'");
-                EatStatement();
-                return new InvalidStatement(CurrentToken);
+                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration, NextToken);
             }
 
             LoadNextToken();
@@ -604,9 +621,7 @@ namespace EdenClasslibrary.Parser
             //  If next token is not Semicolon then expression was not parsed properly...
             if (!CurrentToken.IsSemicolon())
             {
-                _errors.Add($"There was an error while parsing expression. Expected '{TokenType.Semicolon}', actual '{CurrentToken.Keyword}' at line '{CurrentToken.Line}' column '{CurrentToken.TokenStartingLinePosition}'");
-                EatStatement();
-                return new InvalidStatement(variableStatement.NodeToken);
+                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration_MissingSemicolon, CurrentToken);
             }
 
             LoadNextToken();

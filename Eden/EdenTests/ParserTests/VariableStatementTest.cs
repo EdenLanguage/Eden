@@ -57,13 +57,13 @@ namespace EdenTests.ParserTests
                 expectedExpression = expectedExpressions[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
-                Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+                Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-                VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+                VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
                 
                 // ID
                 string actualID = vds.Identifier.Name;
@@ -105,11 +105,11 @@ namespace EdenTests.ParserTests
                 code = codes[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 1);
-                Assert.True(parser.AbstractSyntaxTree.Statements[0] is InvalidStatement);
+                Assert.True(parser.Program.Block.Statements[0] is InvalidStatement);
             }
         }
 
@@ -139,13 +139,13 @@ namespace EdenTests.ParserTests
                 expected = expectedOutputs[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
-                Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
-                Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+                Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-                VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+                VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
 
                 // Type
                 VariableTypeExpression type = vds.Type;
