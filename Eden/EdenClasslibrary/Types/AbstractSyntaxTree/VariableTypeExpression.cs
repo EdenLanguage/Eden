@@ -36,7 +36,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent)}{"Type".Pastel(Color.Green)}: {Type}";
+            return $"{Common.IndentCreator(indent)}{nameof(VariableTypeExpression)} {{ {Type} }}";
         }
 
         public string PrettyPrint(int indents = 0)

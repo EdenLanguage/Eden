@@ -52,23 +52,23 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                BlockStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code);
 
                 if(expected == null)
                 {
                     //  Invalid
-                    Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                    Assert.Equal(parser.Program.Block.Statements.Length, 1);
                     Assert.Equal(parser.Errors.Length, 1);
-                    Assert.True(parser.AbstractSyntaxTree.Statements[0] is InvalidStatement);
+                    Assert.True(parser.Program.Block.Statements[0] is InvalidStatement);
                 }
                 else
                 {
                     //  Valid
-                    Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+                    Assert.Equal(parser.Program.Block.Statements.Length, 1);
                     Assert.Equal(parser.Errors.Length, 0);
-                    Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+                    Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-                    ReturnStatement vds = parser.AbstractSyntaxTree.Statements[0] as ReturnStatement;
+                    ReturnStatement vds = parser.Program.Block.Statements[0] as ReturnStatement;
 
                     string actual = vds.Expression.ParenthesesPrint();
                     Log.WriteLine($"{expected} <- Expected");

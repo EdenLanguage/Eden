@@ -38,7 +38,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent)}{nameof(FloatExpression).Pastel(Color.Orange)}: {Value}";
+            return $"{Common.IndentCreator(indent)}{nameof(FloatExpression)} {{ {Value.ToString(CultureInfo.InvariantCulture)} }}";
         }
 
         public string PrettyPrint(int indents = 0)

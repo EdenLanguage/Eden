@@ -1,6 +1,7 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
 using EdenClasslibrary.Utility;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
@@ -42,22 +43,22 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             StringBuilder sb = new StringBuilder();
 
             sb.Append($"{Common.IndentCreator(indents)}Function");
-            sb.Append($"{Type.PrettyPrint()}");
-            sb.Append($"{Name.PrettyPrint()}");
+            sb.Append($" {Type.PrettyPrint()}");
+            sb.Append($" {Name.PrettyPrint()}");
             sb.Append("(");
 
             //  Function args.
             for(int i = 0; i < Arguments.Length; i++)
             {
                 sb.Append($"{(Arguments[i] as IPrintable).PrettyPrint()}");
-                if (i > Arguments.Length - 1)
+                if (i < Arguments.Length - 1)
                 {
                     sb.Append(", ");
                 }
             }
 
             sb.Append(")");
-            sb.AppendLine("{");
+            sb.AppendLine(" {");
             sb.Append($"{Body.PrettyPrint(indents + 1)}");
             sb.Append("}");
 
@@ -72,7 +73,32 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(FunctionExpression)} {{");
+            sb.AppendLine($"{(Type as IPrintable).PrettyPrintAST(indent + 1)},");
+            sb.Append($"{(Name as IPrintable).PrettyPrintAST(indent + 1)}");
+
+            if(Arguments.Length > 0)
+            {
+                sb.Append(",");
+                for(int i = 0; i < Arguments.Length; i++)
+                {
+                    sb.AppendLine();
+                    sb.Append($"{(Arguments[i] as IPrintable).PrettyPrintAST(indent + 1)}");
+                    if(i < Arguments.Length - 1)
+                    {
+                        sb.Append($",");
+                    }
+                }
+            }
+
+            sb.Append($",");
+            sb.AppendLine();
+            sb.Append($"{(Body as IPrintable).PrettyPrintAST(indent + 1)}");
+            sb.Append($"{Common.IndentCreator(indent)}}}");
+
+            string result = sb.ToString();
+            return result;
         }
 
         public override string ToString()

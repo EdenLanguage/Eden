@@ -49,14 +49,14 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();
-            //sb.AppendLine($"{Common.IndentCreator(indent)}{"Block".Pastel(Color.Orange)} {{");
 
-            //foreach (Statement statement in _statements)
-            //{
-            //    sb.AppendLine($"{statement.ToPrettyAST(indent + 1)}");
-            //}
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(BlockStatement)} {{");
+            foreach(Statement statement in Statements)
+            {
+                sb.AppendLine($"{(statement as IPrintable).PrettyPrintAST(indent + 1)}");
+            }
+            sb.AppendLine($"{Common.IndentCreator(indent)}}};");
 
-            //sb.AppendLine("}");
             string result = sb.ToString();
             return result;
         }

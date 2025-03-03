@@ -43,7 +43,12 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return $"{nameof(IntExpression)}";
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append($"{Common.IndentCreator(indent)}{nameof(IntExpression)} {{ {Value} }}");
+
+            string toStr = sb.ToString();
+            return toStr;
         }
     }
 }

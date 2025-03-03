@@ -10,21 +10,24 @@ namespace EdenTests.AbstractSyntaxTreeTests
         public Printing(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
 
         [Fact]
-        public void VariableDeclaration1()
+        public void VariableDeclaration_1()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration1)}");
+            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration_1)}");
 
             string input = "Var Float funcCall = 3.14 * zmienna / 2;";
             string output = "...";
 
             Parser parser = new Parser();
-            BlockStatement ast = parser.Parse(input);
+            FileStatement ast = parser.Parse(input);
 
-            Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+            string toString = ast.ToString();
+            string toAST = ast.ToASTFormat();
+
+            Assert.Equal(parser.Program.Block.Statements.Length, 1);
             Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-            VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
 
             Console.WriteLine($"Input data: {input}");
             Console.WriteLine("Output data:");
@@ -33,21 +36,24 @@ namespace EdenTests.AbstractSyntaxTreeTests
         }
 
         [Fact]
-        public void VariableDeclaration2()
+        public void VariableDeclaration_2()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration2)}");
+            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration_2)}");
 
             string input = "Var Int variable = 5 + 5 * 2 - 1 + 5;";
             string output = "...";
 
             Parser parser = new Parser();
-            BlockStatement ast = parser.Parse(input);
+            FileStatement ast = parser.Parse(input);
 
-            Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+            string toString = ast.ToString();
+            string toAST = ast.ToASTFormat();
+
+            Assert.Equal(parser.Program.Block.Statements.Length, 1);
             Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-            VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
 
             Console.WriteLine($"Input data: {input}");
             Console.WriteLine("Output data:");
@@ -56,21 +62,24 @@ namespace EdenTests.AbstractSyntaxTreeTests
         }
 
         [Fact]
-        public void VariableDeclaration3()
+        public void VariableDeclaration_3()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration3)}");
+            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration_3)}");
 
             string input = "Var String name = \"Maciek\";";
             string output = "...";
 
             Parser parser = new Parser();
-            BlockStatement ast = parser.Parse(input);
+            FileStatement ast = parser.Parse(input);
 
-            Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+            string toString = ast.ToString();
+            string toAST = ast.ToASTFormat();
+
+            Assert.Equal(parser.Program.Block.Statements.Length, 1);
             Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-            VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
 
             Console.WriteLine($"Input data: {input}");
             Console.WriteLine("Output data:");
@@ -79,21 +88,24 @@ namespace EdenTests.AbstractSyntaxTreeTests
         }
 
         [Fact]
-        public void ReturnStatement1()
+        public void ReturnStatement_1()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.ReturnStatement1)}");
+            PrintTestName($"{nameof(Printing)}.{nameof(Printing.ReturnStatement_1)}");
 
             string input = "Return 50*50;";
             string output = "...";
 
             Parser parser = new Parser();
-            BlockStatement ast = parser.Parse(input);
+            FileStatement ast = parser.Parse(input);
 
-            Assert.Equal(parser.AbstractSyntaxTree.Statements.Length, 1);
+            string toString = ast.ToString();
+            string toAST = ast.ToASTFormat();
+
+            Assert.Equal(parser.Program.Block.Statements.Length, 1);
             Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.AbstractSyntaxTree.Statements[0] is not InvalidStatement);
+            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-            VariableDeclarationStatement vds = parser.AbstractSyntaxTree.Statements[0] as VariableDeclarationStatement;
+            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
 
 
             Console.WriteLine($"Input data: {input}");

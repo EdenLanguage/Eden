@@ -14,11 +14,11 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            BlockStatement block = parser.Parse(code);
+            FileStatement block = parser.Parse(code);
             string AST = block.ToASTFormat();
 
             Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Statements.Length == 1);
+            Assert.True(block.Block.Statements.Length == 1);
         }
 
         [Fact]
@@ -28,11 +28,11 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            BlockStatement block = parser.Parse(code);
+            FileStatement block = parser.Parse(code);
             string AST = block.ToString();
 
             Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Statements.Length == 1);
+            Assert.True(block.Block.Statements.Length == 1);
         }
 
         [Fact]
@@ -43,11 +43,11 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            BlockStatement block = parser.ParseFile(executionLocation);
+            FileStatement block = parser.ParseFile(executionLocation);
             string AST = block.ToString();
 
             Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Statements.Length == 1);
+            Assert.True(block.Block.Statements.Length == 1);
         }
 
     }
