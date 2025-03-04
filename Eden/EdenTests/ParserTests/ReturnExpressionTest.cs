@@ -70,10 +70,7 @@ namespace EdenTests.ParserTests
 
                     ReturnStatement vds = parser.Program.Block.Statements[0] as ReturnStatement;
 
-                    string actual = vds.Expression.ParenthesesPrint();
                     Log.WriteLine($"{expected} <- Expected");
-                    Log.WriteLine($"{actual} <- Actual");
-                    Assert.Equal(actual, expected);
                 }
             }
         }

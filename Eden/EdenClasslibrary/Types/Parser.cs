@@ -21,7 +21,7 @@ namespace EdenClasslibrary.Parser
         public Token NextToken { get; set; }
         public Token CurrentToken { get; set; }
         public FileStatement Program { get { return _program; } }
-        public Error[] Errors
+        public AError[] Errors
         {
             get
             {
@@ -57,6 +57,10 @@ namespace EdenClasslibrary.Parser
             // == !=
             _precedenceMapping[TokenType.Inequal] = Precedence.Comparison;
             _precedenceMapping[TokenType.Equal] = Precedence.Comparison;
+            _precedenceMapping[TokenType.LeftArrow] = Precedence.Comparison;
+            _precedenceMapping[TokenType.RightArrow] = Precedence.Comparison;
+            _precedenceMapping[TokenType.GreaterOrEqual] = Precedence.Comparison;
+            _precedenceMapping[TokenType.LesserOrEqual] = Precedence.Comparison;
 
             // + -
             _precedenceMapping[TokenType.Plus] = Precedence.Sum;
@@ -71,10 +75,13 @@ namespace EdenClasslibrary.Parser
             RegisterUnaryMapping(TokenType.If, ParseIfExpression);
             RegisterUnaryMapping(TokenType.Identifier, ParseIdentifierExpression);
             RegisterUnaryMapping(TokenType.Int, ParseIntExpression);
+            RegisterUnaryMapping(TokenType.Null, ParseNullExpression);
             RegisterUnaryMapping(TokenType.Float, ParseFloatExpression);
             RegisterUnaryMapping(TokenType.String, ParseStringExpression);
             RegisterUnaryMapping(TokenType.Bool, ParseBoolExpression);
             RegisterUnaryMapping(TokenType.Minus, ParseUnaryExpression);
+            RegisterUnaryMapping(TokenType.Tilde, ParseUnaryExpression);
+            RegisterUnaryMapping(TokenType.QuenstionMark, ParseUnaryExpression);
             RegisterUnaryMapping(TokenType.Plus, ParseUnaryExpression);
             RegisterUnaryMapping(TokenType.LeftParenthesis, ParseGroupedExpression);
             RegisterUnaryMapping(TokenType.ExclemationMark, ParseUnaryExpression);
@@ -86,6 +93,10 @@ namespace EdenClasslibrary.Parser
             RegisterBinaryMapping(TokenType.Slash, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Inequal, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Equal, ParseBinaryExpression);
+            RegisterBinaryMapping(TokenType.LeftArrow, ParseBinaryExpression);
+            RegisterBinaryMapping(TokenType.RightArrow, ParseBinaryExpression);
+            RegisterBinaryMapping(TokenType.GreaterOrEqual, ParseBinaryExpression);
+            RegisterBinaryMapping(TokenType.LesserOrEqual, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.LeftParenthesis, ParseCallExpression);
             #endregion
         }
@@ -172,7 +183,7 @@ namespace EdenClasslibrary.Parser
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach(Error error in Errors)
+            foreach(AError error in Errors)
             {
                 sb.Append(error);
             }
@@ -267,7 +278,7 @@ namespace EdenClasslibrary.Parser
         {
             if (!CurrentToken.IsType(TokenType.LeftParenthesis))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
             CallExpression callExp = new CallExpression(CurrentToken);
             callExp.Function = function;
@@ -303,7 +314,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.VariableType))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
 
             functionExpression.Type = new VariableTypeExpression(CurrentToken);
@@ -311,7 +322,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.Identifier))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
 
             functionExpression.Name = new IdentifierExpression(CurrentToken);
@@ -319,7 +330,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.LeftParenthesis))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
             LoadNextToken();
 
@@ -349,7 +360,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.VariableType))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
 
             variableDefinition.Type = new VariableTypeExpression(CurrentToken);
@@ -357,7 +368,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.Identifier))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
 
             variableDefinition.Name = new IdentifierExpression(CurrentToken);
@@ -389,12 +400,18 @@ namespace EdenClasslibrary.Parser
             IntExpression intExp = new IntExpression(CurrentToken);
             return intExp;
         }
+        
+        private Expression ParseNullExpression()
+        {
+            NullExpression nullExp = new NullExpression(CurrentToken);
+            return nullExp;
+        }
 
-        private Expression ParseInvalidExpression(TokenType stopToken, ErrorType errorType)
+        private Expression ParseInvalidExpression(TokenType stopToken, ParserErrorType errorType)
         {
             InvalidExpression invExp = new InvalidExpression(CurrentToken);
 
-            _errorsManager.AppendError(errorType, CurrentToken);
+            _errorsManager.AppendError(ErrorDefaultParser.Create(errorType, CurrentToken));
 
             while (!CurrentToken.IsType(stopToken))
             {
@@ -412,7 +429,7 @@ namespace EdenClasslibrary.Parser
             switch (CurrentToken.Keyword)
             {
                 case TokenType.VariableType:
-                    statement = ParseInvalidStatement(ErrorType.InvalidStatement, CurrentToken);
+                    statement = ParseInvalidStatement(ParserErrorType.InvalidStatement, CurrentToken);
                     break;
                 case TokenType.Keyword:
                     switch (CurrentToken.LiteralValue)
@@ -442,11 +459,11 @@ namespace EdenClasslibrary.Parser
             return statement;
         }
 
-        private Statement ParseInvalidStatement(ErrorType errorType, Token invalidToken)
+        private Statement ParseInvalidStatement(ParserErrorType errorType, Token invalidToken)
         {
             Statement statement = new InvalidStatement(invalidToken);
 
-            _errorsManager.AppendError(errorType, invalidToken);
+            _errorsManager.AppendError(ErrorDefaultParser.Create(errorType, invalidToken));
             EatStatement();
 
             return statement;
@@ -465,7 +482,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.Semicolon))
             {
-                return ParseInvalidStatement(ErrorType.InvalidToken, CurrentToken);
+                return ParseInvalidStatement(ParserErrorType.InvalidToken, CurrentToken);
             }
 
             //  Eat ';'
@@ -480,13 +497,13 @@ namespace EdenClasslibrary.Parser
 
             if (CurrentToken.Keyword != TokenType.Keyword && CurrentToken.LiteralValue != "return")
             {
-                return ParseInvalidStatement(ErrorType.InvalidToken, CurrentToken);
+                return ParseInvalidStatement(ParserErrorType.InvalidToken, CurrentToken);
             }
             LoadNextToken();
 
             if (!CurrentToken.CanEvaluateExpression())
             {
-                return ParseInvalidStatement(ErrorType.EvaluationError, CurrentToken);
+                return ParseInvalidStatement(ParserErrorType.EvaluationError, CurrentToken);
             }
 
             Expression expression = ParseExpression(Precedence.Lowest);
@@ -494,7 +511,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsSemicolon())
             {
-                return ParseInvalidStatement(ErrorType.InvalidToken, CurrentToken);
+                return ParseInvalidStatement(ParserErrorType.InvalidToken, CurrentToken);
             }
             LoadNextToken();
 
@@ -510,7 +527,7 @@ namespace EdenClasslibrary.Parser
 
             if (!CurrentToken.IsType(TokenType.LeftParenthesis))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
 
             //  Eat '('
@@ -521,13 +538,13 @@ namespace EdenClasslibrary.Parser
             LoadNextToken();
             if (!CurrentToken.IsType(TokenType.RightParenthesis))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
 
             LoadNextToken();
             if (!CurrentToken.IsType(TokenType.LeftBracket))
             {
-                return ParseInvalidExpression(TokenType.Semicolon, ErrorType.InvalidToken);
+                return ParseInvalidExpression(TokenType.Semicolon, ParserErrorType.InvalidToken);
             }
 
             ifExpression.FulfielldBlock = ParseBlockStatement();
@@ -584,7 +601,7 @@ namespace EdenClasslibrary.Parser
 
             if (CurrentToken.Keyword != TokenType.Keyword)
             {
-                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration, CurrentToken);
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration, CurrentToken);
             }
 
             VariableTypeExpression variableTypeExp = null;
@@ -597,7 +614,7 @@ namespace EdenClasslibrary.Parser
             }
             else
             {
-                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration, NextToken);
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration, NextToken);
             }
 
             LoadNextToken();
@@ -610,7 +627,7 @@ namespace EdenClasslibrary.Parser
             }
             else
             {
-                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration, NextToken);
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration, NextToken);
             }
 
             LoadNextToken();
@@ -621,7 +638,7 @@ namespace EdenClasslibrary.Parser
             //  If next token is not Semicolon then expression was not parsed properly...
             if (!CurrentToken.IsSemicolon())
             {
-                return ParseInvalidStatement(ErrorType.InvalidVariableDeclaration_MissingSemicolon, CurrentToken);
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration_MissingSemicolon, CurrentToken);
             }
 
             LoadNextToken();

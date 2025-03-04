@@ -26,7 +26,7 @@ namespace EdenClasslibrary.Types
         GreaterOrEqual,     // >=
         LeftArrow,          // <
         RightArrow,         // >
-        ExclemationMark,    // ?
+        ExclemationMark,    // !
         Plus,               // +
         Minus,              // -
         Star,               // *
@@ -34,6 +34,8 @@ namespace EdenClasslibrary.Types
         Power,              // ^
         Comma,              // ,
         Dot,                // .
+        QuenstionMark,      // ?
+        Tilde,              // ~
 
         //  Symbols
         Semicolon,          // ;
@@ -47,6 +49,7 @@ namespace EdenClasslibrary.Types
         Int,
         Float,
         String,
+        Null,
     }
 
     public class Token

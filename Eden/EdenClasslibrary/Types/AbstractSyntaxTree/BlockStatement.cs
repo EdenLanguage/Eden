@@ -30,17 +30,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         {
             return PrettyPrint();
         }
-
-        public override string Print()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach(Statement statement in Statements)
-            {
-                sb.AppendLine(statement.Print());
-            }
-            return sb.ToString();
-        }
-
         public string ToASTFormat()
         {
             return PrettyPrintAST();

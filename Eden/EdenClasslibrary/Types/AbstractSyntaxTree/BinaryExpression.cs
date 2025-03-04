@@ -27,12 +27,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         {
             return PrettyPrintAST();
         }
-
-        public override string ParenthesesPrint()
-        {
-            return $"({Left.ParenthesesPrint()}{NodeToken.LiteralValue}{Right.ParenthesesPrint()})";
-        }
-
         public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();

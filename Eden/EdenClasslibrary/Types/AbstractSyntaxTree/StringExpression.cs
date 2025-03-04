@@ -19,11 +19,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         }
         public StringExpression(Token token) : base(token) { }
 
-        public override string ParenthesesPrint()
-        {
-            return Value;
-        }
-
         public override string ToString()
         {
             return PrettyPrint();

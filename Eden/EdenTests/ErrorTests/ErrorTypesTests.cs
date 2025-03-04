@@ -21,11 +21,11 @@ namespace EdenTests.ErrorTests
         public void BasicTypes()
         {
             ErrorsManager errorManager = new ErrorsManager();
-            errorManager.AppendError(ErrorType.InvalidSyntax, _tokenGenerator.Generate());
-            errorManager.AppendError(ErrorType.InvalidToken, _tokenGenerator.Generate());
+            errorManager.AppendError(ErrorDefaultParser.Create(ParserErrorType.InvalidSyntax, _tokenGenerator.Generate()));
+            errorManager.AppendError(ErrorDefaultParser.Create(ParserErrorType.InvalidToken, _tokenGenerator.Generate()));
 
-            Error error = errorManager.Errors.FirstOrDefault();
-            string asStr = error.ToString();
+            AError error = errorManager.Errors.FirstOrDefault();
+            string asStr = error.PrintError();
             Assert.NotNull(error);
 
             string allErrors = errorManager.PrintErrors();

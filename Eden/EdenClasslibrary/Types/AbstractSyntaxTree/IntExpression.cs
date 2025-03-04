@@ -26,11 +26,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return PrettyPrint();
         }
 
-        public override string ParenthesesPrint()
-        {
-            return $"{Value}";
-        }
-
         public string PrettyPrint(int indents = 0)
         {
             return $"{Common.IndentCreator(indents)}{Value}";

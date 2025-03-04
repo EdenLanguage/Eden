@@ -1,5 +1,15 @@
+- [ ] Prepare for release:
+	- [ ] [[Release 1.0.0.0]]
+	- [ ] ...
+- [ ] Language:
+	- [ ] [[For loop]] are still not implemented. But their overall semantic should contain Body and counter.
+	- [ ] [[If Else]] statements.
+	- [ ] [[Structure]]
+- [ ] [[Evaluator]]
+	- [ ] Optimize:
+		- [ ] Null and Bool Type-objects don't need to have multiple instances. We can just use reference instead of creating new Null-object for every null in program.
 - [ ] [[Lexer]]
-	- [x] Refactor.
+	- [x] Refactor
 - [ ] [[Parser]]
 	- [x] Before we start evaluating AST we should refactor whole thing.
 	- [x] Add better errors handling with clear messages.

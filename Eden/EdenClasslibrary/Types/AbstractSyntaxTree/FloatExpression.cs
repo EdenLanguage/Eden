@@ -26,11 +26,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         {
             return PrettyPrint();
         }
-        public override string ParenthesesPrint()
-        {
-            return $"{Value.ToString(CultureInfo.InvariantCulture)}";
-        }
-
         public string ToASTFormat()
         {
             return PrettyPrintAST();

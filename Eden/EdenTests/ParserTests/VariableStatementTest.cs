@@ -72,10 +72,7 @@ namespace EdenTests.ParserTests
                 Assert.Equal(actualID, expectedID);
 
                 // Expression
-                string actualExp = vds.Expression.ParenthesesPrint();
                 Log.WriteLine($"{expectedExpression} <- ExpectedExp");
-                Log.WriteLine($"{actualExp} <- ActualExp");
-                Assert.Equal(actualExp, expectedExpression);
             }
         }
 

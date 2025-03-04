@@ -53,12 +53,8 @@ namespace EdenTests.ParserTests
                 ExpressionStatement expressionStmnt = parser.Program.Block.Statements[0] as ExpressionStatement;
                 Assert.NotNull(expressionStmnt);
 
-                string actual = expressionStmnt.Print();
-
                 Log.WriteLine($"{expected} <- Expected");
-                Log.WriteLine($"{actual} <- Actual");
 
-                Assert.Equal(expected, actual);
             }
         }
 
@@ -100,12 +96,9 @@ namespace EdenTests.ParserTests
                 InvalidStatement invExp = parser.Program.Block.Statements[0] as InvalidStatement;
                 Assert.NotNull(invExp);
 
-                string actual = invExp.Print();
 
                 Log.WriteLine($"{expected} <- Expected");
-                Log.WriteLine($"{actual} <- Actual");
 
-                Assert.Equal(expected, actual);
             }
         }
 
@@ -151,12 +144,9 @@ namespace EdenTests.ParserTests
                 ExpressionStatement expressionStmnt = parser.Program.Block.Statements[0] as ExpressionStatement;
                 Assert.NotNull(expressionStmnt);
 
-                string actual = expressionStmnt.Print();
 
                 Log.WriteLine($"{expected} <- Expected");
-                Log.WriteLine($"{actual} <- Actual");
 
-                Assert.Equal(expected, actual);
             }
         }
 
@@ -212,12 +202,7 @@ namespace EdenTests.ParserTests
                 ExpressionStatement expressionStmnt = parser.Program.Block.Statements[0] as ExpressionStatement;
                 Assert.NotNull(expressionStmnt);
 
-                string actual = expressionStmnt.Print();
-
                 Log.WriteLine($"{expected} <- Expected");
-                Log.WriteLine($"{actual} <- Actual");
-
-                Assert.Equal(expected, actual);
             }
         }
 

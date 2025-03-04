@@ -15,11 +15,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public BlockStatement AlternativeBlock { get; set; }
         public IfExpression(Token token) : base(token) { }
 
-        public override string ParenthesesPrint()
-        {
-            return "NotImplementedException";
-        }
-
         public string ToASTFormat()
         {
             return PrettyPrintAST();

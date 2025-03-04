@@ -18,11 +18,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return PrettyPrint();
         }
 
-        public override string Print()
-        {
-            return Expression.ParenthesesPrint();
-        }
-
         public string ToASTFormat()
         {
             return PrettyPrintAST();
