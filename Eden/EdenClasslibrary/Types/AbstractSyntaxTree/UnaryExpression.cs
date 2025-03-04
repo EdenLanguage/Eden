@@ -20,23 +20,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         {
         }
 
-        private string EvaluatePrint()
-        {
-            if(NodeToken.Keyword == TokenType.Minus)
-            {
-                return $"({NodeToken.LiteralValue}{Expression.ParenthesesPrint()})";
-            }
-            else
-            {
-                return $"{Expression.ParenthesesPrint()}";
-            }
-        }
-
-        public override string ParenthesesPrint()
-        {
-            return EvaluatePrint();
-        }
-
         public override string ToString()
         {
             return PrettyPrint();
@@ -50,9 +33,14 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public string PrettyPrintAST(int indent = 0)
         {
             StringBuilder sb = new StringBuilder();
-            //sb.AppendLine($"{nameof(UnaryExpression).Pastel(Color.Orange)} {{");
-            //sb.AppendLine($"\t{Expression.ToPrettyAST()}");
-            //sb.AppendLine("}");
+
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(UnaryExpression)} {{");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Prefix {{ {Prefix.LiteralValue} }},");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Expression {{");
+            sb.AppendLine($"{(Expression as IPrintable).PrettyPrintAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}}");
+            sb.Append($"{Common.IndentCreator(indent)}}}");
+
             string toStr = sb.ToString();
             return toStr;
         }

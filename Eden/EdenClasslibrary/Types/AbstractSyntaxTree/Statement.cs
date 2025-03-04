@@ -12,6 +12,5 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public Statement(Token token) : base(token)
         {
         }
-        public abstract string Print();
     }
 }

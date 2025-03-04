@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.ASTreeNode">
-    <Position X="12.75" Y="0.75" Width="1.5" />
+    <Position X="21.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\ASTreeNode.cs</FileName>
@@ -10,13 +10,13 @@
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.BlockStatement">
     <Position X="8.5" Y="5.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAQAAAAAAAAAFAAAAAAAAAAAARAAAAAAAABAEAAQ=</HashCode>
+      <HashCode>AAAAAQAAAIAAAAAEAAAAAAAAAAAABAAAAAAAABAEAAQ=</HashCode>
       <FileName>Types\AbstractSyntaxTree\BlockStatement.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.Statement">
-    <Position X="7.5" Y="3.25" Width="1.5" />
+    <Position X="10" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\Statement.cs</FileName>
@@ -25,45 +25,46 @@
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.VariableDeclarationStatement">
     <Position X="11" Y="5.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAQAAAAAAAAAFAAAAAAAAAAAAQAAQAQAAQAAEAAA=</HashCode>
+      <HashCode>AAAAAQAAAIAAAAAEAAAAAAAAAAAAAAAQAQAAQBAEAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\VariableDeclarationStatement.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.VariableTypeExpression">
-    <Position X="21.75" Y="5.5" Width="2" />
+    <Position X="29.5" Y="5.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAEQAAAAAAAAAFAAAAAAAAAAAAQAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAAAAAAAAAAAAQAAABAAAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\VariableTypeExpression.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.IntExpression">
-    <Position X="16.75" Y="5.5" Width="1.5" />
+    <Position X="24.5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEQAAAAAAAAAFAAAAAAAAAAAAQAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAAAAAAAAAAAAAAgABAAAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\IntExpression.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.IdentifierExpression">
-    <Position X="19" Y="5.5" Width="2" />
+    <Position X="26.75" Y="5.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAEQAAAAAAAAAFAAAAAAQAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAQAAAAAAAAAAAAAABAAAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\IdentifierExpression.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.Expression">
-    <Position X="17.5" Y="3.25" Width="1.5" />
+    <Position X="37.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\Expression.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.BinaryExpression">
-    <Position X="14.5" Y="5.5" Width="1.5" />
+    <Position X="22.25" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAEQAAAAAAAAAFAAAAAAAAAAAAQAAACACAAAAAAAA=</HashCode>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAAAAAAAAAAACACAABAAAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\BinaryExpression.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -71,7 +72,7 @@
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.ReturnStatement">
     <Position X="6" Y="5.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAQAAAAAAAAAFAAAAAAAAAAAAQAAQAAAAAAAEAAA=</HashCode>
+      <HashCode>AAAAAQAAAIAAAAAEAAAAAAAAAAAAAAAQAAAAABAEAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\ReturnStatement.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -79,8 +80,96 @@
   <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.ExpressionStatement">
     <Position X="3.5" Y="5.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAQAAAAAAAAAFAAAAAAAAAAAAQAAQAAAAAAAEAAA=</HashCode>
+      <HashCode>AAAAAQAAAIAAAAAEAAAAAAAAAAAAAAAQAAAAABAEAAA=</HashCode>
       <FileName>Types\AbstractSyntaxTree\ExpressionStatement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.BoolExpresion">
+    <Position X="52.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAAAAAAAAAAAAAAgABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\BoolExpresion.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.CallExpression">
+    <Position X="49.25" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAQAEAAAAAAIAAAAAAAAAYAAAABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\CallExpression.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.FloatExpression">
+    <Position X="36.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAAAAAAAAAAAAAAgABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\FloatExpression.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.FunctionExpression">
+    <Position X="41.75" Y="5.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAEQAAAIAAAAAEAAABAAQAAAAAAIAAIQAAABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\FunctionExpression.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.IfExpression">
+    <Position X="46.5" Y="5.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAAAGAAAAAAAAAAAAAEBAAAAAABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\IfExpression.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.InvalidStatement">
+    <Position X="16.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAIAAAAAEAAAAAAAAAAAAAAAAAAAAABAEAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\InvalidStatement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.StringExpression">
+    <Position X="34.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAAAAAAAAAAAAAAgABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\StringExpression.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.UnaryExpression">
+    <Position X="32.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAAEEAAAAAAACAAAAAAAQAAAAABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\UnaryExpression.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.VariableDefinitionExpression">
+    <Position X="38.75" Y="5.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAQAAAAAAAAAAQAAABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\VariableDefinitionExpression.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.FileStatement">
+    <Position X="14" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAQAAAIAAAAAEAAACAAAAAAAAAAAAAABAABBEAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\FileStatement.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="EdenClasslibrary.Types.AbstractSyntaxTree.InvalidExpression">
+    <Position X="44.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEQAAAIAAAAAEAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Types\AbstractSyntaxTree\InvalidExpression.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>

@@ -94,6 +94,8 @@ namespace EdenClasslibrary.Types
                 case ',': nextToken = CreateNewToken(TokenType.Comma); break;
                 case '.': nextToken = CreateNewToken(TokenType.Dot); break;
                 case ';': nextToken = CreateNewToken(TokenType.Semicolon); break;
+                case '~': nextToken = CreateNewToken(TokenType.Tilde); break;
+                case '?': nextToken = CreateNewToken(TokenType.QuenstionMark); break;
                 case '^': nextToken = CreateNewToken(TokenType.Power); break;
                 case '*': nextToken = CreateNewToken(TokenType.Star); break;
                 case '/': nextToken = CreateNewToken(TokenType.Slash); break;

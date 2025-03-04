@@ -27,11 +27,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             _arguments.Add(argument);
         }
 
-        public override string ParenthesesPrint()
-        {
-            throw new NotImplementedException();
-        }
-
         public string PrettyPrint(int indents = 0)
         {
             StringBuilder sb = new StringBuilder();

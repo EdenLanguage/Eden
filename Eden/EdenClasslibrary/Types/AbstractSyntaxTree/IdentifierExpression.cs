@@ -24,11 +24,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             return PrettyPrint();
         }
 
-        public override string ParenthesesPrint()
-        {
-            return $"{Name}";
-        }
-
         public string ToASTFormat()
         {
             return PrettyPrintAST();

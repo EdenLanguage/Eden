@@ -11,12 +11,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         {
             return $"{Common.IndentCreator(indents)}Invalid statement: '{"statement"}'";
         }
-
-        public override string Print()
-        {
-            return "Parser encountered invalid statement!";
-        }
-
         public string ToASTFormat()
         {
             return PrettyPrintAST();

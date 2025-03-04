@@ -5,8 +5,8 @@ namespace EdenClasslibrary.Errors
 {
     public class ErrorsManager
     {
-        private List<Error> _errors;
-        public Error[] Errors
+        private List<AError> _errors;
+        public AError[] Errors
         {
             get
             {
@@ -15,26 +15,25 @@ namespace EdenClasslibrary.Errors
         }
         public ErrorsManager()
         {
-            _errors = new List<Error>();
+            _errors = new List<AError>();
         }
 
         public string PrintErrors()
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach(Error error in Errors)
+            foreach(AError error in Errors)
             {
-                sb.AppendLine($"{error}");
+                sb.AppendLine($"{error.PrintError()}");
             }
 
             string result = sb.ToString();
             return result;
         }
 
-        public void AppendError(ErrorType errorType, Token token)
+        public void AppendError(AError error)
         {
-            Error newError = ErrorsFactory.Create(errorType, token);
-            _errors.Add(newError);
+            _errors.Add(error);
         }
     }
 }

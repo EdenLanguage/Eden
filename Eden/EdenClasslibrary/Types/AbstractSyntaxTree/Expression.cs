@@ -12,7 +12,5 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
     public abstract class Expression : ASTreeNode
     {
         protected Expression(Token token) : base(token) { }
-
-        public abstract string ParenthesesPrint();
     }
 }

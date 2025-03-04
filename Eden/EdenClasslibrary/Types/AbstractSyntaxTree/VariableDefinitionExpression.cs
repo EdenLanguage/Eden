@@ -10,11 +10,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public IdentifierExpression Name { get; set; }
         public VariableDefinitionExpression(Token token) : base(token) { }
 
-        public override string ParenthesesPrint()
-        {
-            throw new NotImplementedException();
-        }
-
         public string PrettyPrint(int indents = 0)
         {
             return $"{Common.IndentCreator(indents)}Var {Type.PrettyPrint()} {Name.PrettyPrint()}";

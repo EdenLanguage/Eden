@@ -30,11 +30,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             _filePath = filePath;
         }
 
-        public override string Print()
-        {
-            return "";
-        }
-
         public override string ToString()
         {
             return PrettyPrint();
