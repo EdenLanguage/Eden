@@ -14,9 +14,14 @@
         }
         public object Value { get; set; }
 
-        public NullObject(object value)
+        private NullObject(object value)
         {
             Value = value;
+        }
+
+        public static IObject Create()
+        {
+            return new NullObject(null);
         }
 
         public bool IsSameType(IObject other)

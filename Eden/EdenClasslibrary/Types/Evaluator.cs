@@ -7,9 +7,11 @@ namespace EdenClasslibrary.Types
 {
     public class Evaluator
     {
+        private EvaluationMapper _evalFuncsMapper;
         private ErrorsManager _errorManager;
         public Evaluator()
         {
+            _evalFuncsMapper = new EvaluationMapper();
             _errorManager = new ErrorsManager();
         }
 
@@ -162,7 +164,7 @@ namespace EdenClasslibrary.Types
             {
                 // TODO - handle error!
             }
-            return new IntObject(intExp.Value);
+            return IntObject.Create(intExp.Value);
         }
 
         private IObject EvaluateBoolExpression(ASTreeNode root)
@@ -172,7 +174,7 @@ namespace EdenClasslibrary.Types
             {
                 // TODO - handle error!
             }
-            return new BoolObject(boolExp.Value);
+            return BoolObject.Create(boolExp.Value);
         }
 
         private IObject EvaluateNullExpression(ASTreeNode root)
@@ -182,7 +184,7 @@ namespace EdenClasslibrary.Types
             {
                 // TODO - handle error!
             }
-            return new NullObject(nullExp.Value);
+            return NullObject.Create();
         }
 
         private IObject EvaluateUnaryExpression(ASTreeNode root)
@@ -195,7 +197,15 @@ namespace EdenClasslibrary.Types
 
             IObject insideEval = EvaluateExpression(unaryExp.Expression);
 
-            return IObjectFactory.ResolveUnaryObject(unaryExp.Prefix.Keyword, insideEval);
+            Func<IObject, IObject> unaryFunc = _evalFuncsMapper.GetEvaluationFunc(unaryExp.Prefix, insideEval);
+
+            if (unaryFunc == null)
+            {
+                _errorManager.AppendErrors(_evalFuncsMapper.PopErrors());
+                return new ErrorObject(_errorManager.Errors.LastOrDefault());
+            }
+
+            return unaryFunc(insideEval);
         }
 
         private IObject EvaluateBinaryExpression(ASTreeNode root)
@@ -208,7 +218,16 @@ namespace EdenClasslibrary.Types
             IObject leftEval = EvaluateExpression(binExp.Left);
             IObject rightEval = EvaluateExpression(binExp.Right);
 
-            return IObjectFactory.ResolveBinaryObject(leftEval, binExp.NodeToken.Keyword, rightEval);
+            Func<IObject, IObject, IObject> binaryFunc = _evalFuncsMapper.GetEvaluationFunc(leftEval, binExp.NodeToken, rightEval);
+
+            if(binaryFunc == null)
+            {
+                _errorManager.AppendErrors(_evalFuncsMapper.PopErrors());
+                return new ErrorObject(_errorManager.Errors.LastOrDefault());
+            }
+
+            return binaryFunc(leftEval, rightEval);
+            //return IObjectFactory.ResolveBinaryObject(leftEval, binExp.NodeToken.Keyword, rightEval);
         }
 
         private IObject EvaluateConditionalExpression(ASTreeNode root)
@@ -230,7 +249,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                return new NullObject(null);
+                return NullObject.Create();
             }
         }
         #endregion
