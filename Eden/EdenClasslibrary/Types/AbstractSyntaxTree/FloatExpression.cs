@@ -8,13 +8,13 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
     public class FloatExpression : Expression, IPrintable
     {
-        public double Value
+        public float Value
         {
             get
             {
                 // If this throws idk, theoretically it was parsed in Lexer before so it should work now...
-                double parsed = 0;
-                bool couldParse = double.TryParse(NodeToken.LiteralValue, CultureInfo.InvariantCulture, out parsed);
+                float parsed = 0;
+                bool couldParse = float.TryParse(NodeToken.LiteralValue, CultureInfo.InvariantCulture, out parsed);
                 return parsed;
             }
         }

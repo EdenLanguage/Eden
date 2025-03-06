@@ -18,6 +18,17 @@ namespace EdenClasslibrary.Errors
             _errors = new List<AError>();
         }
 
+        /// <summary>
+        /// Returns all of the errors and clears storage.
+        /// </summary>
+        /// <returns></returns>
+        public AError[] PopErrors()
+        {
+            AError[] errors = Errors;
+            _errors.Clear();
+            return errors;
+        }
+
         public string PrintErrors()
         {
             StringBuilder sb = new StringBuilder();
@@ -34,6 +45,11 @@ namespace EdenClasslibrary.Errors
         public void AppendError(AError error)
         {
             _errors.Add(error);
+        }
+
+        public void AppendErrors(AError[] error)
+        {
+            _errors.AddRange(error);
         }
     }
 }

@@ -160,13 +160,13 @@ namespace EdenClasslibrary.Types
                     {
                         //  This function is handling numbers. So Int and Float should be parsable.
                         string inputLiteral = ReadInputNumberLiteral();
-                        double convertedNumber = 0;
-                        bool couldConvertToDouble = double.TryParse(inputLiteral, CultureInfo.InvariantCulture, out convertedNumber);
+                        float convertedNumber = 0;
+                        bool couldConvertToFloat = float.TryParse(inputLiteral, CultureInfo.InvariantCulture, out convertedNumber);
 
                         //  If contains '.' then it could be double
                         if (inputLiteral.Contains('.'))
                         {
-                            if (couldConvertToDouble == true)
+                            if (couldConvertToFloat == true)
                             {
                                 if (inputLiteral.EndsWith('.'))
                                 {

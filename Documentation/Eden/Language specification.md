@@ -4,3 +4,8 @@
 	- ! - Negation - Negates expression. Example: !5 == -5.
 	- ~ - Reverse - Flips bits of expression: Example: !True == False.
 		- For now only [[Int]] type is implemented, and in that case result would be ~10 == -11 because of two's complement. But in future other types like [[UInt]] will be added and in that case ~10 == 4294967285. It is important to point out that [[Int]] is 32-bit.
+- Types
+	- [[Int]]
+	- [[Float]]
+	- [[Double]]
+	- [[Decimal]]

@@ -1,24 +1,24 @@
 ﻿namespace EdenClasslibrary.Types.LanguageTypes
 {
-    public class BoolObject : IObject
+    public class FloatObject : IObject
     {
+        public float Value { get; set; }
         public Type Type
         {
             get
             {
-                return typeof(BoolObject);
+                return typeof(FloatObject);
             }
         }
-        public bool Value { get; set; }
 
-        private BoolObject(bool value)
+        private FloatObject(float value)
         {
             Value = value;
         }
 
-        public static IObject Create(bool value)
+        public static IObject Create(float value)
         {
-            return new BoolObject(value);
+            return new FloatObject(value);
         }
 
         public string AsString()
@@ -28,7 +28,8 @@
 
         public bool IsSameType(IObject other)
         {
-            return Type == other.Type;
+            if (Type == other.Type) return true;
+            return false;
         }
     }
 }
