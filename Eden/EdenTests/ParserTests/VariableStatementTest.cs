@@ -122,7 +122,7 @@ namespace EdenTests.ParserTests
 
             string[][] expectedOutputs = new string[][]
             {
-                new string[]{ "Var", "Int", "counter", "(((5*10)/2)+(2*(1/2)))"},
+                new string[]{ "Var", "IntObject", "counter", "(((5*10)/2)+(2*(1/2)))"},
             };
 
             Parser parser = new Parser();
@@ -147,7 +147,7 @@ namespace EdenTests.ParserTests
                 // Type
                 VariableTypeExpression type = vds.Type;
                 Assert.NotNull(type);
-                Assert.Equal(type.Type, expected[1]);
+                Assert.Equal(type.Type.Name, expected[1]);
                 
                 // Identifier
                 IdentifierExpression ie = vds.Identifier;

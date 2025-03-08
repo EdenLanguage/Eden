@@ -33,5 +33,10 @@
         {
             return "Null";
         }
+
+        public override string ToString()
+        {
+            return "Null";
+        }
     }
 }

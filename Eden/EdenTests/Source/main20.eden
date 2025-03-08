@@ -1,0 +1,4 @@
+Function Int Add(Var Int a, Var Int b){
+	Return a+b;
+};
+Add(5,10);

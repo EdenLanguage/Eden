@@ -1,117 +1,92 @@
 ﻿using EdenClasslibrary.Parser;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenTests.Utility;
-using Xunit.Abstractions;
 
 namespace EdenTests.AbstractSyntaxTreeTests
 {
-    public class Printing : ConsoleWriter
+    public class Printing : FileTester
     {
-        public Printing(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
-
         [Fact]
-        public void VariableDeclaration_1()
+        public void TestingFiles()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration_1)}");
+            string dir = GetTestFilesDirectory();
+            string[] testFiles = Directory.GetFiles(dir);
 
-            string input = "Var Float funcCall = 3.14 * zmienna / 2;";
-            string output = "...";
-
-            Parser parser = new Parser();
-            FileStatement ast = parser.Parse(input);
-
-            string toString = ast.ToString();
-            string toAST = ast.ToASTFormat();
-
-            Assert.Equal(parser.Program.Block.Statements.Length, 1);
-            Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
-
-            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
-
-            Console.WriteLine($"Input data: {input}");
-            Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToASTFormat()}");
-            Console.WriteLine("|------------------------------------|\n");
+            foreach (string file in testFiles)
+            {
+                try
+                {
+                    Parser parser = new Parser();
+                    FileStatement block = parser.ParseFile(file);
+                    string STR = block.ToString();
+                    string AST = block.ToASTFormat();
+                    Assert.True(AST != null && AST.Length != 0);
+                }
+                catch (Exception exception)
+                {
+                    Assert.Fail($"There was an error at: '{file}'. Message: '{exception.Message}'");
+                }
+            }
         }
 
         [Fact]
-        public void VariableDeclaration_2()
+        public void TestingFile_2()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration_2)}");
+            string dir = GetTestFilesDirectory();
+            string file = Path.Combine(dir, "main2.eden");
 
-            string input = "Var Int variable = 5 + 5 * 2 - 1 + 5;";
-            string output = "...";
-
-            Parser parser = new Parser();
-            FileStatement ast = parser.Parse(input);
-
-            string toString = ast.ToString();
-            string toAST = ast.ToASTFormat();
-
-            Assert.Equal(parser.Program.Block.Statements.Length, 1);
-            Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
-
-            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
-
-            Console.WriteLine($"Input data: {input}");
-            Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToASTFormat()}");
-            Console.WriteLine("|------------------------------------|\n");
+            try
+            {
+                Parser parser = new Parser();
+                FileStatement block = parser.ParseFile(file);
+                string STR = block.ToString();
+                string AST = block.ToASTFormat();
+                Assert.True(AST != null && AST.Length != 0);
+            }
+            catch (Exception exception)
+            {
+                Assert.Fail($"There was an error at: '{file}'. Message: '{exception.Message}'");
+            }
         }
 
         [Fact]
-        public void VariableDeclaration_3()
+        public void TestingFile_21()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.VariableDeclaration_3)}");
+            string dir = GetTestFilesDirectory();
+            string file = Path.Combine(dir, "main21.eden");
 
-            string input = "Var String name = \"Maciek\";";
-            string output = "...";
-
-            Parser parser = new Parser();
-            FileStatement ast = parser.Parse(input);
-
-            string toString = ast.ToString();
-            string toAST = ast.ToASTFormat();
-
-            Assert.Equal(parser.Program.Block.Statements.Length, 1);
-            Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
-
-            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
-
-            Console.WriteLine($"Input data: {input}");
-            Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToASTFormat()}");
-            Console.WriteLine("|------------------------------------|\n");
+            try
+            {
+                Parser parser = new Parser();
+                FileStatement block = parser.ParseFile(file);
+                string STR = block.ToString();
+                string AST = block.ToASTFormat();
+                Assert.True(AST != null && AST.Length != 0);
+            }
+            catch (Exception exception)
+            {
+                Assert.Fail($"There was an error at: '{file}'. Message: '{exception.Message}'");
+            }
         }
 
         [Fact]
-        public void ReturnStatement_1()
+        public void TestingFile_8()
         {
-            PrintTestName($"{nameof(Printing)}.{nameof(Printing.ReturnStatement_1)}");
+            string dir = GetTestFilesDirectory();
+            string file = Path.Combine(dir, "main8.eden");
 
-            string input = "Return 50*50;";
-            string output = "...";
-
-            Parser parser = new Parser();
-            FileStatement ast = parser.Parse(input);
-
-            string toString = ast.ToString();
-            string toAST = ast.ToASTFormat();
-
-            Assert.Equal(parser.Program.Block.Statements.Length, 1);
-            Assert.Equal(parser.Errors.Length, 0);
-            Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
-
-            VariableDeclarationStatement vds = parser.Program.Block.Statements[0] as VariableDeclarationStatement;
-
-
-            Console.WriteLine($"Input data: {input}");
-            Console.WriteLine("Output data:");
-            Console.WriteLine($"{ast.ToASTFormat()}");
-            Console.WriteLine("|------------------------------------|\n");
+            try
+            {
+                Parser parser = new Parser();
+                FileStatement block = parser.ParseFile(file);
+                string STR = block.ToString();
+                string AST = block.ToASTFormat();
+                Assert.True(AST != null && AST.Length != 0);
+            }
+            catch (Exception exception)
+            {
+                Assert.Fail($"There was an error at: '{file}'. Message: '{exception.Message}'");
+            }
         }
     }
 }

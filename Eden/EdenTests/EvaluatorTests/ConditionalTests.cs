@@ -2,6 +2,7 @@
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types;
+using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -40,7 +41,8 @@ namespace EdenTests.EvaluatorTests
                 string toSTR = output.ToASTFormat();
 
                 Evaluator evaluator = new Evaluator();
-                IObject result = evaluator.Evaluate(output);
+                Environment env = new Environment();
+                IObject result = evaluator.Evaluate(output, env);
 
                 string actualAsString = result.AsString();
 
@@ -81,7 +83,8 @@ namespace EdenTests.EvaluatorTests
                 string toSTR = output.ToASTFormat();
 
                 Evaluator evaluator = new Evaluator();
-                IObject result = evaluator.Evaluate(output);
+                Environment env = new Environment();
+                IObject result = evaluator.Evaluate(output, env);
 
                 string actualAsString = result.AsString();
 

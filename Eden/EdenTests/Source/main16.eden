@@ -1,0 +1,5 @@
+Var Int counter = 10;
+Var Int length = 20;
+If(counter < length){
+	Return counter + length;
+};

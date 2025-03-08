@@ -21,12 +21,12 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $"> Expression failed! {_operationToken} {_type.ToString()}";
+            return $">     Expression failed! {_operationToken} {_type.ToString()}";
         }
 
         public override string GetMessage()
         {
-            return $">     Undefined operation! {_operationToken} {_type.Type} is not defined!";
+            return $"> Undefined operation! {_operationToken} {_type.Type} is not defined!";
         }
     }
 }

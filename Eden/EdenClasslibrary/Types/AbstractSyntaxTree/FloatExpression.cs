@@ -1,4 +1,5 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Utility;
 using Pastel;
 using System.Drawing;
@@ -6,7 +7,7 @@ using System.Globalization;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class FloatExpression : Expression, IPrintable
+    public class FloatExpression : VariableValueExpression, IPrintable
     {
         public float Value
         {
@@ -18,9 +19,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
                 return parsed;
             }
         }
-        public FloatExpression(Token token) : base(token)
-        {
-        }
+        public FloatExpression(Token token) : base(token, typeof(FloatObject)) { }
 
         public override string ToString()
         {

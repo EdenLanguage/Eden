@@ -10,7 +10,7 @@ namespace EdenClasslibrary.Parser
     {
         #region Fields
         private readonly Lexer _lexer;
-        private FileStatement _program;
+        private Statement _program;
         private ErrorsManager _errorsManager;
         private readonly Dictionary<TokenType, Func<Expression>> _unaryMapping;
         private readonly Dictionary<TokenType, Func<Expression, Expression>> _binaryMapping;
@@ -20,7 +20,8 @@ namespace EdenClasslibrary.Parser
         #region Properties
         public Token NextToken { get; set; }
         public Token CurrentToken { get; set; }
-        public FileStatement Program { get { return _program; } }
+        public Statement ProgramStatement { get { return _program; } }
+        public FileStatement Program { get { return _program as FileStatement; } }
         public AError[] Errors
         {
             get
@@ -112,7 +113,7 @@ namespace EdenClasslibrary.Parser
         {
             _lexer.SetInput(code);
             _program = ParseFileStatement();
-            return _program;
+            return _program as FileStatement;
         }
 
         public FileStatement ParseFile(string path)
@@ -120,23 +121,11 @@ namespace EdenClasslibrary.Parser
             //string sourceCode = GetSource(path);
             _lexer.LoadFile(path);
             _program = ParseFileStatement();
-            return _program;
+            return _program as FileStatement;
         }
         #endregion
 
         #region Helper methods
-        private string GetSource(string path)
-        {
-            if (File.Exists(path))
-            {
-                return File.ReadAllText(path);
-            }
-            else
-            {
-                return "";
-            }
-        }
-
         private Precedence CurrentTokenEvaluationOrder()
         {
             if (_precedenceMapping.ContainsKey(CurrentToken.Keyword))
@@ -461,10 +450,11 @@ namespace EdenClasslibrary.Parser
 
         private Statement ParseInvalidStatement(ParserErrorType errorType, Token invalidToken)
         {
-            Statement statement = new InvalidStatement(invalidToken);
+            AError error = ErrorDefaultParser.Create(errorType, invalidToken);
 
-            _errorsManager.AppendError(ErrorDefaultParser.Create(errorType, invalidToken));
-            EatStatement();
+            Statement statement = new InvalidStatement(CurrentToken, error);
+            _errorsManager.AppendError(error);
+            //EatStatement();
 
             return statement;
         }
@@ -578,7 +568,7 @@ namespace EdenClasslibrary.Parser
             return block;
         }
 
-        private FileStatement ParseFileStatement()
+        private Statement ParseFileStatement()
         {
             FileStatement file = new FileStatement(CurrentToken);
             BlockStatement programBlock = new BlockStatement(CurrentToken);
@@ -589,6 +579,11 @@ namespace EdenClasslibrary.Parser
             {
                 Statement statement = ParseStatement();
                 programBlock.AddStatement(statement);
+
+                if(statement is InvalidStatement)
+                {
+                    return file;
+                }
             }
 
             return file;

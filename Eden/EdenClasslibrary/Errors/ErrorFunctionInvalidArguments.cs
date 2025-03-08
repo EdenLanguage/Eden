@@ -2,14 +2,18 @@
 
 namespace EdenClasslibrary.Errors
 {
-    public class ErrorDevideByZero : AError
+    public class ErrorFunctionInvalidArguments : AError
     {
-        private ErrorDevideByZero() { }
+        private ErrorFunctionInvalidArguments()
+        {
+
+        }
 
         public static AError Create()
         {
-            return new ErrorDevideByZero();
+            return new ErrorFunctionInvalidArguments();
         }
+
         public static IObject CreateErrorObject()
         {
             return new ErrorObject(Create());
@@ -17,12 +21,12 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $">     Invalid operation!";
+            return $">     Invalid function call!";
         }
 
         public override string GetMessage()
         {
-            return $"> It is not possible to devide by zero!";
+            return $"> There is no definition for function with that name that has provided amount of arguments!";
         }
     }
 }

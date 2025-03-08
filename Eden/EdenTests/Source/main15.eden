@@ -1,0 +1,2 @@
+Var Int counter = 10;
+Return counter;

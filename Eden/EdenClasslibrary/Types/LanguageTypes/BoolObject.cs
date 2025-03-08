@@ -30,5 +30,10 @@
         {
             return Type == other.Type;
         }
+
+        public override string ToString()
+        {
+            return $"Bool: {Value}";
+        }
     }
 }
