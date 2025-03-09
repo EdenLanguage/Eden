@@ -32,5 +32,10 @@ namespace EdenClasslibrary.Types.LanguageTypes
         {
             return $"{Value}";
         }
+
+        public override string ToString()
+        {
+            return $"Int: {Value}";
+        }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Utility;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class NullExpression : Expression, IPrintable
+    public class NullExpression : VariableValueExpression, IPrintable
     {
         public object Value
         {
@@ -13,7 +14,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
                 return null;
             }
         }
-        public NullExpression(Token token) : base(token) { }
+        public NullExpression(Token token) : base(token, typeof(NullObject)) { }
 
         public string PrettyPrint(int indents = 0)
         {

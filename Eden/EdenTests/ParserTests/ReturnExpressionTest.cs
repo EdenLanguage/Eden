@@ -1,14 +1,14 @@
 ﻿using EdenClasslibrary.Parser;
+using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.LanguageTypes;
 using EdenTests.Utility;
-using Xunit.Abstractions;
+using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.ParserTests
 {
-    public class ReturnExpressionTest : ConsoleWriter
+    public class ReturnExpressionTest : FileTester
     {
-        public ReturnExpressionTest(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
-
         [Fact]
         public void Valid()
         {
@@ -69,10 +69,28 @@ namespace EdenTests.ParserTests
                     Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
                     ReturnStatement vds = parser.Program.Block.Statements[0] as ReturnStatement;
-
-                    Log.WriteLine($"{expected} <- Expected");
                 }
             }
+        }
+
+        [Fact]
+        public void NestedBlockReturn()
+        {
+            string filename = "main14.eden";
+            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
+
+            Parser parser = new Parser();
+            Evaluator evaluator = new Evaluator();
+            Environment env = new Environment();
+
+            FileStatement block = parser.ParseFile(executionLocation);
+            string AST = block.ToString();
+
+            IObject result = evaluator.Evaluate(block, env);
+            Assert.Equal((result as IntObject).Value, 1);
+
+            Assert.True(parser.Errors.Length == 0);
+            Assert.True(block.Block.Statements.Length == 1);
         }
     }
 }

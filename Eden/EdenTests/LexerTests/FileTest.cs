@@ -103,17 +103,30 @@ namespace EdenTests.LexerTests
                 new Token(TokenType.RightArrow, ">"),
                 new Token(TokenType.Identifier, "B"),
                 new Token(TokenType.RightParenthesis, ")"),
+                new Token(TokenType.LeftBracket, "{"),
+                
+                // Third line
                 new Token(TokenType.Keyword, "Return"),
                 new Token(TokenType.Bool, "True"),
                 new Token(TokenType.Semicolon, ";"),
+                
+                //  Forth line
+                new Token(TokenType.RightBracket, "}"),
 
-                // Third line
+                //  Fifth line
                 new Token(TokenType.Else, "Else"),
+                new Token(TokenType.LeftBracket, "{"),
+                
+                //  Sixth line
                 new Token(TokenType.Keyword, "Return"),
                 new Token(TokenType.Bool, "False"),
                 new Token(TokenType.Semicolon, ";"),
+                
+                // Seventh line
+                new Token(TokenType.RightBracket, "}"),
+                new Token(TokenType.Semicolon, ";"),
 
-                // Third line
+                //  Eight Line
                 new Token(TokenType.RightBracket, "}"),
                 new Token(TokenType.Semicolon, ";"),
 
@@ -160,8 +173,8 @@ namespace EdenTests.LexerTests
                 // Second line
                 new Token(TokenType.Keyword, "Return"),
                 new Token(TokenType.Identifier, "A"),
-                new Token(TokenType.Power, "^"),
-                new Token(TokenType.Int, "2"),
+                new Token(TokenType.Star, "*"),
+                new Token(TokenType.Identifier, "A"),
                 new Token(TokenType.Semicolon, ";"),
 
                 // Third line
@@ -182,8 +195,10 @@ namespace EdenTests.LexerTests
                 // Fifth line
                 new Token(TokenType.Keyword, "Return"),
                 new Token(TokenType.Identifier, "A"),
-                new Token(TokenType.Power, "^"),
-                new Token(TokenType.Int, "3"),
+                new Token(TokenType.Star, "*"),
+                new Token(TokenType.Identifier, "A"),
+                new Token(TokenType.Star, "*"),
+                new Token(TokenType.Identifier, "A"),
                 new Token(TokenType.Semicolon, ";"),
 
                 // Sixth line

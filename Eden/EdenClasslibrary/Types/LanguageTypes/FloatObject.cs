@@ -31,5 +31,10 @@
             if (Type == other.Type) return true;
             return false;
         }
+
+        public override string ToString()
+        {
+            return $"Float: {Value}";
+        }
     }
 }

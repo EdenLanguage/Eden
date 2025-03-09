@@ -2,6 +2,7 @@
 using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.LanguageTypes;
+using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -24,7 +25,8 @@ namespace EdenTests.EvaluatorTests
             string STR = output.ToString();
 
             Evaluator evaluator = new Evaluator();
-            IObject result = evaluator.Evaluate(output);
+            Environment env = new Environment();
+            IObject result = evaluator.Evaluate(output, env);
 
             Assert.True(result is IntObject);
 
@@ -48,7 +50,8 @@ namespace EdenTests.EvaluatorTests
             string STR = output.ToString();
 
             Evaluator evaluator = new Evaluator();
-            IObject result = evaluator.Evaluate(output);
+            Environment env = new Environment();
+            IObject result = evaluator.Evaluate(output, env);
 
             Assert.True(result is IntObject);
 

@@ -28,5 +28,10 @@ namespace EdenClasslibrary.Types.LanguageTypes
         {
             return Type == other.Type;
         }
+
+        public override string ToString()
+        {
+            return $"Error: {_error.GetMessage()}";
+        }
     }
 }

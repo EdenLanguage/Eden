@@ -1,7 +1,9 @@
 ﻿using EdenClasslibrary.Errors;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 
 namespace EdenClasslibrary.Types
 {
@@ -15,17 +17,15 @@ namespace EdenClasslibrary.Types
             _errorManager = new ErrorsManager();
         }
 
-        public IObject Evaluate(ASTreeNode root)
+        public IObject Evaluate(ASTreeNode root, Environment env)
         {
             if(root is Expression)
             {
-                return EvaluateExpression(root as Expression);
+                return EvaluateExpression(root as Expression, env);
             }
             else if(root is Statement)
             {
-                IObject evaluatedStmt = EvaluateStatement(root as Statement);
-                if (evaluatedStmt is ReturnObject retObj) return retObj.WrappedObject;
-                return evaluatedStmt;
+                return EvaluateStatement(root as Statement, env);
             }
             else
             {
@@ -33,19 +33,23 @@ namespace EdenClasslibrary.Types
             }
         }
         #region Helper methods
-        private IObject EvaluateExpression(ASTreeNode root)
+        private IObject EvaluateExpression(ASTreeNode root, Environment env)
         {
             if(root is IntExpression)
             {
                 return EvaluateIntExpression(root as IntExpression);
             }
+            else if (root is FloatExpression)
+            {
+                return EvaluateFloatExpression(root as FloatExpression);
+            }
             else if(root is BinaryExpression)
             {
-                return EvaluateBinaryExpression(root as BinaryExpression);
+                return EvaluateBinaryExpression(root as BinaryExpression, env);
             }
             else if (root is UnaryExpression)
             {
-                return EvaluateUnaryExpression(root as UnaryExpression);
+                return EvaluateUnaryExpression(root as UnaryExpression, env);
             }
             else if (root is BoolExpresion)
             {
@@ -53,7 +57,19 @@ namespace EdenClasslibrary.Types
             }
             else if(root is ExpressionStatement)
             {
-                return EvaluateExpressionStatement(root as ExpressionStatement);
+                return EvaluateExpressionStatement(root as ExpressionStatement, env);
+            }
+            else if (root is IdentifierExpression)
+            {
+                return EvaluateIdentifierExpression(root as IdentifierExpression, env);
+            }
+            else if (root is VariableDefinitionExpression)
+            {
+                return EvaluateVariableDeclarationExpression(root as VariableDefinitionExpression, env);
+            }
+            else if (root is CallExpression)
+            {
+                return EvaluateCallExpression(root as CallExpression, env);
             }
             else
             {
@@ -61,23 +77,31 @@ namespace EdenClasslibrary.Types
             }
         }
 
-        private IObject EvaluateStatement(ASTreeNode root)
+        private IObject EvaluateStatement(ASTreeNode root, Environment env)
         {
             if (root is FileStatement)
             {
-                return EvaluateFileStatement(root as FileStatement);
+                return EvaluateFileStatement(root as FileStatement, env);
             }
             else if(root is BlockStatement)
             {
-                return EvaluateBlockStatement(root as BlockStatement);
+                return EvaluateBlockStatement(root as BlockStatement, env);
             }
             else if(root is ExpressionStatement)
             {
-                return EvaluateExpressionStatement(root as ExpressionStatement);
+                return EvaluateExpressionStatement(root as ExpressionStatement, env);
             }
             else if (root is ReturnStatement)
             {
-                return EvaluateReturnStatement(root as ReturnStatement);
+                return EvaluateReturnStatement(root as ReturnStatement, env);
+            }
+            else if (root is VariableDeclarationStatement)
+            {
+                return EvaluateVariableDeclarationStatement(root as VariableDeclarationStatement, env);
+            }
+            else if (root is InvalidStatement)
+            {
+                return EvaluateInvalidStatement(root as InvalidStatement, env);
             }
             else
             {
@@ -85,42 +109,86 @@ namespace EdenClasslibrary.Types
             }
         }
         #region Statements evaluators
-        private IObject EvaluateFileStatement(ASTreeNode root)
+        private IObject EvaluateFileStatement(ASTreeNode root, Environment env)
         {
             BlockStatement block = (root as FileStatement).Block;
 
-            return EvaluateBlockStatement(block);
+            IObject result = EvaluateBlockStatement(block, env);
+
+            if(result is ReturnObject AsReturnObj)
+            {
+                return AsReturnObj.WrappedObject;
+            }
+            else if (result is ErrorObject AsErrorObject)
+            {
+                return AsErrorObject;
+            }
+
+            return result;
         }
 
-        private IObject EvaluateBlockStatement(ASTreeNode root)
+        private IObject EvaluateBlockStatement(ASTreeNode root, Environment env)
         {
             BlockStatement block = root as BlockStatement;
             IObject result = null;
 
             foreach(Statement statement in block.Statements)
             {
-                result = EvaluateStatement(statement);
+                result = EvaluateStatement(statement, env);
 
                 //  We don't need to evaluate further.
-                if(result is ReturnObject)
+                if (result is ReturnObject AsReturnObj)
                 {
-                    return (result as ReturnObject).WrappedObject;
+                    return AsReturnObj;
+                }
+                else if(result is ErrorObject AsErrorObj)
+                {
+                    return AsErrorObj;
                 }
             }
 
             return result;
         }
 
-        private IObject EvaluateReturnStatement(ASTreeNode root)
+        private IObject EvaluateReturnStatement(ASTreeNode root, Environment env)
         {
             ReturnStatement retStmt = root as ReturnStatement;
 
-            IObject returnExp = EvaluateExpression(retStmt.Expression);
+            IObject returnExp = EvaluateExpression(retStmt.Expression, env);
 
             return new ReturnObject(returnExp);
         }
 
-        private IObject EvaluateExpressionStatement(ASTreeNode root)
+        private IObject EvaluateInvalidStatement(ASTreeNode root, Environment env)
+        {
+            return ErrorInvalidStatement.CreateErrorObject();
+        }
+
+        /// <summary>
+        /// Handles evaluating variable declaration. Example: 'Var Int counter = 10';
+        /// It has to check whether variable with such name was previously created.
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns></returns>
+        private IObject EvaluateVariableDeclarationStatement(ASTreeNode root, Environment env)
+        {
+            /*  In future it is important to create function on eval mapper that allows to assign value to variable. This will allow to check whether there was a type missmatch.
+             */
+
+            VariableDeclarationStatement varStatement = root as VariableDeclarationStatement;
+
+            //  Will be used to check whether this assingment is possible.
+            VariableTypeExpression type = varStatement.Type;
+            
+            //  Variable with this name should not exist before this declaration!
+            IdentifierExpression identifier = varStatement.Identifier;
+
+            IObject rightSide = EvaluateExpression(varStatement.Expression, env);
+
+            return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+        }
+
+        private IObject EvaluateExpressionStatement(ASTreeNode root, Environment env)
         {
             ExpressionStatement expStatement = root as ExpressionStatement;
             Expression exp = expStatement.Expression;
@@ -139,19 +207,27 @@ namespace EdenClasslibrary.Types
             }
             else if (exp is UnaryExpression)
             {
-                return EvaluateUnaryExpression(exp as UnaryExpression);
+                return EvaluateUnaryExpression(exp as UnaryExpression, env);
             }
             else if (exp is BinaryExpression)
             {
-                return EvaluateBinaryExpression(exp as BinaryExpression);
+                return EvaluateBinaryExpression(exp as BinaryExpression, env);
             }
             else if (exp is IfExpression)
             {
-                return EvaluateConditionalExpression(exp as IfExpression);
+                return EvaluateConditionalExpression(exp as IfExpression, env);
+            }
+            else if (exp is FunctionExpression)
+            {
+                return EvaluateFunctionExpression(exp as FunctionExpression, env);
+            }
+            else if (exp is CallExpression)
+            {
+                return EvaluateCallExpression(exp as CallExpression, env);
             }
             else
             {
-                return EvaluateExpression(exp);
+                return EvaluateExpression(exp, env);
             }
         }
         #endregion
@@ -165,6 +241,16 @@ namespace EdenClasslibrary.Types
                 // TODO - handle error!
             }
             return IntObject.Create(intExp.Value);
+        }
+
+        private IObject EvaluateFloatExpression(ASTreeNode root)
+        {
+            FloatExpression floatExp = root as FloatExpression;
+            if (floatExp is null)
+            {
+                // TODO - handle error!
+            }
+            return FloatObject.Create(floatExp.Value);
         }
 
         private IObject EvaluateBoolExpression(ASTreeNode root)
@@ -187,7 +273,7 @@ namespace EdenClasslibrary.Types
             return NullObject.Create();
         }
 
-        private IObject EvaluateUnaryExpression(ASTreeNode root)
+        private IObject EvaluateUnaryExpression(ASTreeNode root, Environment env)
         {
             UnaryExpression unaryExp = root as UnaryExpression;
             if (unaryExp is null)
@@ -195,7 +281,7 @@ namespace EdenClasslibrary.Types
                 // TODO - handle error!
             }
 
-            IObject insideEval = EvaluateExpression(unaryExp.Expression);
+            IObject insideEval = EvaluateExpression(unaryExp.Expression, env);
 
             Func<IObject, IObject> unaryFunc = _evalFuncsMapper.GetEvaluationFunc(unaryExp.Prefix, insideEval);
 
@@ -208,15 +294,40 @@ namespace EdenClasslibrary.Types
             return unaryFunc(insideEval);
         }
 
-        private IObject EvaluateBinaryExpression(ASTreeNode root)
+        private IObject[] EvaluateExpressions(ASTreeNode root, Environment env, Expression[] expressions)
+        {
+            IObject[] expressionResults = new IObject[expressions.Length];
+
+            for(int i = 0; i < expressions.Length; i++)
+            {
+                expressionResults[i] = EvaluateExpression(expressions[i], env);
+            }
+
+            return expressionResults;
+        }
+
+        private IObject EvaluateBinaryExpression(ASTreeNode root, Environment env)
         {
             BinaryExpression binExp = root as BinaryExpression;
             if (binExp is null)
             {
             }
 
-            IObject leftEval = EvaluateExpression(binExp.Left);
-            IObject rightEval = EvaluateExpression(binExp.Right);
+            IObject leftEval = EvaluateExpression(binExp.Left, env);
+            IObject rightEval = EvaluateExpression(binExp.Right, env);
+
+            //  If expression are 'Return' expression type. We need to unwrap them.
+            if(leftEval is ReturnObject lar)
+            {
+                leftEval = lar.WrappedObject;
+            }
+
+            if (rightEval is ReturnObject rar)
+            {
+                rightEval = rar.WrappedObject;
+            }
+
+
 
             Func<IObject, IObject, IObject> binaryFunc = _evalFuncsMapper.GetEvaluationFunc(leftEval, binExp.NodeToken, rightEval);
 
@@ -230,25 +341,102 @@ namespace EdenClasslibrary.Types
             //return IObjectFactory.ResolveBinaryObject(leftEval, binExp.NodeToken.Keyword, rightEval);
         }
 
-        private IObject EvaluateConditionalExpression(ASTreeNode root)
+        private IObject EvaluateIdentifierExpression(ASTreeNode root, Environment env)
+        {
+            IdentifierExpression identifier = root as IdentifierExpression;
+            return env.GetVariableValue(identifier.Name);
+        }
+
+        private IObject EvaluateVariableDeclarationExpression(ASTreeNode root, Environment env)
+        {
+            VariableDefinitionExpression varDef = root as VariableDefinitionExpression;
+            return VariableSignatureObject.Create(varDef.Name.Name, varDef.Type.Type);
+        }
+
+        private IObject EvaluateCallExpression(ASTreeNode root, Environment env)
+        {
+            CallExpression callExp = root as CallExpression;
+            
+            string funcName = (callExp.Function as IdentifierExpression).Name;
+
+            //  First check whether there is such function defined.
+            bool funcExists = env.FunctionExistsRoot(funcName);
+
+            if(funcExists == false)
+            {
+                return ErrorFunctionNotDefined.CreateErrorObject();
+            }
+
+            //  Check whether signature are ok.
+            FunctionPayload funcSigPayload = env.GetFunctionRoot(funcName);
+            bool signatureOK = funcSigPayload.ArgumentsSignatureMatch(callExp);
+
+            if(signatureOK == false)
+            {
+                return ErrorFunctionInvalidArguments.CreateErrorObject();
+            }
+
+            //  Evaluate arguments so for example input is '5+1' -> '6'.
+            IObject[] arguments = EvaluateExpressions(root, env, callExp.Arguments);
+
+            foreach(IObject arg in arguments)
+            {
+                if(arg is ErrorObject AsError)
+                {
+                    return AsError;
+                }
+            }
+
+            //  Call evaluate function body with given arguments.
+            Environment extendedEnv = env.ExtendEnvironment();
+            
+            for(int i = 0; i < arguments.Length; i++)
+            {
+                VariableSignatureObject varDef = (funcSigPayload.Arguments[i].Variable as VariableSignatureObject);
+                extendedEnv.DefineVariable(varDef.Name, VariablePayload.Create(varDef.Type, arguments[i]));
+            }
+
+            //  Evalute block of function with new environment that has details about passed variables...
+            IObject result = EvaluateBlockStatement(funcSigPayload.Body, extendedEnv);
+
+            return result;
+
+            //return FunctionObject.Create(funcExp.Body, funcExp.Arguments);
+        }
+
+        private IObject EvaluateFunctionExpression(ASTreeNode root, Environment env)
+        {
+            FunctionExpression funcExp = root as FunctionExpression;
+
+            IObject funcBody = FunctionObject.Create(funcExp.Body, funcExp.Arguments);
+
+            IObject[] argumentSignatures = EvaluateExpressions(root, env, funcExp.Arguments);
+            VariablePayload[] variablePayload = FunctionPayload.GenerateArgumentsSignature(argumentSignatures);
+            env.DefineFunction(funcExp.Name.Name, FunctionPayload.Create(funcExp.Type.Type, variablePayload, funcExp.Body));
+
+            return funcBody;
+        }
+
+        private IObject EvaluateConditionalExpression(ASTreeNode root, Environment env)
         {
             IfExpression ifExp = root as IfExpression;
             if (ifExp is null)
             {
             }
-            IObject condition = EvaluateExpression(ifExp.ConditionExpression);
+            IObject condition = EvaluateExpression(ifExp.ConditionExpression, env);
 
             bool conditionMeet = ObjectHelpers.IsTruthy(condition);
             if(conditionMeet == true)
             {
-                return EvaluateBlockStatement(ifExp.FulfielldBlock);
+                return EvaluateBlockStatement(ifExp.FulfielldBlock, env);
             }
             else if(ifExp.AlternativeBlock != null)
             {
-                return EvaluateBlockStatement(ifExp.AlternativeBlock);
+                return EvaluateBlockStatement(ifExp.AlternativeBlock, env);
             }
             else
             {
+                //  TODO: In case main21.eden -> Fibonacci example, after condition is not meet. Code should execute recirsive call of n-2 + n-1.
                 return NullObject.Create();
             }
         }

@@ -22,7 +22,29 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return "NotImplementedException";
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(IfExpression)} {{");
+
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Condition {{");
+            sb.AppendLine($"{(ConditionExpression as IPrintable).PrettyPrintAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}},");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}FulfielldBlock {{");
+            sb.AppendLine($"{(FulfielldBlock as IPrintable).PrettyPrintAST(indent + 2)}");
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}}");
+
+            if(AlternativeBlock != null)
+            {
+                sb.Append(",");
+                sb.AppendLine($"{Common.IndentCreator(indent + 1)}FulfielldBlock {{");
+                sb.AppendLine($"{(AlternativeBlock as IPrintable).PrettyPrintAST(indent + 2)}");
+                sb.AppendLine($"{Common.IndentCreator(indent + 1)}}}");
+            }
+
+            sb.AppendLine($"{Common.IndentCreator(indent)}}};");
+
+            string result = sb.ToString();
+            return result;
         }
 
         public override string ToString()

@@ -26,5 +26,10 @@ namespace EdenClasslibrary.Types.LanguageTypes
             if (Type == other.Type) return true;
             return false;
         }
+
+        public override string ToString()
+        {
+            return $"Return : {WrappedObject.ToString()}";
+        }
     }
 }

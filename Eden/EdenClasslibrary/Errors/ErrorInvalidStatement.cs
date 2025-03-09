@@ -2,13 +2,13 @@
 
 namespace EdenClasslibrary.Errors
 {
-    public class ErrorDevideByZero : AError
+    public class ErrorInvalidStatement : AError
     {
-        private ErrorDevideByZero() { }
+        private ErrorInvalidStatement() { }
 
         public static AError Create()
         {
-            return new ErrorDevideByZero();
+            return new ErrorInvalidStatement();
         }
         public static IObject CreateErrorObject()
         {
@@ -17,12 +17,12 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $">     Invalid operation!";
+            return $">     Invalid statement!";
         }
 
         public override string GetMessage()
         {
-            return $"> It is not possible to devide by zero!";
+            return $"> Provided statement is not valid!";
         }
     }
 }

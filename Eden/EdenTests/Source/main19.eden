@@ -1,0 +1,3 @@
+Function Int Add(Var Int A, Var Int B){
+	Return A+B;
+};

@@ -1,4 +1,5 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Utility;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
@@ -47,7 +48,22 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(CallExpression)} {{");
+            sb.AppendLine($"{(Function as IPrintable).PrettyPrintAST(indent + 1)},");
+
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}Arguments {{");
+            foreach(Expression argument in Arguments)
+            {
+                sb.AppendLine($"{(argument as IPrintable).PrettyPrintAST(indent + 2)},");
+            }
+            sb.AppendLine($"{Common.IndentCreator(indent + 1)}}};");
+
+            sb.Append($"{Common.IndentCreator(indent)}}};");
+
+            string result = sb.ToString();
+            return result;
         }
 
         public string ToASTFormat()

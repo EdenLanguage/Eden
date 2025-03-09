@@ -1,13 +1,14 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Utility;
-using Pastel;
-using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class IntExpression : Expression, IPrintable
+    public class IntExpression : VariableValueExpression, IPrintable
     {
+        public IntExpression(Token token) : base(token, typeof(IntObject)) { }
+
         public int Value
         {
             get
@@ -16,9 +17,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
                 bool couldParse = int.TryParse(NodeToken.LiteralValue, out parsed);
                 return parsed;
             }
-        }
-        public IntExpression(Token token) : base(token)
-        {
         }
 
         public override string ToString()

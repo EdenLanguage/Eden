@@ -1,24 +1,11 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
 using EdenClasslibrary.Utility;
-using Pastel;
-using System.Drawing;
-using System.Reflection;
-using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class VariableTypeExpression : Expression, IPrintable
+    public class VariableTypeExpression : VariableValueExpression, IPrintable
     {
-        public string Type
-        {
-            get
-            {
-                return NodeToken.LiteralValue;
-            }
-        }
-        public VariableTypeExpression(Token token) : base(token)
-        {
-        }
+        public VariableTypeExpression(Token token) : base(token, TypeTokenMapper.TypeFromToken(token)) { }
         public override string ToString()
         {
             return PrettyPrint();
@@ -31,7 +18,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent)}{nameof(VariableTypeExpression)} {{ {Type} }}";
+            return $"{Common.IndentCreator(indent)}{nameof(VariableTypeExpression)} {{ {Type.Name } }}";
         }
 
         public string PrettyPrint(int indents = 0)

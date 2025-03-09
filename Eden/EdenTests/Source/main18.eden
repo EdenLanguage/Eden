@@ -1,0 +1,14 @@
+Var Int counter = 10;
+Var Int length = 20;
+Var Float pi = 3.14;
+If(counter > length){
+	Return counter + length;
+}
+Else{
+	If(pi < 3){
+		Return length * pi;
+	}
+	Else{
+		Return pi;
+	};
+};
