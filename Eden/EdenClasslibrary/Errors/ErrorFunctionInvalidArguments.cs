@@ -21,12 +21,12 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $">     Invalid function call!";
+            return $"Invalid function call!";
         }
 
         public override string GetMessage()
         {
-            return $"> There is no definition for function with that name that has provided amount of arguments!";
+            return $"There is no definition for function with that name that has provided amount of arguments!";
         }
     }
 }

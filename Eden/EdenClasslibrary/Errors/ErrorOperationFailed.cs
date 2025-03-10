@@ -27,12 +27,12 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $">     Expression evaluation failed! {_left.ToString()} {_operatorToken} {_right.ToString()}";
+            return $"Expression evaluation failed! {_left.ToString()} {_operatorToken} {_right.ToString()}";
         }
 
         public override string GetMessage()
         {
-            return $"> There was a fatal error while evaluation expression with types: {_left.Type} {_operatorToken} {_right.Type}";
+            return $"There was a fatal error while evaluation expression with types: {_left.Type} {_operatorToken} {_right.Type}";
         }
     }
 }

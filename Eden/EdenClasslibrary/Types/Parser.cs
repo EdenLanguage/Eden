@@ -2,6 +2,7 @@
 using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.Enums;
+using System.Data;
 using System.Text;
 
 namespace EdenClasslibrary.Parser
@@ -55,6 +56,8 @@ namespace EdenClasslibrary.Parser
             // TODO: Implement logical like &&, ||
             _precedenceMapping[TokenType.Bool] = Precedence.Logical;
 
+            _precedenceMapping[TokenType.LeftSquareBracket] = Precedence.Index;
+
             // == !=
             _precedenceMapping[TokenType.Inequal] = Precedence.Comparison;
             _precedenceMapping[TokenType.Equal] = Precedence.Comparison;
@@ -99,6 +102,7 @@ namespace EdenClasslibrary.Parser
             RegisterBinaryMapping(TokenType.GreaterOrEqual, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.LesserOrEqual, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.LeftParenthesis, ParseCallExpression);
+            RegisterBinaryMapping(TokenType.LeftSquareBracket, ParseIndexExpression);
             #endregion
         }
         #endregion
@@ -213,6 +217,75 @@ namespace EdenClasslibrary.Parser
             return leftNodeExpression;
         }
 
+        private Expression ParseListArguments(VariableTypeExpression variableTypeExp)
+        {
+            ListArgumentsExpression arguments = new ListArgumentsExpression(CurrentToken);
+            arguments.Type = variableTypeExp;
+
+            if (!CurrentToken.IsType(TokenType.LeftSquareBracket))
+            {
+                return new InvalidExpression(CurrentToken);
+            }
+
+            if (NextToken.IsType(TokenType.RightSquareBracket))
+            {
+                //  Empty arguments list.
+                LoadNextToken();
+                return arguments;
+            }
+
+            LoadNextToken();
+            while (!CurrentToken.IsType(TokenType.RightBracket))
+            {
+                Expression singleArgument = ParseExpression(Precedence.Lowest);
+                arguments.AddArgument(singleArgument);
+                
+                //  Eat <argument> and <,>
+                LoadNextToken();
+
+                if (CurrentToken.IsType(TokenType.RightSquareBracket))
+                {
+                    break;
+                }
+
+                LoadNextToken();
+
+            }
+
+            return arguments;
+        }
+
+        private Expression ParseListSize(VariableTypeExpression variableTypeExp)
+        {
+            ListArgumentsExpression arguments = new ListArgumentsExpression(CurrentToken);
+            arguments.Type = variableTypeExp;
+
+            if (!CurrentToken.IsType(TokenType.LeftParenthesis))
+            {
+                return new InvalidExpression(CurrentToken);
+            }
+            LoadNextToken();
+
+            Expression expression = null;
+            if (!CurrentToken.IsType(TokenType.Int))
+            {
+                return new InvalidExpression(CurrentToken);
+            }
+            else
+            {
+                expression = ParseExpression(Precedence.Lowest);
+                if(expression is not IntExpression)
+                {
+                    return new InvalidExpression(CurrentToken);
+                }
+            }
+            LoadNextToken();
+
+            arguments.SetCapacity((expression as IntExpression).Value);
+
+            return arguments;
+        }
+
         private Expression ParseUnaryExpression()
         {
             Token token = CurrentToken;
@@ -288,6 +361,24 @@ namespace EdenClasslibrary.Parser
             }
 
             return callExp;
+        }
+
+        private Expression ParseIndexExpression(Expression left)
+        {
+            IndexExpression indexExp = new IndexExpression(CurrentToken);
+            LoadNextToken();
+
+            Expression index = ParseExpression(Precedence.Lowest);
+            if (index is InvalidExpression isInvalidIndexExp)
+            {
+                return isInvalidIndexExp;
+            }
+            LoadNextToken();
+
+            indexExp.Object = left;
+            indexExp.Index = index;
+
+            return indexExp;
         }
 
         private Expression ParseIdentifierExpression()
@@ -428,6 +519,9 @@ namespace EdenClasslibrary.Parser
                             break;
                         case "Var":
                             statement = ParseVariableStatement();
+                            break;
+                        case "List":
+                            statement = ParseListStatement();
                             break;
                         default:
                             statement = ParseExpressionStatement();
@@ -587,6 +681,80 @@ namespace EdenClasslibrary.Parser
             }
 
             return file;
+        }
+
+        /// <summary>
+        /// Parse List declaration statements.
+        /// Signature: '<List> <Type> <Identifier> <=> ( (<[> <Values> <]>) | (<(> <Size> <)>) ) <;>'
+        /// Example: 'List Int primes = [2,3,5,7];'
+        /// </summary>
+        /// <returns></returns>
+        private Statement ParseListStatement()
+        {
+            ListDeclarationStatement list = new ListDeclarationStatement(CurrentToken);
+            if (CurrentToken.Keyword != TokenType.Keyword)
+            {
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration, CurrentToken);
+            }
+
+            VariableTypeExpression variableTypeExp = null;
+
+            // Check whether it is a type
+            if (NextToken.IsVariableType())
+            {
+                LoadNextToken();
+                variableTypeExp = new VariableTypeExpression(CurrentToken);
+            }
+            else
+            {
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration, NextToken);
+            }
+
+            LoadNextToken();
+            IdentifierExpression identifierExp = new IdentifierExpression(CurrentToken);
+
+            if (NextToken.IsAssignType())
+            {
+                // Consume '='
+                LoadNextToken();
+            }
+            else
+            {
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration, NextToken);
+            }
+
+            LoadNextToken();
+
+            Expression expression = null;
+            if (CurrentToken.IsType(TokenType.LeftSquareBracket))
+            {
+                expression = ParseListArguments(variableTypeExp);
+            }
+            else if (CurrentToken.IsType(TokenType.LeftParenthesis))
+            {
+                expression = ParseListSize(variableTypeExp);
+            }
+            else
+            {
+                return ParseInvalidStatement(ParserErrorType.InvalidSyntax, NextToken);
+            }
+
+            //  Eat <]> or <)>
+            LoadNextToken();
+
+            //  If next token is not Semicolon then expression was not parsed properly...
+            if (!CurrentToken.IsSemicolon())
+            {
+                return ParseInvalidStatement(ParserErrorType.InvalidVariableDeclaration_MissingSemicolon, CurrentToken);
+            }
+
+            LoadNextToken();
+
+            list.Type = variableTypeExp;
+            list.Identifier = identifierExp;
+            list.Expression = expression;
+
+            return list;
         }
 
         private Statement ParseVariableStatement()

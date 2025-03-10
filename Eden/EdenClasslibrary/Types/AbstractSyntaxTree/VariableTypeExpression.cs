@@ -8,7 +8,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public VariableTypeExpression(Token token) : base(token, TypeTokenMapper.TypeFromToken(token)) { }
         public override string ToString()
         {
-            return PrettyPrint();
+            return Type.Name;
         }
 
         public string ToASTFormat()
@@ -18,7 +18,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent)}{nameof(VariableTypeExpression)} {{ {Type.Name } }}";
+            return $"{Common.IndentCreator(indent)}{nameof(VariableTypeExpression)} {{ {Type } }}";
         }
 
         public string PrettyPrint(int indents = 0)

@@ -1,4 +1,6 @@
 ﻿
+using System.Net.Http.Headers;
+
 namespace EdenClasslibrary.Types.LanguageTypes
 {
     /// <summary>
@@ -6,7 +8,20 @@ namespace EdenClasslibrary.Types.LanguageTypes
     /// </summary>
     public class StringObject : IObject
     {
-        public Type Type => throw new NotImplementedException();
+        public Type Type
+        {
+            get
+            {
+                return typeof(StringObject);
+            }
+        }
+
+        public string Value { get; set; }
+
+        public static IObject Create(string initialValue)
+        {
+            return new StringObject();
+        }
 
         public string AsString()
         {

@@ -14,6 +14,7 @@ namespace EdenClasslibrary.Types
             "Function",
             "Return",
             "If",
+            "List",
             "Null",
             "Else",
             "Structure",
@@ -32,6 +33,7 @@ namespace EdenClasslibrary.Types
                 case "Var": 
                 case "Return": 
                 case "Structure": 
+                case "List": 
                     type = TokenType.Keyword; break;
                 case "Null":
                     type = TokenType.Null; break;

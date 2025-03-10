@@ -4,22 +4,16 @@ using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    /// <summary>
-    /// Variable declaration expression. Example:
-    ///     'Var Int counter = 50;'
-    /// </summary>
-    public class VariableDeclarationStatement : Statement, IPrintable
+    public class ListDeclarationStatement : Statement, IPrintable
     {
         public VariableTypeExpression Type { get; set; }
         public IdentifierExpression Identifier { get; set; }
         public Expression Expression { get; set; }
-        public VariableDeclarationStatement(Token token) : base(token)
-        {
-        }
+        public ListDeclarationStatement(Token token) : base(token) { }
 
         public override string ToString()
         {
-            return PrettyPrint();
+            throw new NotImplementedException();
         }
 
         public string ToASTFormat()
@@ -31,7 +25,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(VariableDeclarationStatement)} {{");
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(ListDeclarationStatement)} {{");
             sb.AppendLine($"{(Type as IPrintable).PrettyPrintAST(indent + 1)},");
             sb.AppendLine($"{(Identifier as IPrintable).PrettyPrintAST(indent + 1)},");
             sb.AppendLine($"{(Expression as IPrintable).PrettyPrintAST(indent + 1)}");
@@ -44,11 +38,12 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public string PrettyPrint(int indents = 0)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"{Common.IndentCreator(indents)}Var");
-            sb.Append($" {Type.PrettyPrint()}");
-            sb.Append($" {Identifier.PrettyPrint()}");
-            sb.Append($" = ");
-            sb.Append($"{(Expression as IPrintable).PrettyPrint()};");
+
+            sb.Append("List");
+            sb.Append($" {(Type as IPrintable).PrettyPrint()}");
+            sb.Append($" {(Identifier as IPrintable).PrettyPrint()}");
+            sb.Append($" = {(Expression as IPrintable).PrettyPrint()};");
+
             string result = sb.ToString();
             return result;
         }
