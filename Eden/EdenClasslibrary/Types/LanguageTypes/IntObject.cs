@@ -1,7 +1,4 @@
-﻿
-using System.Reflection.Metadata.Ecma335;
-
-namespace EdenClasslibrary.Types.LanguageTypes
+﻿namespace EdenClasslibrary.Types.LanguageTypes
 {
     public class IntObject : IObject
     {

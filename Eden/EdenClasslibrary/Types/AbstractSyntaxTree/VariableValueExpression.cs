@@ -16,7 +16,7 @@
         }
         public string AsString()
         {
-            return $"{Type.ToString().Substring(Type.ToString().LastIndexOf('.')+1)}";
+            return Type.Name;
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
 using EdenClasslibrary.Utility;
-using Pastel;
-using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree

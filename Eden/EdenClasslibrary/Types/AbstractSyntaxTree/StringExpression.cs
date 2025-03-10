@@ -1,8 +1,5 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
 using EdenClasslibrary.Utility;
-using Pastel;
-using System.Drawing;
-using System.Globalization;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
@@ -18,7 +15,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
             }
         }
         public StringExpression(Token token) : base(token) { }
-
+        
         public override string ToString()
         {
             return PrettyPrint();

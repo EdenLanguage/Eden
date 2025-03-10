@@ -2,8 +2,10 @@
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
+using EdenClasslibrary.Types.LanguageTypes.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.InteropServices;
 
 namespace EdenClasslibrary.Types
 {
@@ -39,6 +41,10 @@ namespace EdenClasslibrary.Types
             {
                 return EvaluateIntExpression(root as IntExpression);
             }
+            else if (root is StringExpression)
+            {
+                return EvaluateStringExpression(root as StringExpression);
+            }
             else if (root is FloatExpression)
             {
                 return EvaluateFloatExpression(root as FloatExpression);
@@ -67,9 +73,17 @@ namespace EdenClasslibrary.Types
             {
                 return EvaluateVariableDeclarationExpression(root as VariableDefinitionExpression, env);
             }
+            else if (root is ListArgumentsExpression)
+            {
+                return EvaluateListDeclarationExpression(root as ListArgumentsExpression, env);
+            }
             else if (root is CallExpression)
             {
                 return EvaluateCallExpression(root as CallExpression, env);
+            }
+            else if (root is IndexExpression)
+            {
+                return EvaluateIndexExpression(root as IndexExpression, env);
             }
             else
             {
@@ -98,6 +112,10 @@ namespace EdenClasslibrary.Types
             else if (root is VariableDeclarationStatement)
             {
                 return EvaluateVariableDeclarationStatement(root as VariableDeclarationStatement, env);
+            }
+            else if (root is ListDeclarationStatement)
+            {
+                return EvaluateListDeclarationStatement(root as ListDeclarationStatement, env);
             }
             else if (root is InvalidStatement)
             {
@@ -185,6 +203,31 @@ namespace EdenClasslibrary.Types
 
             IObject rightSide = EvaluateExpression(varStatement.Expression, env);
 
+            if(rightSide is ErrorObject asError)
+            {
+                return asError;
+            }
+
+            return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+        }
+
+        private IObject EvaluateListDeclarationStatement(ASTreeNode root, Environment env)
+        {
+            ListDeclarationStatement list = root as ListDeclarationStatement;
+
+            //  Will be used to check whether this assingment is possible.
+            VariableTypeExpression type = list.Type;
+
+            //  Variable with this name should not exist before this declaration!
+            IdentifierExpression identifier = list.Identifier;
+
+            IObject rightSide = EvaluateExpression(list.Expression, env);
+
+            if(rightSide is ErrorObject asError)
+            {
+                return asError;
+            }
+
             return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
         }
 
@@ -251,6 +294,16 @@ namespace EdenClasslibrary.Types
                 // TODO - handle error!
             }
             return FloatObject.Create(floatExp.Value);
+        }
+
+        private IObject EvaluateStringExpression(ASTreeNode root)
+        {
+            StringExpression stringExp = root as StringExpression;
+            if (stringExp is null)
+            {
+                // TODO - handle error!
+            }
+            return StringObject.Create(stringExp.Value);
         }
 
         private IObject EvaluateBoolExpression(ASTreeNode root)
@@ -351,6 +404,72 @@ namespace EdenClasslibrary.Types
         {
             VariableDefinitionExpression varDef = root as VariableDefinitionExpression;
             return VariableSignatureObject.Create(varDef.Name.Name, varDef.Type.Type);
+        }
+
+        private IObject EvaluateListDeclarationExpression(ASTreeNode root, Environment env)
+        {
+            ListArgumentsExpression listArgs = root as ListArgumentsExpression;
+            
+            List<IObject> argsValues = new List<IObject>();
+            if (listArgs.Arguments.Count > 0)
+            {
+                foreach (Expression exp in listArgs.Arguments)
+                {
+                    IObject value = EvaluateExpression(exp, env);
+
+                    if(value.Type != listArgs.Type.Type)
+                    {
+                        return ErrorCollectionArgumentTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type);
+                    }
+
+                    argsValues.Add(value);
+                }
+            }
+            else if (listArgs.Arguments.Capacity > 0)
+            {
+                for (int i = 0; i < listArgs.Capacity; i++)
+                {
+                    IObject value = ObjectFactory.Create(listArgs.Type.Type);
+                    
+                    if (value.Type != listArgs.Type.Type)
+                    {
+                        return ErrorCollectionArgumentTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type);
+                    }
+
+                    argsValues.Add(value);
+                }
+            }
+
+            return ObjectCollection.Create(listArgs.Type.Type, argsValues.ToArray());
+        }
+
+        private IObject EvaluateIndexExpression(ASTreeNode root, Environment env)
+        {
+            IndexExpression indexExp = root as IndexExpression;
+            IObject obj = EvaluateExpression(indexExp.Object, env);
+            IObject idx = EvaluateExpression(indexExp.Index, env);
+            IObject result = null;
+
+            if(obj is not IIndexable notIndexableError)
+            {
+                return ErrorObjectTypeIsNotIndexable.CreateErrorObject(obj);
+            }
+
+            if (idx is not IntObject notIntIndexer || (idx is IntObject asIntObj && asIntObj.Value < 0))
+            {
+                return ErrorIndexNotValid.CreateErrorObject(idx);
+            }
+
+            try
+            {
+                result = (obj as IIndexable)[(idx as IntObject).Value];
+            }
+            catch(ArgumentOutOfRangeException exception)
+            {
+                return ErrorArgumentOutOfRange.CreateErrorObject(obj as IIndexable, idx as IntObject);
+            }
+
+            return result;
         }
 
         private IObject EvaluateCallExpression(ASTreeNode root, Environment env)

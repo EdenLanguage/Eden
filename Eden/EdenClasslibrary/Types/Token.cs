@@ -39,10 +39,12 @@ namespace EdenClasslibrary.Types
 
         //  Symbols
         Semicolon,          // ;
-        LeftParenthesis,    // {
-        RightParenthesis,   // }
-        LeftBracket,        // [
-        RightBracket,       // ]
+        LeftParenthesis,    // (
+        RightParenthesis,   // )
+        LeftBracket,        // {
+        RightBracket,       // }
+        LeftSquareBracket,  // [
+        RightSquareBracket, // ]
 
         //  Variable values for variable types: 'Float' -> '0.123123' 
         Bool,

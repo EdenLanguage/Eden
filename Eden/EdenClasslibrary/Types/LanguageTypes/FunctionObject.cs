@@ -4,7 +4,13 @@ namespace EdenClasslibrary.Types.LanguageTypes
 {
     public class FunctionObject : IObject
     {
-        public Type Type => throw new NotImplementedException();
+        public Type Type
+        {
+            get
+            {
+                return typeof(FunctionObject);
+            }
+        }
         public Expression[] Arguments { get; set; }
         public BlockStatement Body { get; set; }
 

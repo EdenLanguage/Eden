@@ -1,0 +1,6 @@
+List Int primes = [2, 3, 5, 7, 9];
+
+Var Int max = Max(primes);
+Var Int min = Min(primes);
+Var Int min = Length(primes);
+Var Int length = Length("abracadabra");

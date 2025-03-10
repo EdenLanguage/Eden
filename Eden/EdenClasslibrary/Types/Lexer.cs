@@ -101,6 +101,8 @@ namespace EdenClasslibrary.Types
                 case '/': nextToken = CreateNewToken(TokenType.Slash); break;
                 case '(': nextToken = CreateNewToken(TokenType.LeftParenthesis); break;
                 case ')': nextToken = CreateNewToken(TokenType.RightParenthesis); break;
+                case '[': nextToken = CreateNewToken(TokenType.LeftSquareBracket); break;
+                case ']': nextToken = CreateNewToken(TokenType.RightSquareBracket); break;
                 case '{': nextToken = CreateNewToken(TokenType.LeftBracket); break;
                 case '}': nextToken = CreateNewToken(TokenType.RightBracket); break;
                 case '"':

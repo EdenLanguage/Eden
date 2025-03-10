@@ -3,7 +3,7 @@
 	- [ ] ...
 - [ ] Language:
 	- [ ] [[For loop]] are still not implemented. But their overall semantic should contain Body and counter.
-	- [ ] [[If Else]] statements.
+	- [x] [[If Else]] statements.
 	- [ ] [[Structure]]
 - [ ] [[Evaluator]]
 	- [ ] Optimize:
