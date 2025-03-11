@@ -91,33 +91,74 @@ namespace EdenClasslibrary.Types
             //  Int
             RegisterMethod(typeof(IntObject), TokenType.Plus, typeof(IntObject), Int_Add_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.Plus, typeof(FloatObject), Func_Float_Add_Float);
+            RegisterMethod(typeof(IntObject), TokenType.Plus, typeof(CharObject), Func_Float_Add_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.Minus, typeof(IntObject), Int_Subtract_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.Minus, typeof(FloatObject), Func_Float_Subtract_Float);
+            RegisterMethod(typeof(IntObject), TokenType.Minus, typeof(CharObject), Func_Float_Subtract_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.Star, typeof(IntObject), Int_Multiply_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.Star, typeof(FloatObject), Func_Float_Multiply_Float);
+            RegisterMethod(typeof(IntObject), TokenType.Star, typeof(CharObject), Func_Float_Multiply_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.Slash, typeof(IntObject), Int_Devide_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.Slash, typeof(FloatObject), Func_Float_Division_Float);
+            RegisterMethod(typeof(IntObject), TokenType.Slash, typeof(CharObject), Func_Float_Division_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.Equal, typeof(IntObject), Int_Equal_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.Equal, typeof(FloatObject), Func_Float_Equal_Float);
+            RegisterMethod(typeof(IntObject), TokenType.Equal, typeof(CharObject), Func_Float_Equal_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.Inequal, typeof(IntObject), Int_InEqual_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.Inequal, typeof(FloatObject), Func_Float_InEqual_Float);
+            RegisterMethod(typeof(IntObject), TokenType.Inequal, typeof(CharObject), Func_Float_InEqual_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.LeftArrow, typeof(IntObject), Int_Smaller_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.LeftArrow, typeof(FloatObject), Func_Float_Lesser_Float);
+            RegisterMethod(typeof(IntObject), TokenType.LeftArrow, typeof(CharObject), Func_Float_Lesser_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.RightArrow, typeof(IntObject), Int_Bigger_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.RightArrow, typeof(FloatObject), Func_Float_Greater_Float);
+            RegisterMethod(typeof(IntObject), TokenType.RightArrow, typeof(CharObject), Func_Float_Greater_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.GreaterOrEqual, typeof(IntObject), Int_GreaterEqual_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.GreaterOrEqual, typeof(FloatObject), Func_Float_GreaterEqual_Float);
+            RegisterMethod(typeof(IntObject), TokenType.GreaterOrEqual, typeof(CharObject), Func_Float_GreaterEqual_Float);
 
             RegisterMethod(typeof(IntObject), TokenType.LesserOrEqual, typeof(IntObject), Int_SmallerEqual_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.LesserOrEqual, typeof(FloatObject), Func_Float_LesserEqual_Float);
+            RegisterMethod(typeof(IntObject), TokenType.LesserOrEqual, typeof(CharObject), Func_Float_LesserEqual_Float);
+
+            //  Char
+            RegisterMethod(typeof(CharObject), TokenType.Plus, typeof(CharObject), Char_Add_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.Plus, typeof(IntObject), Func_Float_Add_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.Minus, typeof(CharObject), Char_Subtract_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.Minus, typeof(IntObject), Func_Float_Subtract_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.Star, typeof(CharObject), Char_Multiply_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.Star, typeof(IntObject), Func_Float_Multiply_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.Slash, typeof(CharObject), Char_Divide_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.Slash, typeof(IntObject), Func_Float_Division_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.Equal, typeof(CharObject), Char_Equal_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.Equal, typeof(IntObject), Func_Float_Equal_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.Inequal, typeof(CharObject), Char_InEqual_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.Inequal, typeof(IntObject), Func_Float_InEqual_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.LeftArrow, typeof(CharObject), Char_Smaller_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.LeftArrow, typeof(IntObject), Func_Float_Lesser_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.RightArrow, typeof(CharObject), Char_Greater_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.RightArrow, typeof(IntObject), Func_Float_Greater_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.GreaterOrEqual, typeof(CharObject), Char_BiggerEqual_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.GreaterOrEqual, typeof(IntObject), Func_Float_GreaterEqual_Float);
+
+            RegisterMethod(typeof(CharObject), TokenType.LesserOrEqual, typeof(CharObject), Char_SmallerEqual_Char_Func);
+            RegisterMethod(typeof(CharObject), TokenType.LesserOrEqual, typeof(IntObject), Func_Float_LesserEqual_Float);
 
             //  Bool
             RegisterMethod(typeof(BoolObject), TokenType.Equal, typeof(BoolObject), Bool_Equal_Bool_Func);
@@ -157,6 +198,15 @@ namespace EdenClasslibrary.Types
             //  Null
             RegisterMethod(typeof(NullObject), TokenType.Equal, typeof(NullObject), Null_Equal_Null_Func);
             RegisterMethod(typeof(NullObject), TokenType.Inequal, typeof(NullObject), Null_InEqual_Null_Func);
+
+            //  String
+            RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(CharObject), String_Plus_Any_Func);
+            RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(StringObject), String_Plus_Any_Func);
+            RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(IntObject), String_Plus_Any_Func);
+            RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(FloatObject), String_Plus_Any_Func);
+            RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(NullObject), String_Plus_Any_Func);
+            RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(BoolObject), String_Plus_Any_Func);
+
             #endregion
 
             #region Register unary functions
@@ -314,6 +364,72 @@ namespace EdenClasslibrary.Types
         #endregion
 
         #region Binary evaluation functions
+        #region Char
+        private IObject Char_Add_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                int result = (left as CharObject).Value + (right as CharObject).Value;
+                int r = result % 255;
+                char resAsChar = (char)r;
+                return CharObject.Create(resAsChar);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_Subtract_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                int result = (left as CharObject).Value - (right as CharObject).Value;
+                int r = result % 255;
+                char res = '0';
+                if (r < 0)
+                {
+                    res = (char)(255 + r);
+                }
+                else
+                {
+                    res = (char)r;
+                }
+                return CharObject.Create(res);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_Multiply_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                int result = (left as CharObject).Value * (right as CharObject).Value;
+                int r = result % 255;
+                char resAsChar = (char)r;
+                return CharObject.Create(resAsChar);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_Divide_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                int result = (left as CharObject).Value / (right as CharObject).Value;
+                int r = result % 255;
+                char resAsChar = (char)r;
+                return CharObject.Create(resAsChar);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        #endregion
         private IObject Int_Add_Int_Func(IObject left, IObject right)
         {
             try
@@ -325,6 +441,114 @@ namespace EdenClasslibrary.Types
                 return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
             }
         }
+        private IObject Char_Equal_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create((left as CharObject).Value == (right as CharObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_InEqual_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create((left as CharObject).Value != (right as CharObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_Smaller_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create((left as CharObject).Value < (right as CharObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_Greater_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create((left as CharObject).Value > (right as CharObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_SmallerEqual_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create((left as CharObject).Value <= (right as CharObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        private IObject Char_BiggerEqual_Char_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create((left as CharObject).Value >= (right as CharObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        #region String
+        private IObject String_Plus_Any_Func(IObject left, IObject right)
+        {
+            try
+            {
+                string value = string.Empty;
+                if(right is CharObject AsChar)
+                {
+                    value = AsChar.Value.ToString();
+                }
+                else if (right is StringObject AsString)
+                {
+                    value = AsString.Value.ToString();
+                }
+                else if (right is IntObject AsInt)
+                {
+                    value = AsInt.Value.ToString();
+                }
+                else if (right is BoolObject asBool)
+                {
+                    value = asBool.Value.ToString();
+                }
+                else if(right is NullObject AsNull)
+                {
+                    value = AsNull.Value.ToString();
+                }
+                else if(right is FloatObject AsFloat)
+                {
+                    value = AsFloat.Value.ToString();
+                }
+                else
+                {
+
+                }
+                return StringObject.Create((left as StringObject).Value += value);
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+            }
+        }
+        #endregion
 
         /// <summary>
         /// This function can handle adding of Int to Float, Float to Int and Float to Float.
@@ -343,6 +567,14 @@ namespace EdenClasslibrary.Types
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
                     return FloatObject.Create(OnlyRF.Value + LI.Value);
+                }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return IntObject.Create(LeftChar.Value + RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return IntObject.Create(LeftInt.Value + RightChar.Value);
                 }
                 else
                 {
@@ -373,6 +605,14 @@ namespace EdenClasslibrary.Types
                 {
                     return FloatObject.Create(LI.Value - OnlyRF.Value);
                 }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return IntObject.Create(LeftChar.Value - RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return IntObject.Create(LeftInt.Value - RightChar.Value);
+                }
                 else
                 {
                     return FloatObject.Create((left as FloatObject).Value - (right as FloatObject).Value);
@@ -401,6 +641,14 @@ namespace EdenClasslibrary.Types
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
                     return FloatObject.Create(OnlyRF.Value * LI.Value);
+                }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return IntObject.Create(LeftChar.Value * RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return IntObject.Create(LeftInt.Value * RightChar.Value);
                 }
                 else
                 {
@@ -437,6 +685,14 @@ namespace EdenClasslibrary.Types
                 {
                     return FloatObject.Create(LI.Value / OnlyRF.Value);
                 }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return IntObject.Create(LeftChar.Value / RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return IntObject.Create(LeftInt.Value / RightChar.Value);
+                }
                 else
                 {
                     return FloatObject.Create((left as FloatObject).Value / (right as FloatObject).Value);
@@ -466,6 +722,14 @@ namespace EdenClasslibrary.Types
                 {
                     return BoolObject.Create(OnlyRF.Value == LI.Value);
                 }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return BoolObject.Create(LeftChar.Value == RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return BoolObject.Create(LeftInt.Value == RightChar.Value);
+                }
                 else
                 {
                     return BoolObject.Create((left as FloatObject).Value == (right as FloatObject).Value);
@@ -488,6 +752,14 @@ namespace EdenClasslibrary.Types
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
                     return BoolObject.Create(OnlyRF.Value != LI.Value);
+                }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return BoolObject.Create(LeftChar.Value != RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return BoolObject.Create(LeftInt.Value != RightChar.Value);
                 }
                 else
                 {
@@ -512,6 +784,14 @@ namespace EdenClasslibrary.Types
                 {
                     return BoolObject.Create(OnlyRF.Value > LI.Value);
                 }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return BoolObject.Create(LeftChar.Value > RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return BoolObject.Create(LeftInt.Value > RightChar.Value);
+                }
                 else
                 {
                     return BoolObject.Create((left as FloatObject).Value > (right as FloatObject).Value);
@@ -534,6 +814,14 @@ namespace EdenClasslibrary.Types
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
                     return BoolObject.Create(OnlyRF.Value < LI.Value);
+                }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return BoolObject.Create(LeftChar.Value < RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return BoolObject.Create(LeftInt.Value < RightChar.Value);
                 }
                 else
                 {
@@ -558,6 +846,14 @@ namespace EdenClasslibrary.Types
                 {
                     return BoolObject.Create(OnlyRF.Value >= LI.Value);
                 }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return BoolObject.Create(LeftChar.Value >= RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return BoolObject.Create(LeftInt.Value >= RightChar.Value);
+                }
                 else
                 {
                     return BoolObject.Create((left as FloatObject).Value >= (right as FloatObject).Value);
@@ -580,6 +876,14 @@ namespace EdenClasslibrary.Types
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
                     return BoolObject.Create(OnlyRF.Value <= LI.Value);
+                }
+                else if (left is CharObject LeftChar && right is IntObject RightInt)
+                {
+                    return BoolObject.Create(LeftChar.Value <= RightInt.Value);
+                }
+                else if (left is IntObject LeftInt && right is CharObject RightChar)
+                {
+                    return BoolObject.Create(LeftInt.Value <= RightChar.Value);
                 }
                 else
                 {

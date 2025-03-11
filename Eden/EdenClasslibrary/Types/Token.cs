@@ -51,6 +51,7 @@ namespace EdenClasslibrary.Types
         Int,
         Float,
         String,
+        Char,
         Null,
     }
 

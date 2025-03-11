@@ -48,11 +48,11 @@ namespace EdenTests.EvaluatorTests
         {
             string[] code =
             [
-                "List Int primes = [1,2,3,4];\r\nLength(primes);",
-                "List Int primes = [1,2,3,4,5,6,7,8,9];\r\nLength(primes);",
+                "List Int primes = [1i,2i,3i,4i];\r\nLength(primes);",
+                "List Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i];\r\nLength(primes);",
                 "List Int primes = [];\r\nLength(primes);",
-                "List Int primes = (10);\r\nLength(primes);",
-                "List Int primes = (1);\r\nLength(primes);",
+                "List Int primes = (10i);\r\nLength(primes);",
+                "List Int primes = (1i);\r\nLength(primes);",
             ];
 
             string[] expectedResults =
@@ -96,18 +96,18 @@ namespace EdenTests.EvaluatorTests
             string[] code =
             [
                 //  Arguments as radians
-                "SinusR(0);",
-                "SinusR(30);",
-                "SinusR(45);",
-                "SinusR(60);",
-                "SinusR(90);",
+                "SinusR(0f);",
+                "SinusR(30f);",
+                "SinusR(45f);",
+                "SinusR(60f);",
+                "SinusR(90f);",
 
                 //  Arguments as degrees
-                "SinusD(0);",
-                "SinusD(30);",
-                "SinusD(45);",
-                "SinusD(60);",
-                "SinusD(90);",
+                "SinusD(0f);",
+                "SinusD(30f);",
+                "SinusD(45f);",
+                "SinusD(60f);",
+                "SinusD(90f);",
             ];
 
             float[] expectedResults =
@@ -160,18 +160,18 @@ namespace EdenTests.EvaluatorTests
             string[] code =
             [
                 //  Arguments as radians
-                "CosinusR(0);",
-                "CosinusR(30);",
-                "CosinusR(45);",
-                "CosinusR(60);",
-                "CosinusR(90);",
+                "CosinusR(0f);",
+                "CosinusR(30f);",
+                "CosinusR(45f);",
+                "CosinusR(60f);",
+                "CosinusR(90f);",
 
                 //  Arguments as degrees
-                "CosinusD(0);",
-                "CosinusD(30);",
-                "CosinusD(45);",
-                "CosinusD(60);",
-                "CosinusD(90);",
+                "CosinusD(0f);",
+                "CosinusD(30f);",
+                "CosinusD(45f);",
+                "CosinusD(60f);",
+                "CosinusD(90f);",
             ];
 
             float[] expectedResults =
@@ -222,11 +222,11 @@ namespace EdenTests.EvaluatorTests
         {
             string[] code =
             [
-                "List Int primes = [1,2,3,4];\r\nMin(primes);",
-                "List Int primes = [1,2,3,4,5,6,7,8,9];\r\nMin(primes);",
+                "List Int primes = [1i,2i,3i,4i];\r\nMin(primes);",
+                "List Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i];\r\nMin(primes);",
                 "List Int primes = [];\r\nMin(primes);",
-                "List Int primes = (10);\r\nMin(primes);",
-                "List Int primes = (1);\r\nMin(primes);",
+                "List Int primes = (10i);\r\nMin(primes);",
+                "List Int primes = (1i);\r\nMin(primes);",
             ];
 
             string[] expectedTypes =
@@ -284,11 +284,11 @@ namespace EdenTests.EvaluatorTests
         {
             string[] code =
             [
-                "List Int primes = [1,2,3,4];\r\nMax(primes);",
-                "List Int primes = [1,2,3,4,5,6,7,8,9];\r\nMax(primes);",
+                "List Int primes = [1i,2i,3i,4i];\r\nMax(primes);",
+                "List Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i];\r\nMax(primes);",
                 "List Int primes = [];\r\nMax(primes);",
-                "List Int primes = (10);\r\nMax(primes);",
-                "List Int primes = (1);\r\nMax(primes);",
+                "List Int primes = (10i);\r\nMax(primes);",
+                "List Int primes = (1i);\r\nMax(primes);",
             ];
 
             string[] expectedTypes =
@@ -346,8 +346,8 @@ namespace EdenTests.EvaluatorTests
         {
             string[] code =
             [
-                "PrintLine(5);",
-                "PrintLine(3.14);",
+                "PrintLine(5i);",
+                "PrintLine(3.14f);",
                 "PrintLine(\"Hello\");",
                 "PrintLine(\"Hello world!\");",
             ];

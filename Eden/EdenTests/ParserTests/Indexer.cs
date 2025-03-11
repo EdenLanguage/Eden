@@ -4,12 +4,12 @@ using EdenTests.Utility;
 
 namespace EdenTests.ParserTests
 {
-    public class IndexOperation : FileTester
+    public class Indexer : FileTester
     {
         [Fact]
         public void IndexExpression()
         {
-            string code = "array[0];";
+            string code = "array[0i];";
 
             Parser parser = new Parser();
 

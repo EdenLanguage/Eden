@@ -1,2 +1,2 @@
-Var Int counter = 10;
+Var Int counter = 10i;
 Return counter;

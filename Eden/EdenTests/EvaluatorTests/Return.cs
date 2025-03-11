@@ -6,15 +6,15 @@ using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
-    public class ReturnTests
+    public class Return
     {
         [Fact]
         public void Test_1()
         {
             string input = 
-                "10+20*3;" +
-                "Return 10;" +
-                "100;";
+                "10i+20i*3i;" +
+                "Return 10i;" +
+                "100i;";
 
             string expected = "10";
 
@@ -37,9 +37,9 @@ namespace EdenTests.EvaluatorTests
         public void Test_2()
         {
             string input =
-                "10+23*3;" +
-                "Return 5*10-1*(8*2);" +
-                "10123120;";
+                "10i+23i*3i;" +
+                "Return 5i*10i-1i*(8i*2i);" +
+                "10123120i;";
 
             string expected = "10";
 

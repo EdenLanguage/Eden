@@ -1,8 +1,8 @@
 Function Int Fibonacci(Var Int number){
-	If(number <= 1){
+	If(number <= 1i){
 		Return number;
 	};
 
-	Return (Fibonacci(number - 2) + Fibonacci(number - 1)); 
+	Return (Fibonacci(number - 2i) + Fibonacci(number - 1i)); 
 };
-Fibonacci(9);
+Fibonacci(9i);

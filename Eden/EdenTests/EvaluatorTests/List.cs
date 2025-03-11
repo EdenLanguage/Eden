@@ -7,23 +7,23 @@ using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
-    public class ListStatement
+    public class List
     {
         [Fact]
         public void Declaration()
         {
             string[] code = new string[]
             {
-                "List Int primes = [2, 3, 5, 7, 9];",
-                "List Float primes = [2, 1.5, \"John\"];",
+                "List Int primes = [2i, 3i, 5i, 7i, 9i];",
+                "List Float primes = [2i, 1.5f, \"John\"];",
                 "List String primes = [\"John\"];",
-                "List Float pies = [1.1, 2.2, 3.3, 4.4, 5.5];",
+                "List Float pies = [1.1f, 2.2f, 3.3f, 4.4f, 5.5f];",
                 "List String names = [\"Mark\", \"Adam\", \"Jordan\", \"David\", \"Isaac\"];",
-                "List Int temp = (0);",
-                "List Int temp = (1);",
-                "List Float temp = (10);",
+                "List Int temp = (0i);",
+                "List Int temp = (1i);",
+                "List Float temp = (10i);",
                 "List Int temp = [];",
-                "List Int temp = [1];",
+                "List Int temp = [1i];",
             };
 
             string[][] isOutcomeValid = new string[][]

@@ -1,2 +1,2 @@
-List Int primes = [1,2,3,4];
+List Int primes = [1i,2i,3i,4i];
 Length(primes);

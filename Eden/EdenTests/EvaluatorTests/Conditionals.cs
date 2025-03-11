@@ -6,16 +6,16 @@ using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
-    public class ConditionalTests
+    public class Conditionals
     {
         [Fact]
         public void If()
         {
             string[] input = new string[]
             {
-                "If(2>1){10;};",
-                "If(2<1){10;};",
-                "If(False){100;};",
+                "If(2i>1i){10i;};",
+                "If(2i<1i){10i;};",
+                "If(False){100i;};",
             };
 
             string[] expectedOutput = new string[]
@@ -55,9 +55,9 @@ namespace EdenTests.EvaluatorTests
         {
             string[] input = new string[]
             {
-                "If(2>1){10;}Else{20;};",
-                "If(2<1){10;}Else{20;};",
-                "If(True){100;}Else{20;};",
+                "If(2i>1i){10i;}Else{20i;};",
+                "If(2i<1i){10i;}Else{20i;};",
+                "If(True){100i;}Else{20i;};",
             };
 
             string[] expectedOutput = new string[]

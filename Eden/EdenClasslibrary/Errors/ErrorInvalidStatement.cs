@@ -17,12 +17,12 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $">     Invalid statement!";
+            return $"Invalid statement!";
         }
 
         public override string GetMessage()
         {
-            return $"> Provided statement is not valid!";
+            return $"Provided statement is not valid!";
         }
     }
 }

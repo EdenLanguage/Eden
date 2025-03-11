@@ -14,9 +14,12 @@ namespace EdenClasslibrary.Errors
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"{GetMessage()}");
-            sb.AppendLine($"    {GetDetails()}");
-            sb.AppendLine($"    {GetTip()}");
+            sb.AppendLine($"> {GetMessage()}");
+            sb.AppendLine($"-> {GetDetails()}");
+
+            string isTip = GetTip();
+            string tip = isTip == "" ? "" : "-> " + isTip;
+            sb.AppendLine($"{tip}");
 
             string result = sb.ToString();
             return result;

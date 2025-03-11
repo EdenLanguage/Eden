@@ -14,9 +14,14 @@ namespace EdenTests.ErrorTests
                 "Var int counter = 10;",
                 "Var Float counter = 3,145;",
                 "Var Bool flaga = evaluateFlag(10)",
+                "Var int pajacyk = 5i;",
+                "var String imie = \"5553\";",
+                "Var Stringasdasd = \"Pawel\";",
+                "Var Int variable = 10i",
+                "Var String surname = \"sdasd\"",
             };
 
-            foreach(string input in data)
+            foreach (string input in data)
             {
                 Parser parser = new Parser();
 
@@ -24,7 +29,6 @@ namespace EdenTests.ErrorTests
 
                 Assert.True(parser.Errors.Length != 0);
 
-                
                 string errors = parser.PrintErrors();
             }
         }

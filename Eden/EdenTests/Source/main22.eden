@@ -1,1 +1,1 @@
-List Int primes = [2,3,5,7,9];
+List Int primes = [2i,3i,5i,7i,9i];

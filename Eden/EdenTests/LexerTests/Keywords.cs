@@ -2,12 +2,12 @@
 
 namespace EdenTests.LexerTests
 {
-    public class KeywordsTest
+    public class Keywords
     {
         [Fact]
         public void VariableAssingment()
         {
-            string code = "Var Int zmienna = 5;";
+            string code = "Var Int zmienna = 5i;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -76,7 +76,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void FunctionCall()
         {
-            string code = "Var Int result = Calculator(5);";
+            string code = "Var Int result = Calculator(5i);";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -110,7 +110,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void IfStatement()
         {
-            string code = "If(counter == 5) Return 10;";
+            string code = "If(counter == 5i) Return 10i;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -144,7 +144,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void ElseIfStatement()
         {
-            string code = "Else If(counter == True) Return 20;";
+            string code = "Else If(counter == True) Return 20i;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
             List<Token> expected = new List<Token>()

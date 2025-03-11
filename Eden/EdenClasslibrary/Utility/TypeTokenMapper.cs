@@ -13,6 +13,9 @@ namespace EdenClasslibrary.Utility
                 case TokenType.Int:
                     result = typeof(IntObject);
                     break;
+                case TokenType.Char:
+                    result = typeof(CharObject);
+                    break;
                 case TokenType.Float:
                     result = typeof(FloatObject);
                     break;
@@ -50,6 +53,9 @@ namespace EdenClasslibrary.Utility
                     break;
                 case "String":
                     result = typeof(StringObject);
+                    break;
+                case "Char":
+                    result = typeof(CharObject);
                     break;
                 default:
                     throw new Exception("Unhandled type!");

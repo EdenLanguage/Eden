@@ -1,16 +1,15 @@
 ﻿using EdenClasslibrary.Parser;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenTests.Utility;
-using Xunit.Abstractions;
 
 namespace EdenTests.ParserTests
 {
-    public class IfExpressionTests : FileTester
+    public class Conditionals : FileTester
     {
         [Fact]
         public void IfExpression()
         {
-            string code = "If(True){Var Int zmienna = 5;};";
+            string code = "If(True){Var Int zmienna = 5i;};";
 
             Parser parser = new Parser();
 
@@ -24,7 +23,7 @@ namespace EdenTests.ParserTests
         [Fact]
         public void IfElseExpression()
         {
-            string code = "If(True){Var Int zmienna = 5;}Else{Var Int counter = 20;};";
+            string code = "If(True){Var Int zmienna = 5i;}Else{Var Int counter = 20i;};";
 
             Parser parser = new Parser();
 

@@ -5,9 +5,9 @@ using Xunit.Abstractions;
 
 namespace EdenTests.ParserTests
 {
-    public class ExpressionTest : ConsoleWriter
+    public class Expression : ConsoleWriter
     {
-        public ExpressionTest(ITestOutputHelper consoleWriter) : base(consoleWriter)
+        public Expression(ITestOutputHelper consoleWriter) : base(consoleWriter)
         {
         }
 
@@ -20,8 +20,8 @@ namespace EdenTests.ParserTests
             {
                 "zmienna;",
                 "counter;",
-                "counter + 2;",
-                "- counter + 10;",
+                "counter + 2i;",
+                "- counter + 10i;",
                 "counter + counter + zmienna - zmienna;",
             };
 
@@ -109,11 +109,11 @@ namespace EdenTests.ParserTests
 
             string[] codes = new string[testCount]
             {
-                "1+2+3;",
-                "1*2+3;",
-                "1+2*3;",
-                "1/2*3;",
-                "-1*2/3;",
+                "1i+2i+3i;",
+                "1i*2i+3i;",
+                "1i+2i*3i;",
+                "1i/2i*3i;",
+                "-1i*2i/3i;",
             };
 
             string[] expecteds = new string[testCount]
@@ -157,16 +157,16 @@ namespace EdenTests.ParserTests
 
             string[] codes = new string[testCount]
             {
-                "-1;",
-                "+1;",
-                "-52;",
-                "-00001;",
-                "-1424;",
-                "-3.14;",
-                "-0.123123;",
-                "+1.5235235;",
-                "0;",
-                "325;",
+                "-1i;",
+                "+1i;",
+                "-52i;",
+                "-00001i;",
+                "-1424i;",
+                "-3.14f;",
+                "-0.123123f;",
+                "+1.5235235f;",
+                "0i;",
+                "325i;",
             };
 
             string[] expecteds = new string[testCount]
@@ -213,11 +213,11 @@ namespace EdenTests.ParserTests
 
             string[] codes = new string[testCount]
             {
-                "(5+5)*2;",
-                "5+5*2;",
-                "5==(5==True);",
-                "5==5==True;",
-                "(1+2)*(3+4);",
+                "(5i+5i)*2i;",
+                "5i+5i*2i;",
+                "5i==(5i==True);",
+                "5i==5i==True;",
+                "(1i+2i)*(3i+4i);",
             };
 
             string[] expecteds = new string[testCount]

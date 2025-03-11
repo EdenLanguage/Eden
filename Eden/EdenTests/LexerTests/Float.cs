@@ -2,13 +2,13 @@
 
 namespace EdenTests.LexerTests
 {
-    public class FloatTest
+    public class Float
     {
 
         [Fact]
         public void ParseFloat_1()
         {
-            string code = $"3.14;";
+            string code = $"3.14f;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -35,7 +35,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void ParseFloat_2()
         {
-            string code = $"34224.2424442;";
+            string code = $"34224.2424442f;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -68,9 +68,7 @@ namespace EdenTests.LexerTests
 
             List<Token> expected = new List<Token>()
             {
-                new Token(TokenType.Float, "34224"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
+                new Token(TokenType.Illegal, "34224."),
             };
 
             List<Token> actual = lexer.Tokenize().ToList();
@@ -89,7 +87,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void ParseFloat_4()
         {
-            string code = $"0.0009;";
+            string code = $"0.0009f;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -123,10 +121,7 @@ namespace EdenTests.LexerTests
             List<Token> expected = new List<Token>()
             {
                 new Token(TokenType.Identifier, "dssd"),
-                new Token(TokenType.Float, "0.0009"),
-                new Token(TokenType.Identifier, "dssd"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
+                new Token(TokenType.Illegal, "0.0009"),
             };
 
             List<Token> actual = lexer.Tokenize().ToList();
@@ -152,11 +147,7 @@ namespace EdenTests.LexerTests
             List<Token> expected = new List<Token>()
             {
                 new Token(TokenType.Identifier, "dssd"),
-                new Token(TokenType.Float, "0.0009"),
-                new Token(TokenType.Dot, "."),
-                new Token(TokenType.Identifier, "dssd"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
+                new Token(TokenType.Illegal, "0.0009"),
             };
 
             List<Token> actual = lexer.Tokenize().ToList();
@@ -175,7 +166,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void ParseFloat_7()
         {
-            string code = $"Var Float pi = 3.14;";
+            string code = $"Var Float pi = 3.14f;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 

@@ -1,11 +1,11 @@
-Var Int counter = 10;
-Var Int length = 20;
-Var Float pi = 3.14;
+Var Int counter = 10i;
+Var Int length = 20i;
+Var Float pi = 3.14f;
 If(counter > length){
 	Return counter + length;
 }
 Else{
-	If(pi < 3){
+	If(pi < 3i){
 		Return length * pi;
 	}
 	Else{

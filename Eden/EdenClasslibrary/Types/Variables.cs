@@ -6,7 +6,7 @@
         {
             get
             {
-                return new string[] { "Int", "Float", "String", "Bool" };
+                return new string[] { "Int", "Float", "String", "Bool", "Char" };
             }
         }
 

@@ -2,13 +2,13 @@
 
 namespace EdenTests.LexerTests
 {
-    public class IntTest
+    public class Int
     {
 
         [Fact]
         public void ParseInt_1()
         {
-            string code = $"202020;";
+            string code = $"202020i;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -35,7 +35,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void ParseInt_2()
         {
-            string code = $"0;";
+            string code = $"0i;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -62,14 +62,13 @@ namespace EdenTests.LexerTests
         [Fact]
         public void ParseInt_3()
         {
-            string code = $"0a;";
+            string code = $"0i;";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
             List<Token> expected = new List<Token>()
             {
                 new Token(TokenType.Int, "0"),
-                new Token(TokenType.Identifier, "a"),
                 new Token(TokenType.Semicolon, ";"),
                 new Token(TokenType.Eof, "\0"),
             };

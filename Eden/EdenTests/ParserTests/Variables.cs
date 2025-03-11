@@ -5,9 +5,9 @@ using Xunit.Abstractions;
 
 namespace EdenTests.ParserTests
 {
-    public class VariableStatementTest : ConsoleWriter
+    public class Variables : ConsoleWriter
     {
-        public VariableStatementTest(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
+        public Variables(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
 
         [Fact]
         public void CorrectStatements()
@@ -16,12 +16,12 @@ namespace EdenTests.ParserTests
 
             string[] codes = new string[testCount]
             {
-                "Var Int counter = 10;",
+                "Var Int counter = 10i;",
                 "Var Bool flaga = True;",
                 "Var String name = \"Pratt\";",
-                "Var Float pi = 3.14;",
-                "Var Int sum = counter + 5 - licznik * 10;",
-                "Var Float funcCall = 3.14 * zmienna / 2;",
+                "Var Float pi = 3.14f;",
+                "Var Int sum = counter + 5i - licznik * 10i;",
+                "Var Float funcCall = 3.14f * zmienna / 2i;",
             };
 
             string[] expectedIDs = new string[testCount]
@@ -83,12 +83,12 @@ namespace EdenTests.ParserTests
 
             string[] codes = new string[testCount]
             {
-                "Var Intcounter = 10;",
+                "Var Intcounter = 10i;",
                 "Var Bool 4flaga = True;",
                 "Var Strig name = \"Pratt\";",
-                "var Float pi = 3.14;",
-                "Var Int sum = counter5 - licznik * 10;",
-                "Var Float funcCall = 3.14 * zmienna / 2",
+                "var Float pi = 3.14f;",
+                "Var Int sum = counter5 - licznik * 10i;",
+                "Var Float funcCall = 3.14f * zmienna / 2i",
             };
 
             Parser parser = new Parser();
@@ -117,7 +117,7 @@ namespace EdenTests.ParserTests
 
             string[] inputCodes = new string[testCount]
             {
-                "Var Int counter = (5*10)/2+2*(1/2);",
+                "Var Int counter = (5i*10i)/2i+2i*(1i/2i);",
             };
 
             string[][] expectedOutputs = new string[][]
@@ -155,7 +155,7 @@ namespace EdenTests.ParserTests
                 Assert.Equal(ie.Name, expected[2]);
 
                 // Expression
-                Expression exp = vds.Expression;
+                EdenClasslibrary.Types.AbstractSyntaxTree.Expression exp = vds.Expression;
                 Assert.NotNull(exp);
                 Assert.Equal(exp.ToString(), expected[3]);
 
