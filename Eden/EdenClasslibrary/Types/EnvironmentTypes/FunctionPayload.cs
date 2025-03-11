@@ -8,51 +8,46 @@ namespace EdenClasslibrary.Types.EnvironmentTypes
     {
         public Type Type { get; set; }
         public BlockStatement Body { get; set; }
-        public VariablePayload[] Arguments { get; set; }
-        private FunctionPayload(Type type, VariablePayload[] arguments, BlockStatement body)
+        public ObjectSignature[] Arguments { get; set; }
+        private FunctionPayload(Type type, ObjectSignature[] arguments, BlockStatement body)
         {
             Type = type;
             Arguments = arguments;
             Body = body;
         }
-        public static FunctionPayload Create(Type type, VariablePayload[] arguments, BlockStatement body)
+        public static FunctionPayload Create(Type type, ObjectSignature[] arguments, BlockStatement body)
         {
             return new FunctionPayload(type, arguments, body);
         }
 
-        public static VariablePayload[] GenerateArgumentsSignature(IObject[] rawSignatures)
+        public static ObjectSignature[] GenerateArgumentsSignature(IObject[] rawSignatures)
         {
-            VariablePayload[] args = new VariablePayload[rawSignatures.Length];
+            ObjectSignature[] args = new ObjectSignature[rawSignatures.Length];
 
             for (int i = 0; i < rawSignatures.Length; i++)
             {
                 VariableSignatureObject vso = rawSignatures[i] as VariableSignatureObject;
 
-                args[i] = VariablePayload.Create(vso.Type, rawSignatures[i]);
+                args[i] = ObjectSignature.Create(vso.Name, vso.Type);
             }
 
             return args;
         }
 
-        public bool ArgumentsSignatureMatch(CallExpression callExpression)
+        public bool ArgumentsSignatureMatch(IObject[] arguments)
         {
-            if(Arguments.Length != callExpression.Arguments.Length)
+            if(Arguments.Length != arguments.Length)
             {
                 return false;
             }
 
-            //for(int i = 0; i < Arguments.Length; i++)
-            //{
-            //    VariablePayload signature = Arguments[i];
-            //    VariableValueExpression callExpArg = callExpression.Arguments[i] as VariableValueExpression;
-
-            //    if (callExpArg == null) throw new Exception("Not value type!");
-
-            //    if (callExpArg.Type != signature.Variable.Type)
-            //    {
-            //        return false;
-            //    }
-            //}
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                if ((arguments[i].GetType() != Arguments[i].Type) && !arguments[i].GetType().GetInterfaces().Contains(Arguments[i].Type))
+                {
+                    return false;
+                }
+            }
 
             return true;
         }

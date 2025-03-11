@@ -8,11 +8,13 @@ namespace EdenClasslibrary.Types
     {
         private Dictionary<string, VariablePayload> _variables;
         private Dictionary<string, FunctionPayload> _functions;
+        private BuildIn _buildIn;
         public Environment OutterEnvironment { get; set; }
         public Environment()
         {
             _variables = new Dictionary<string, VariablePayload>();
             _functions = new Dictionary<string, FunctionPayload>();
+            _buildIn = BuildIn.GetInstance();
         }
 
         /// <summary>
@@ -26,6 +28,21 @@ namespace EdenClasslibrary.Types
                 return variable.Variable;
             }
             return ErrorVariableUndefined.CreateErrorObject(name);
+        }
+
+        public IObject CallBuildInFunc(string name, params IObject[] arguments)
+        {
+            return BuildIn.GetInstance().CallBuildInFunc(name, arguments);
+        }
+
+        public bool IsBuildInFunction(string name)
+        {
+            return _buildIn.FunctionExists(name);
+        }
+
+        public FunctionPayload GetBuildInFunctionSignature(string name)
+        {
+            return _buildIn.GetFunctionSignature(name);
         }
 
         public Environment ExtendEnvironment()

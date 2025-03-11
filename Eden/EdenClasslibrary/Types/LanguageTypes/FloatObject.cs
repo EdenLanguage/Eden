@@ -1,6 +1,9 @@
-﻿namespace EdenClasslibrary.Types.LanguageTypes
+﻿using EdenClasslibrary.Types.LanguageTypes.Collections;
+using System.Globalization;
+
+namespace EdenClasslibrary.Types.LanguageTypes
 {
-    public class FloatObject : IObject
+    public class FloatObject : IObjectComparable
     {
         public float Value { get; set; }
         public Type Type
@@ -23,7 +26,7 @@
 
         public string AsString()
         {
-            return $"{Value}";
+            return $"{Value.ToString(CultureInfo.InvariantCulture)}";
         }
 
         public bool IsSameType(IObject other)
@@ -35,6 +38,41 @@
         public override string ToString()
         {
             return $"Float: {Value}";
+        }
+        public bool Greater(IObjectComparable other)
+        {
+            if (IsSameType(other))
+            {
+                return Value > (other as FloatObject).Value;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool Lesser(IObjectComparable other)
+        {
+            if (IsSameType(other))
+            {
+                return Value < (other as FloatObject).Value;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool Equal(IObjectComparable other)
+        {
+            if (IsSameType(other))
+            {
+                return Value == (other as FloatObject).Value;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

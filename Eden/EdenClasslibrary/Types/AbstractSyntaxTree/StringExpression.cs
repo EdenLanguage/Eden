@@ -1,9 +1,10 @@
 ﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Utility;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
 {
-    public class StringExpression : Expression, IPrintable
+    public class StringExpression : VariableValueExpression, IPrintable
     {
         public string Value
         {
@@ -14,7 +15,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
                 return NodeToken.LiteralValue.Replace("\"","");
             }
         }
-        public StringExpression(Token token) : base(token) { }
+        public StringExpression(Token token) : base(token, typeof(StringObject)) { }
         
         public override string ToString()
         {
