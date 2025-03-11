@@ -1,6 +1,8 @@
-﻿namespace EdenClasslibrary.Types.LanguageTypes
+﻿using EdenClasslibrary.Types.LanguageTypes.Collections;
+
+namespace EdenClasslibrary.Types.LanguageTypes
 {
-    public class IntObject : IObject
+    public class IntObject : IObjectComparable
     {
         public Type Type
         {
@@ -33,6 +35,42 @@
         public override string ToString()
         {
             return $"Int: {Value}";
+        }
+
+        public bool Greater(IObjectComparable other)
+        {
+            if (IsSameType(other))
+            {
+                return Value > (other as IntObject).Value;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool Lesser(IObjectComparable other)
+        {
+            if (IsSameType(other))
+            {
+                return Value < (other as IntObject).Value;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public bool Equal(IObjectComparable other)
+        {
+            if (IsSameType(other))
+            {
+                return Value == (other as IntObject).Value;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

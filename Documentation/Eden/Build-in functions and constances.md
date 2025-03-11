@@ -1,0 +1,2 @@
+Yeah but how to implement that. We cant just use FunctionPayload from Environment functions definitions becuase it contains BlockStatement and i dont want to rewrite all of this code. 
+I tkink the best idea is to get insie EvaluateCallExpression() method in Evaluator and firstly check whether function name is not one of build-in functions. If it is go to EvaluateBuildInFunction() method and handle that from there.
