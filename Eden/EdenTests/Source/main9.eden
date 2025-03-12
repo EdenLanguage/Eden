@@ -1,2 +1,2 @@
-Var Int const = 5050;
+Var Int const = 5050i;
 Var Bool flag = False;

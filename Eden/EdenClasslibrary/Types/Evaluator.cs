@@ -45,6 +45,10 @@ namespace EdenClasslibrary.Types
             {
                 return EvaluateStringExpression(root as StringExpression);
             }
+            else if (root is CharExpression)
+            {
+                return EvaluateCharExpression(root as CharExpression);
+            }
             else if (root is FloatExpression)
             {
                 return EvaluateFloatExpression(root as FloatExpression);
@@ -306,6 +310,16 @@ namespace EdenClasslibrary.Types
             return StringObject.Create(stringExp.Value);
         }
 
+        private IObject EvaluateCharExpression(ASTreeNode root)
+        {
+            CharExpression charExp = root as CharExpression;
+            if (charExp is null)
+            {
+                // TODO - handle error!
+            }
+            return CharObject.Create(charExp.Value);
+        }
+
         private IObject EvaluateBoolExpression(ASTreeNode root)
         {
             BoolExpresion boolExp = root as BoolExpresion;
@@ -380,8 +394,6 @@ namespace EdenClasslibrary.Types
                 rightEval = rar.WrappedObject;
             }
 
-
-
             Func<IObject, IObject, IObject> binaryFunc = _evalFuncsMapper.GetEvaluationFunc(leftEval, binExp.NodeToken, rightEval);
 
             if (binaryFunc == null)
@@ -391,7 +403,6 @@ namespace EdenClasslibrary.Types
             }
 
             return binaryFunc(leftEval, rightEval);
-            //return IObjectFactory.ResolveBinaryObject(leftEval, binExp.NodeToken.Keyword, rightEval);
         }
 
         private IObject EvaluateIdentifierExpression(ASTreeNode root, Environment env)

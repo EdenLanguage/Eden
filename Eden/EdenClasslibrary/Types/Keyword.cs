@@ -15,6 +15,7 @@ namespace EdenClasslibrary.Types
             "Return",
             "If",
             "List",
+            "Char",
             "Null",
             "Else",
             "Structure",
@@ -39,6 +40,7 @@ namespace EdenClasslibrary.Types
                     type = TokenType.Null; break;
                 case "Int":
                 case "Float":
+                case "Char":
                 case "Bool":
                 case "String":
                     type = TokenType.VariableType; break;

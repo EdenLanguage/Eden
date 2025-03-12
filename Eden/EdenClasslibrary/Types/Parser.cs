@@ -2,6 +2,7 @@
 using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.Enums;
+using EdenClasslibrary.Types.Excpetions;
 using System.Data;
 using System.Text;
 
@@ -81,6 +82,7 @@ namespace EdenClasslibrary.Parser
             RegisterUnaryMapping(TokenType.Int, ParseIntExpression);
             RegisterUnaryMapping(TokenType.Null, ParseNullExpression);
             RegisterUnaryMapping(TokenType.Float, ParseFloatExpression);
+            RegisterUnaryMapping(TokenType.Char, ParseCharExpression);
             RegisterUnaryMapping(TokenType.String, ParseStringExpression);
             RegisterUnaryMapping(TokenType.Bool, ParseBoolExpression);
             RegisterUnaryMapping(TokenType.Minus, ParseUnaryExpression);
@@ -170,15 +172,19 @@ namespace EdenClasslibrary.Parser
                 CurrentToken = NextToken;
                 NextToken = _lexer.NextToken();
             }
+            if (CurrentToken.Keyword == TokenType.Illegal)
+            {
+                throw new CurrentTokenIsIllegal();
+            }
         }
 
         public string PrintErrors()
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach(AError error in Errors)
+            foreach (AError error in Errors)
             {
-                sb.Append(error);
+                sb.Append(error.PrintError());
             }
 
             string result = sb.ToString();
@@ -239,7 +245,7 @@ namespace EdenClasslibrary.Parser
             {
                 Expression singleArgument = ParseExpression(Precedence.Lowest);
                 arguments.AddArgument(singleArgument);
-                
+
                 //  Eat <argument> and <,>
                 LoadNextToken();
 
@@ -274,7 +280,7 @@ namespace EdenClasslibrary.Parser
             else
             {
                 expression = ParseExpression(Precedence.Lowest);
-                if(expression is not IntExpression)
+                if (expression is not IntExpression)
                 {
                     return new InvalidExpression(CurrentToken);
                 }
@@ -463,6 +469,12 @@ namespace EdenClasslibrary.Parser
             return floatExp;
         }
 
+        private Expression ParseCharExpression()
+        {
+            CharExpression charExpression = new CharExpression(CurrentToken);
+            return charExpression;
+        }
+
         private Expression ParseStringExpression()
         {
             StringExpression stringExp = new StringExpression(CurrentToken);
@@ -480,7 +492,7 @@ namespace EdenClasslibrary.Parser
             IntExpression intExp = new IntExpression(CurrentToken);
             return intExp;
         }
-        
+
         private Expression ParseNullExpression()
         {
             NullExpression nullExp = new NullExpression(CurrentToken);
@@ -506,38 +518,47 @@ namespace EdenClasslibrary.Parser
         private Statement ParseStatement()
         {
             Statement statement = null;
-            switch (CurrentToken.Keyword)
+            try
             {
-                case TokenType.VariableType:
-                    statement = ParseInvalidStatement(ParserErrorType.InvalidStatement, CurrentToken);
-                    break;
-                case TokenType.Keyword:
-                    switch (CurrentToken.LiteralValue)
-                    {
-                        case "Return":
-                            statement = ParseReturnStatement();
-                            break;
-                        case "Var":
-                            statement = ParseVariableStatement();
-                            break;
-                        case "List":
-                            statement = ParseListStatement();
-                            break;
-                        default:
-                            statement = ParseExpressionStatement();
-                            break;
-                    }
-                    break;
-                default:
-                    statement = ParseExpressionStatement();
-                    ////if (CurrentToken.Keyword != TokenType.Semicolon && CurrentToken.Keyword != TokenType.Eof)
-                    //if (CurrentToken.Keyword != TokenType.Semicolon && CurrentToken.Keyword != TokenType.Eof)
-                    //{
-                    //    _errors.Add($"There was en error while parsing expression from line:'{statement.NodeToken.Line}' and column:'{statement.NodeToken.TokenStartingLinePosition}'");
-                    //    statement = new InvalidStatement(statement.NodeToken);
-                    //    EatStatement();
-                    //}
-                    break;
+                switch (CurrentToken.Keyword)
+                {
+                    case TokenType.VariableType:
+                        statement = ParseInvalidStatement(ParserErrorType.InvalidStatement, CurrentToken);
+                        break;
+                    case TokenType.Keyword:
+                        switch (CurrentToken.LiteralValue)
+                        {
+                            case "Return":
+                                statement = ParseReturnStatement();
+                                break;
+                            case "Var":
+                                statement = ParseVariableStatement();
+                                break;
+                            case "List":
+                                statement = ParseListStatement();
+                                break;
+                            default:
+                                statement = ParseExpressionStatement();
+                                break;
+                        }
+                        break;
+                    default:
+                        statement = ParseExpressionStatement();
+                        ////if (CurrentToken.Keyword != TokenType.Semicolon && CurrentToken.Keyword != TokenType.Eof)
+                        //if (CurrentToken.Keyword != TokenType.Semicolon && CurrentToken.Keyword != TokenType.Eof)
+                        //{
+                        //    _errors.Add($"There was en error while parsing expression from line:'{statement.NodeToken.Line}' and column:'{statement.NodeToken.TokenStartingLinePosition}'");
+                        //    statement = new InvalidStatement(statement.NodeToken);
+                        //    EatStatement();
+                        //}
+                        break;
+                }
+            }
+            catch (CurrentTokenIsIllegal exception)
+            {
+                AError error = exception.CreateError(CurrentToken);
+                statement = new InvalidStatement(CurrentToken, error);
+                _errorsManager.AppendError(error);
             }
             return statement;
         }
@@ -668,13 +689,24 @@ namespace EdenClasslibrary.Parser
             BlockStatement programBlock = new BlockStatement(CurrentToken);
             file.Block = programBlock;
 
-            LoadNextToken();
+            try
+            {
+                LoadNextToken();
+            }
+            catch (CurrentTokenIsIllegal exception)
+            {
+                AError error = exception.CreateError(CurrentToken);
+                programBlock.AddStatement(new InvalidStatement(CurrentToken, error));
+                _errorsManager.AppendError(error);
+                return file;
+            }
+
             while (!CurrentToken.IsType(TokenType.RightBracket) && !CurrentToken.IsType(TokenType.Eof))
             {
                 Statement statement = ParseStatement();
                 programBlock.AddStatement(statement);
 
-                if(statement is InvalidStatement)
+                if (statement is InvalidStatement)
                 {
                     return file;
                 }

@@ -105,6 +105,24 @@ namespace EdenClasslibrary.Types
                 case ']': nextToken = CreateNewToken(TokenType.RightSquareBracket); break;
                 case '{': nextToken = CreateNewToken(TokenType.LeftBracket); break;
                 case '}': nextToken = CreateNewToken(TokenType.RightBracket); break;
+                case '\'':
+                    string charLiteral = ReadCharLiteral();
+                    if (charLiteral == null)
+                    {
+                        nextToken = CreateNewToken(TokenType.Illegal);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            nextToken = CreateNewToken(TokenType.Char, char.Parse(charLiteral));
+                        }
+                        catch (Exception)
+                        {
+                            nextToken = CreateNewToken(TokenType.Illegal);
+                        }
+                    }
+                    break;
                 case '"':
                     string stringLiteral = ReadStringLiteral();
                     bool isValidStringLiteral = IsValidStringLiteral(stringLiteral);
@@ -162,38 +180,82 @@ namespace EdenClasslibrary.Types
                     {
                         //  This function is handling numbers. So Int and Float should be parsable.
                         string inputLiteral = ReadInputNumberLiteral();
-                        float convertedNumber = 0;
-                        bool couldConvertToFloat = float.TryParse(inputLiteral, CultureInfo.InvariantCulture, out convertedNumber);
+                        char type = PeekNextCharacter();
+                        bool isTypeChar = IsLiteralTypeIndicator(type);
 
-                        //  If contains '.' then it could be double
-                        if (inputLiteral.Contains('.'))
+                        if (isTypeChar == true)
                         {
-                            if (couldConvertToFloat == true)
+                            switch (type)
                             {
-                                if (inputLiteral.EndsWith('.'))
-                                {
-                                    inputLiteral = inputLiteral.Replace(".", "");
-                                }
-                                nextToken = CreateNewToken(TokenType.Float, inputLiteral);
+                                case 'c':
+                                    //  Char
+                                    char literalAsChar = '\0';
+                                    int charAsInt = 0;
+
+                                    bool couldConvertToInts = int.TryParse(inputLiteral, out charAsInt);
+                                    if (couldConvertToInts)
+                                    {
+                                        if (charAsInt > 255)
+                                        {
+                                            literalAsChar = (char)(charAsInt % 255);
+                                        }
+                                        else
+                                        {
+                                            literalAsChar = (char)charAsInt;
+                                        }
+                                        nextToken = CreateNewToken(TokenType.Char, literalAsChar);
+                                    }
+                                    else
+                                    {
+                                        nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
+                                    }
+                                    break;
+                                case 'i':
+                                    //  Int
+                                    int literalAsInt = 0;
+                                    bool couldConvertToInt = int.TryParse(inputLiteral, out literalAsInt);
+                                    if (couldConvertToInt)
+                                    {
+                                        nextToken = CreateNewToken(TokenType.Int, inputLiteral);
+                                    }
+                                    else
+                                    {
+                                        nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
+                                    }
+                                    break;
+                                case 'f':
+                                    //  Float
+                                    float convertedNumber = 0;
+                                    bool couldConvertToFloat = float.TryParse(inputLiteral, CultureInfo.InvariantCulture, out convertedNumber);
+
+                                    //  If contains '.' then it could be double
+                                    if (couldConvertToFloat == true)
+                                    {
+                                        if (inputLiteral.EndsWith('.'))
+                                        {
+                                            inputLiteral = inputLiteral.Replace(".", "");
+                                        }
+                                        nextToken = CreateNewToken(TokenType.Float, inputLiteral);
+                                    }
+                                    else
+                                    {
+                                        nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
+                                    }
+                                    break;
+                                default:
+                                    //  Error
+                                    nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
+                                    break;
                             }
-                            else
-                            {
-                                nextToken = CreateNewToken(TokenType.Illegal, inputLiteral);
-                            }
+                            NextCharacter();
+
                         }
                         else
                         {
-                            int literalAsInt = 0;
-                            bool couldConvertToInt = int.TryParse(inputLiteral, out literalAsInt);
-                            if (couldConvertToInt)
-                            {
-                                nextToken = CreateNewToken(TokenType.Int, inputLiteral);
-                            }
-                            else
-                            {
-                                nextToken = CreateNewToken(TokenType.Illegal, inputLiteral);
-                            }
+                            nextToken = CreateNewToken(TokenType.Illegal, inputLiteral);
                         }
+                        //NextCharacter();
+
                     }
                     else
                     {
@@ -204,7 +266,7 @@ namespace EdenClasslibrary.Types
 
             NextCharacter();
 
-            if (nextToken.Keyword == TokenType.Illegal) throw new Exception($"Lexer encountered illegal token: {nextToken.PrintTokenDetails()}");
+            //if (nextToken.Keyword == TokenType.Illegal) throw new Exception($"Lexer encountered illegal token: {nextToken.PrintTokenDetails()}");
 
             return nextToken;
         }
@@ -495,9 +557,51 @@ namespace EdenClasslibrary.Types
             return stringLiteral;
         }
 
+        private string ReadCharLiteral()
+        {
+            string input = string.Empty;
+            char currentChar = ReadCurrentCharacter();
+
+            //input += currentChar;
+
+            if (currentChar != '\'')
+            {
+                return null;
+            }
+            NextCharacter();
+
+            while (ReadCurrentCharacter() != '\'')
+            {
+                input += ReadCurrentCharacter();
+                NextCharacter();
+            }
+            //input += ReadCurrentCharacter();
+
+            char symbol = '\0';
+
+            bool canParseToChar = char.TryParse(input, out symbol);
+            if (canParseToChar == true)
+            {
+                return input;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private bool IsValidStringLiteral(string literal)
         {
             if (literal != null && literal.StartsWith('\"') && literal.EndsWith('\"')) return true;
+            return false;
+        }
+
+        private bool IsLiteralTypeIndicator(char symbol)
+        {
+            if (symbol == 'c' || symbol == 'f' || symbol == 'i')
+            {
+                return true;
+            }
             return false;
         }
 
@@ -528,6 +632,16 @@ namespace EdenClasslibrary.Types
             Token toker = new Token();
 
             int tokenInLineBegPtr = _currentLinePosition - (value.Length - 1);
+
+            toker.SetAttributes(type, value, _currentLine, tokenInLineBegPtr, _filename);
+            return toker;
+        }
+
+        private Token CreateNewToken(TokenType type, char value)
+        {
+            Token toker = new Token();
+
+            int tokenInLineBegPtr = _currentLinePosition - 1;
 
             toker.SetAttributes(type, value, _currentLine, tokenInLineBegPtr, _filename);
             return toker;

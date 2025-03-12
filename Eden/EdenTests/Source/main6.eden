@@ -1,5 +1,5 @@
 Function Bool Calculate(Var Int A, Var Int B){
 	Var Int result = A*B+A*A-B;
-	Var Float normalized = result/3.14;
+	Var Float normalized = result/3.14f;
 	Return normalized;
 };

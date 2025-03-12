@@ -80,7 +80,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void GreaterLesser()
         {
-            string code = "If(variable <= 0)";
+            string code = "If(variable <= 0i)";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 
@@ -111,7 +111,7 @@ namespace EdenTests.LexerTests
         [Fact]
         public void Equal()
         {
-            string code = "counter == 5";
+            string code = "counter == 5i";
             Lexer lexer = new Lexer();
             lexer.SetInput(code);
 

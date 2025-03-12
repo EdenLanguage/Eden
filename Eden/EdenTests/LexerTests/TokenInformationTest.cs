@@ -22,7 +22,7 @@ namespace EdenTests.LexerTests
                 new Token(TokenType.Identifier, "const", line: 1, startPos: 9, filename: executionLocation),
                 new Token(TokenType.Assign, "=", line: 1, startPos: 15, filename: executionLocation),
                 new Token(TokenType.Int, "5050", line: 1, startPos: 17, filename: executionLocation),
-                new Token(TokenType.Semicolon, ";", line: 1, startPos: 21, filename: executionLocation),
+                new Token(TokenType.Semicolon, ";", line: 1, startPos: 22, filename: executionLocation),
 
                 // Second line
                 new Token(TokenType.Keyword, "Var", line: 2, startPos: 1, filename: executionLocation),

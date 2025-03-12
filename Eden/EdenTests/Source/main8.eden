@@ -1,7 +1,7 @@
-Var int pajacyk = 5;
+Var int pajacyk = 5i;
 var String imie = "5553";
 Var Stringasdasd = "Pawel";
-Var Int variable = 10
+Var Int variable = 10i
 Var String surname = "sdasd";
 
 Function Int Add(Var Int a, Var Int b){

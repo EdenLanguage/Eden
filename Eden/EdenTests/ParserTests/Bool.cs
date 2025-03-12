@@ -2,21 +2,20 @@
 using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenTests.Utility;
-using System.Net;
 using Xunit.Abstractions;
 
 namespace EdenTests.ParserTests
 {
-    public class BoolParsingTests : ConsoleWriter
+    public class Bool : ConsoleWriter
     {
-        public BoolParsingTests(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
+        public Bool(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
 
         [Fact]
         public void Assignment()
         {
-            PrintTestName($"{nameof(BoolParsingTests)}.{nameof(BoolParsingTests.Assignment)}");
+            PrintTestName($"{nameof(Bool)}.{nameof(Bool.Assignment)}");
 
-            string input = "5 != 10;";
+            string input = "5i != 10i;";
 
             Parser parser = new Parser();
 
@@ -51,9 +50,9 @@ namespace EdenTests.ParserTests
             string[] codes = new string[]
             {
                 "!False;",
-                "True == (5!=124);",
-                "True == 5!=124;",
-                "False != 5!=124;",
+                "True == (5i!=124i);",
+                "True == 5i!=124i;",
+                "False != 5i!=124i;",
                 "True != False;",
                 "True == !False;",
             };

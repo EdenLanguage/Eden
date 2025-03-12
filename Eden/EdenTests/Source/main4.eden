@@ -1,8 +1,8 @@
 If(True){
-	Var Int counter = 0;
+	Var Int counter = 0i;
 	Var String name = "Jacek";
 }
 Else{
-	Var Int counter = 51;
+	Var Int counter = 51i;
 	Var String name = "Maciek";
 };

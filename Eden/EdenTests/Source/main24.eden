@@ -1,6 +1,6 @@
-List Int numbers = [1, 2, 3, 4];
-Var Int v = numbers[0];
-Var Int x = numbers[1];
-Var Int y = numbers[2];
-Var Int z = numbers[3];
+List Int numbers = [1i, 2i, 3i, 4i];
+Var Int v = numbers[0i];
+Var Int x = numbers[1i];
+Var Int y = numbers[2i];
+Var Int z = numbers[3i];
 Var Int sum = v+x+y+z; 

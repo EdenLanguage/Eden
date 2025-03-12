@@ -7,22 +7,22 @@ using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.ParserTests
 {
-    public class ReturnExpressionTest : FileTester
+    public class Return : FileTester
     {
         [Fact]
         public void Valid()
         {
             string[] codes = new string[]
             {
-                "Return 50;",
+                "Return 50i;",
                 "Return False;",
                 "Return Bool;",
                 "Return INt;",
                 "Return IN5sd5",
                 "Return zmienna;",
                 "Return zm6ienna;",
-                "Return 50*50;",
-                "Return 0.1+0.2;",
+                "Return 50i*50i;",
+                "Return 0.1f+0.2f;",
             };
 
             string[] expecteds = new string[]
