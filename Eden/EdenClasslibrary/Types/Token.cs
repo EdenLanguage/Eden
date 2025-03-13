@@ -36,6 +36,7 @@ namespace EdenClasslibrary.Types
         Dot,                // .
         QuenstionMark,      // ?
         Tilde,              // ~
+        Comment,            // //
 
         //  Symbols
         Semicolon,          // ;

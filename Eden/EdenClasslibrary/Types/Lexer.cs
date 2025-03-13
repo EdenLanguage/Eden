@@ -98,7 +98,19 @@ namespace EdenClasslibrary.Types
                 case '?': nextToken = CreateNewToken(TokenType.QuenstionMark); break;
                 case '^': nextToken = CreateNewToken(TokenType.Power); break;
                 case '*': nextToken = CreateNewToken(TokenType.Star); break;
-                case '/': nextToken = CreateNewToken(TokenType.Slash); break;
+                case '/':
+                    switch (nextCharacter)
+                    {
+                        case '/':
+                            //  Comment detected.
+                            EatComment();
+                            nextToken = CreateNewToken(TokenType.Comment);
+                            break;
+                        default:
+                            nextToken = CreateNewToken(TokenType.Slash);
+                            break;
+                    }
+                    break;
                 case '(': nextToken = CreateNewToken(TokenType.LeftParenthesis); break;
                 case ')': nextToken = CreateNewToken(TokenType.RightParenthesis); break;
                 case '[': nextToken = CreateNewToken(TokenType.LeftSquareBracket); break;
@@ -268,6 +280,11 @@ namespace EdenClasslibrary.Types
 
             //if (nextToken.Keyword == TokenType.Illegal) throw new Exception($"Lexer encountered illegal token: {nextToken.PrintTokenDetails()}");
 
+            if (nextToken.Keyword == TokenType.Comment)
+            {
+                nextToken = NextToken();
+            }
+
             return nextToken;
         }
         #endregion
@@ -321,6 +338,24 @@ namespace EdenClasslibrary.Types
 
             ClearLexer();
             return tokens.ToArray();
+        }
+
+        private void EatComment()
+        {
+            NextCharacter();
+            NextCharacter();
+            while (!IsNewLine() && !(ReadCurrentCharacter() == '/' && PeekNextCharacter() == '/') && !(PeekNextCharacter() == '\0'))
+            {
+                NextCharacter();
+            }
+            if (ReadCurrentCharacter() == '/' && PeekNextCharacter() == '/')
+            {
+                NextCharacter();
+            }
+            if (ReadCurrentCharacter() == '\r' && PeekNextCharacter() == '\n')
+            {
+                NextCharacter();
+            }
         }
 
         private void SkipWhitespaces()
@@ -388,6 +423,16 @@ namespace EdenClasslibrary.Types
         {
             char nextChar = PeekNextCharacter();
             if (nextChar == '\n' || nextChar == '\t' || nextChar == '\r' || nextChar == ' ')
+            {
+                return true;
+            }
+            else return false;
+        }
+
+        private bool IsNewLine()
+        {
+            char nextChar = ReadCurrentCharacter();
+            if (nextChar == '\n' || nextChar == '\r')
             {
                 return true;
             }
