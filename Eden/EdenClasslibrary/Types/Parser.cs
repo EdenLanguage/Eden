@@ -59,6 +59,8 @@ namespace EdenClasslibrary.Parser
 
             _precedenceMapping[TokenType.LeftSquareBracket] = Precedence.Index;
 
+            _precedenceMapping[TokenType.Assign] = Precedence.Equals;
+
             // == !=
             _precedenceMapping[TokenType.Inequal] = Precedence.Comparison;
             _precedenceMapping[TokenType.Equal] = Precedence.Comparison;
@@ -93,6 +95,7 @@ namespace EdenClasslibrary.Parser
             RegisterUnaryMapping(TokenType.ExclemationMark, ParseUnaryExpression);
             RegisterUnaryMapping(TokenType.Function, ParseFunctionExpression);
 
+            RegisterBinaryMapping(TokenType.Assign, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Plus, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Minus, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Star, ParseBinaryExpression);
@@ -206,7 +209,15 @@ namespace EdenClasslibrary.Parser
              *  If we evaluate it successfully. We can go throught all of the tokens that proceed next token, only if their precendence is lower then ours
              */
 
-            Func<Expression> unaryFunc = GetUnaryFunc(CurrentToken.Keyword);
+            Func<Expression> unaryFunc = null;
+            try
+            {
+                unaryFunc = GetUnaryFunc(CurrentToken.Keyword);
+            }
+            catch (Exception)
+            {
+                return new InvalidExpression(CurrentToken);
+            }
 
             Expression leftNodeExpression = unaryFunc();
             Precedence leftNodePrecedence = CurrentTokenEvaluationOrder();
@@ -525,6 +536,18 @@ namespace EdenClasslibrary.Parser
                     case TokenType.VariableType:
                         statement = ParseInvalidStatement(ParserErrorType.InvalidStatement, CurrentToken);
                         break;
+                    case TokenType.Loop:
+                        statement = ParseLoopStatement();
+                        break;
+                    case TokenType.Sisyphus:
+                        statement = ParseSisyphusStatement();
+                        break;
+                    case TokenType.Skip:
+                        statement = ParseSkipStatement();
+                        break;
+                    case TokenType.Quit:
+                        statement = ParseQuitStatement();
+                        break;
                     case TokenType.Keyword:
                         switch (CurrentToken.LiteralValue)
                         {
@@ -577,7 +600,15 @@ namespace EdenClasslibrary.Parser
         private Statement ParseExpressionStatement()
         {
             ExpressionStatement statement = new ExpressionStatement(CurrentToken);
-            statement.Expression = ParseExpression(Precedence.Lowest);
+            
+            Expression exp = ParseExpression(Precedence.Lowest);
+            
+            if(exp is InvalidExpression AsInvalidExp)
+            {
+                return new InvalidStatement(AsInvalidExp.NodeToken, ErrorIllegalToken.Create(CurrentToken));
+            }
+            
+            statement.Expression = exp;
 
             if (NextToken.Keyword == TokenType.Semicolon)
             {
@@ -669,6 +700,26 @@ namespace EdenClasslibrary.Parser
             return ifExpression;
         }
 
+        private LoopBlockStatement ParseLoopBlockStatement()
+        {
+            LoopBlockStatement block = new LoopBlockStatement(CurrentToken);
+
+            LoadNextToken();
+            while (!CurrentToken.IsType(TokenType.RightBracket) && !CurrentToken.IsType(TokenType.Eof))
+            {
+                Statement statement = ParseStatement();
+
+                if(statement is InvalidStatement AsInvalidStatement)
+                {
+                    return block;
+                }
+
+                block.AddStatement(statement);
+            }
+
+            return block;
+        }
+
         private BlockStatement ParseBlockStatement()
         {
             BlockStatement block = new BlockStatement(CurrentToken);
@@ -713,6 +764,107 @@ namespace EdenClasslibrary.Parser
             }
 
             return file;
+        }
+
+        private Statement ParseLoopStatement()
+        {
+            LoopStatement loop = new LoopStatement(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.LeftParenthesis))
+            {
+                return null;
+            }
+            LoadNextToken();
+
+            Statement varStatement = ParseVariableStatement();
+            Expression condition = ParseExpression(Precedence.Lowest);
+            if(condition is InvalidExpression)
+            {
+                return new InvalidStatement(CurrentToken, ErrorIllegalToken.Create(CurrentToken));
+            }
+
+            LoadNextToken();
+            LoadNextToken();
+            Expression indexerExp = ParseExpression(Precedence.Lowest);
+            if (indexerExp is InvalidExpression)
+            {
+                return new InvalidStatement(CurrentToken, ErrorIllegalToken.Create(CurrentToken));
+            }
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.RightParenthesis))
+            {
+                return null;
+            }
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.LeftBracket))
+            {
+                return null;
+            }
+            //LoadNextToken();
+
+            LoopBlockStatement body = ParseLoopBlockStatement();
+
+            LoadNextToken();
+            LoadNextToken();
+
+            loop.Condition = condition;
+            loop.Body = body;
+            loop.IndexerStatement = varStatement;
+            loop.IndexerOperation = indexerExp;
+
+            return loop;
+        }
+
+        private Statement ParseSkipStatement()
+        {
+            SkipStatement skip = new SkipStatement(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.Semicolon))
+            {
+                return null;
+            }
+            LoadNextToken();
+
+            return skip;
+        }
+
+        private Statement ParseQuitStatement()
+        {
+            QuitStatement quit = new QuitStatement(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.Semicolon))
+            {
+                return null;
+            }
+            LoadNextToken();
+
+            return quit;
+        }
+
+        private Statement ParseSisyphusStatement()
+        {
+            SisyphusStatement statement = new SisyphusStatement(CurrentToken);
+            LoadNextToken();
+
+            if (!CurrentToken.IsType(TokenType.LeftBracket))
+            {
+                return null;
+            }
+            //LoadNextToken();
+
+            LoopBlockStatement body = ParseLoopBlockStatement();
+
+            LoadNextToken();
+            LoadNextToken();
+
+            statement.Body = body;
+
+            return statement;
         }
 
         /// <summary>

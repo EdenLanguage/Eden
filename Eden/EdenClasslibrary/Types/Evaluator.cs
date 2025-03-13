@@ -121,13 +121,33 @@ namespace EdenClasslibrary.Types
             {
                 return EvaluateListDeclarationStatement(root as ListDeclarationStatement, env);
             }
+            else if (root is LoopStatement)
+            {
+                return EvaluateLoopStatement(root as LoopStatement, env);
+            }
+            else if (root is SisyphusStatement)
+            {
+                return EvaluateSisyphusStatement(root as SisyphusStatement, env);
+            }
+            else if (root is SkipStatement)
+            {
+                return EvaluateSkipStatement(root as SkipStatement, env);
+            }
+            else if (root is QuitStatement)
+            {
+                return EvaluateQuitStatement(root as QuitStatement, env);
+            }
+            else if (root is NullExpression)
+            {
+                return EvaluateQuitStatement(root as NullExpression, env);
+            }
             else if (root is InvalidStatement)
             {
                 return EvaluateInvalidStatement(root as InvalidStatement, env);
             }
             else
             {
-                return EvaluateNullExpression(root);
+                throw new NotImplementedException();
             }
         }
         #region Statements evaluators
@@ -152,7 +172,8 @@ namespace EdenClasslibrary.Types
         private IObject EvaluateBlockStatement(ASTreeNode root, Environment env)
         {
             BlockStatement block = root as BlockStatement;
-            IObject result = null;
+
+            IObject result = NullObject.Create();
 
             foreach (Statement statement in block.Statements)
             {
@@ -162,6 +183,14 @@ namespace EdenClasslibrary.Types
                 if (result is ReturnObject AsReturnObj)
                 {
                     return AsReturnObj;
+                }
+                else if (result is SkipObject AsSkipObj)
+                {
+                    return AsSkipObj;
+                }
+                else if (result is QuitObject AsQuitObj)
+                {
+                    return AsQuitObj;
                 }
                 else if (result is ErrorObject AsErrorObj)
                 {
@@ -212,7 +241,15 @@ namespace EdenClasslibrary.Types
                 return asError;
             }
 
-            return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+            bool varAlreadyDefined = env.VariableExistsRoot(identifier.Name);
+            if (varAlreadyDefined == true)
+            {
+                return ErrorVariableAlreadyDefined.CreateErrorObject(identifier.Name);
+            }
+            else
+            {
+                return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+            }
         }
 
         private IObject EvaluateListDeclarationStatement(ASTreeNode root, Environment env)
@@ -233,6 +270,88 @@ namespace EdenClasslibrary.Types
             }
 
             return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+        }
+
+        private IObject EvaluateQuitStatement(ASTreeNode root, Environment env)
+        {
+            return QuitObject.Create();
+        }
+
+        private IObject EvaluateSkipStatement(ASTreeNode root, Environment env)
+        {
+            return SkipObject.Create();
+        }
+
+        private IObject EvaluateLoopStatement(ASTreeNode root, Environment env)
+        {
+            LoopStatement loop = root as LoopStatement;
+
+            //  Prepare loop env and define indexer.
+            Environment loopEnv = env.ExtendEnvironment();
+            IObject indexer = EvaluateStatement(loop.IndexerStatement, loopEnv);
+            string indexerName = (loop.IndexerStatement as VariableDeclarationStatement).Identifier.Name;
+
+            while ((EvaluateExpression(loop.Condition, loopEnv) as BoolObject).Value)
+            {
+                IObject blockResult = EvaluateBlockStatement(loop.Body, loopEnv);
+
+                if (blockResult is ErrorObject AsErrorObj)
+                {
+                    return AsErrorObj;
+                }
+                else if(blockResult is SkipObject AsSkipObj)
+                {
+                    /*  If 'Skip' statement is met we should clear current env block,
+                     *  evaluate indexer and navigate to the next iteration.
+                     */
+                }
+                else if(blockResult is QuitObject AsQuitObj)
+                {
+                    /*  If 'Quit' statement is met, just finish evaluating loop.
+                     */
+                    return NullObject.Create();
+                }
+
+                //  Evaluate indexer
+                IObject indexerOpResult = EvaluateExpression(loop.IndexerOperation, loopEnv);
+                //  Clear previous block data
+                loopEnv.Clear();
+                loopEnv.DefineVariable(indexerName, VariablePayload.Create(indexerOpResult.Type, indexerOpResult));
+            }
+
+            return NullObject.Create();
+        }
+
+        private IObject EvaluateSisyphusStatement(ASTreeNode root, Environment env)
+        {
+            SisyphusStatement loop = root as SisyphusStatement;
+
+            //  Prepare loop env and define indexer.
+            Environment loopEnv = env.ExtendEnvironment();
+
+            while (true)
+            {
+                IObject blockResult = EvaluateBlockStatement(loop.Body, loopEnv);
+
+                if (blockResult is ErrorObject AsErrorObj)
+                {
+                    return AsErrorObj;
+                }
+                else if (blockResult is SkipObject AsSkipObj)
+                {
+                    /*  If 'Skip' statement is met we should clear current env block,
+                     *  evaluate indexer and navigate to the next iteration.
+                     */
+                }
+                else if (blockResult is QuitObject AsQuitObj)
+                {
+                    /*  If 'Quit' statement is met, just finish evaluating loop.
+                     */
+                    return NullObject.Create();
+                }
+
+                loopEnv.Clear();
+            }
         }
 
         private IObject EvaluateExpressionStatement(ASTreeNode root, Environment env)
@@ -402,13 +521,27 @@ namespace EdenClasslibrary.Types
                 return new ErrorObject(_errorManager.Errors.LastOrDefault());
             }
 
-            return binaryFunc(leftEval, rightEval);
+            IObject result = binaryFunc(leftEval, rightEval);
+
+            if (binExp.NodeToken.Keyword == TokenType.Assign)
+            {
+                if (binExp.Left is IdentifierExpression AsId && AsId != null)
+                {
+                    result = env.UpdateVariable((binExp.Left as IdentifierExpression).Name, result);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            return result;
         }
 
         private IObject EvaluateIdentifierExpression(ASTreeNode root, Environment env)
         {
             IdentifierExpression identifier = root as IdentifierExpression;
-            return env.GetVariableValue(identifier.Name);
+            return env.GetVariable(identifier.Name);
         }
 
         private IObject EvaluateVariableDeclarationExpression(ASTreeNode root, Environment env)
@@ -581,16 +714,20 @@ namespace EdenClasslibrary.Types
             if (ifExp is null)
             {
             }
+
+
             IObject condition = EvaluateExpression(ifExp.ConditionExpression, env);
 
             bool conditionMeet = ObjectHelpers.IsTruthy(condition);
             if (conditionMeet == true)
             {
-                return EvaluateBlockStatement(ifExp.FulfielldBlock, env);
+                Environment fulfieldBlockEnv = env.ExtendEnvironment();
+                return EvaluateBlockStatement(ifExp.FulfielldBlock, fulfieldBlockEnv);
             }
             else if (ifExp.AlternativeBlock != null)
             {
-                return EvaluateBlockStatement(ifExp.AlternativeBlock, env);
+                Environment alternativeBlockEnv = env.ExtendEnvironment();
+                return EvaluateBlockStatement(ifExp.AlternativeBlock, alternativeBlockEnv);
             }
             else
             {

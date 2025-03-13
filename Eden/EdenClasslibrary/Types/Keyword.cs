@@ -15,6 +15,10 @@ namespace EdenClasslibrary.Types
             "Return",
             "If",
             "List",
+            "Loop",
+            "Sisyphus",
+            "Skip",
+            "Quit",
             "Char",
             "Null",
             "Else",
@@ -31,6 +35,10 @@ namespace EdenClasslibrary.Types
                 case "If": type = TokenType.If; break;
                 case "Else": type = TokenType.Else; break;
                 case "Function": type = TokenType.Function; break;
+                case "Loop": type = TokenType.Loop; break;
+                case "Sisyphus": type = TokenType.Sisyphus; break;
+                case "Skip": type = TokenType.Skip; break;
+                case "Quit": type = TokenType.Quit; break;
                 case "Var": 
                 case "Return": 
                 case "Structure": 

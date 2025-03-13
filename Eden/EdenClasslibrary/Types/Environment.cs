@@ -20,14 +20,59 @@ namespace EdenClasslibrary.Types
         /// <summary>
         /// Handles case: Var Int a = 10;
         /// </summary>
-        public IObject DefineVariable(string name, VariablePayload variable)
+        public IObject DefineVariable(string name, VariablePayload variable, bool allowRedefine = false)
         {
-            if (!VariableExists(name))
+            if (!VariableExists(name) || allowRedefine == true)
             {
                 _variables.Add(name, variable);
                 return variable.Variable;
             }
             return ErrorVariableUndefined.CreateErrorObject(name);
+        }
+
+        /// <summary>
+        /// Clears stored variables
+        /// </summary>
+        public void Clear()
+        {
+            _variables.Clear();
+        }
+
+        public IObject UpdateVariableScope(string name, IObject value)
+        {
+            if (VariableExists(name))
+            {
+                _variables[name] = VariablePayload.Create(value.Type, value);
+                return value;
+            }
+            else
+            {
+                return ErrorVariableUndefined.CreateErrorObject(name);
+            }
+        }
+
+        public IObject UpdateVariable(string name, IObject value)
+        {
+            IObject updated = UpdateVariableScope(name, value);
+
+            if(updated is ErrorObject && OutterEnvironment != null)
+            {
+                return OutterEnvironment.UpdateVariable(name, value);
+            }
+
+            return updated;
+        }
+
+        public bool VariableExistsRoot(string name)
+        {
+            bool varEx = VariableExists(name);
+
+            if (varEx == false && OutterEnvironment != null)
+            {
+                return OutterEnvironment.VariableExistsRoot(name);
+            }
+
+            return varEx;
         }
 
         public IObject CallBuildInFunc(string name, params IObject[] arguments)
@@ -57,13 +102,25 @@ namespace EdenClasslibrary.Types
         /// </summary>
         /// <param name="variableName"></param>
         /// <returns></returns>
-        public IObject GetVariableValue(string name)
+        public IObject GetVariableScope(string name)
         {
             if (VariableExists(name))
             {
                 return _variables[name].Variable;
             }
             return ErrorVariableUndefined.CreateErrorObject(name);
+        }
+
+        public IObject GetVariable(string name)
+        {
+            IObject variable = GetVariableScope(name);
+
+            if (variable is ErrorObject && OutterEnvironment != null)
+            {
+                return OutterEnvironment.GetVariable(name);
+            }
+
+            return variable;
         }
 
         /// <summary>

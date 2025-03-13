@@ -1,1 +1,0 @@
-Evaluator follow [[Language specification]].

@@ -22,12 +22,12 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $">     Variable not defined!";
+            return $"Variable not defined!";
         }
 
         public override string GetMessage()
         {
-            return $"> Variable '{_variableName}' is not defined!";
+            return $"Variable '{_variableName}' is not defined!";
         }
     }
 }

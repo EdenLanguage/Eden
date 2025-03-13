@@ -1,0 +1,8 @@
+Var Int counter = 0i;
+Sisyphus{
+	counter = counter + 1i;
+	If(counter == 10i){
+		Quit;
+	};
+}
+Return counter;

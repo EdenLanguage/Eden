@@ -18,12 +18,12 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
 
         public string PrettyPrintAST(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent)}{nameof(VariableTypeExpression)} {{ {Type } }}";
+            return $"{Common.IndentCreator(indent)}{nameof(VariableTypeExpression)} {{ {Type.Name } }}";
         }
 
         public string PrettyPrint(int indents = 0)
         {
-            return $"{Common.IndentCreator(indents)}{Type}";
+            return $"{Common.IndentCreator(indents)}{Type.Name}";
         }
     }
 }

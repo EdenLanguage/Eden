@@ -2,6 +2,7 @@
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
+using System.Reflection;
 using System.Text;
 
 namespace EdenClasslibrary.Types
@@ -17,6 +18,8 @@ namespace EdenClasslibrary.Types
             RegisterFunc("PrintLine", FunctionPayload.Create(typeof(IObject), [ObjectSignature.Create("input", typeof(IObject))], null));
             RegisterFunc("Print", FunctionPayload.Create(typeof(IObject), [ObjectSignature.Create("input", typeof(IObject))], null));
 
+            RegisterFunc("Inc", FunctionPayload.Create(typeof(IObject), [ObjectSignature.Create("input", typeof(IObject))], null));
+            
             RegisterFunc("Length", FunctionPayload.Create(typeof(IntObject), [ObjectSignature.Create("input", typeof(IIndexable))], null));
             RegisterFunc("Min", FunctionPayload.Create(typeof(IntObject), [ObjectSignature.Create("input", typeof(IIndexable))], null));
             RegisterFunc("Max", FunctionPayload.Create(typeof(IntObject), [ObjectSignature.Create("input", typeof(IIndexable))], null));
@@ -36,6 +39,8 @@ namespace EdenClasslibrary.Types
                     return Print(arguments);
                 case "Length":
                     return Length(arguments);
+                case "Inc":
+                    return Inc(arguments);
                 case "Min":
                     return Min(arguments);
                 case "Max":
@@ -146,7 +151,38 @@ namespace EdenClasslibrary.Types
             }
             return result;
         }
-
+        public IObject Inc(IObject[] arguments)
+        {
+            IObject result = null;
+            if (arguments[0] is IObject AsIObj)
+            {
+                if(AsIObj is IntObject AsInt)
+                {
+                    result = IntObject.Create(AsInt.Value + 1);
+                }
+                else if (AsIObj is FloatObject AsFloat)
+                {
+                    result = FloatObject.Create(AsFloat.Value + 1);
+                }
+                else if (AsIObj is CharObject AsChar)
+                {
+                    result = CharObject.Create(++AsChar.Value);
+                }
+                else if (AsIObj is StringObject AsString)
+                {
+                    result = StringObject.Create(AsString.Value + " ");
+                }
+                else
+                {
+                    result = ErrorIncFunctionInvalidArgument.CreateErrorObject(arguments[0]);
+                }
+            }
+            else
+            {
+                result = ErrorIncFunctionInvalidArgument.CreateErrorObject(arguments[0]);
+            }
+            return result;
+        }
         public IObject PrintLine(IObject[] arguments)
         {
             StringBuilder sb = new StringBuilder();

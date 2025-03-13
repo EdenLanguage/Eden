@@ -13,6 +13,10 @@ namespace EdenClasslibrary.Types
         Keyword,            // Language specific name like: 'for', 'foreach', 'Function', 'Var' ...
         Function,
         Var,
+        Loop,
+        Sisyphus,
+        Skip,
+        Quit,
         If,
         Else,
         Return,

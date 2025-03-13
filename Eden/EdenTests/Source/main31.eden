@@ -1,0 +1,5 @@
+Var Int counter = 10i;
+Loop(Var Int i = 10i; i > 0i; i = i - 1i){
+	counter = counter - 1i;
+};
+Return counter;

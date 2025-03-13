@@ -1,0 +1,35 @@
+- [ ] Prepare for release:
+	- [ ] [[Release 1.0.0.0]]
+- [ ] Language:
+	- [ ] [[Loops]]
+		- [ ] Write actual test cases for them.
+		- [ ] Check for errors
+		- [ ] Better error handling Invalid-expression/Invalid-statement
+		- [ ] Update Doc
+		- [ ] Review test-cases and test for invalid input
+		- [ ] Test how accurate the messages are
+	- [ ] [[Conditionals]]:
+		- [x] [[If]]
+		- [ ] [[If Else]]
+		- [x] [[Else]]
+	- [ ] [[Structure]]
+	- [ ] Implement environment separation for each block. But don't put the code inside EvaluateBlock(). This will not work fine. Instead focus on statements that are described in [[Block]].
+- [ ] [[Evaluator]]
+	- [ ] Optimize:
+		- [ ] Null and Bool Type-objects don't need to have multiple instances. We can just use reference instead of creating new Null-object for every null in program.
+- [ ] [[Lexer]]
+	- [x] Refactor
+- [ ] [[Parser]]
+	- [x] Before we start evaluating AST we should refactor whole thing.
+	- [x] Add better errors handling with clear messages.
+		- [x] ErrorManager class was introduced. Now it is time to use it in parser. I think if parser encountered an invalid statement. It should get to the end of this statement (and maybe use it in ErrorManager to show where was the error) and append appropriate error.
+		- [x] I think it would be useful to embed all of the token that are part of expression to Array of Token. This would by useful for more comprehend error handling and signaling!
+			- Update - For now just let it be. Because it would require thorough research how to implement that, because some of the tokens are neglected. And on top of that recreating output from that tokens is not simple (we have to take into consideration that there is an error so it is not straight forward to predict which token is skipped or added on top of expected tokens set.)
+	- [x] Implement function calls.
+- [ ] [[AST - Abstract Syntax Tree]]
+	- [x] Take one more look at printing AST.
+- [ ] [[REPL]]
+	- [ ] Implementation of REPL is not that important. Let us focus on parsing static files. And once this is completed. Go for REPL.
+- [ ] [[File parsing]]
+	- [x] There should be easy way to parse file from [[Parser]] perspective.
+- [ ] [[Tests]] should include testing of all implemented features.

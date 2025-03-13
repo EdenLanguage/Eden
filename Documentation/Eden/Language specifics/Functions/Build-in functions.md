@@ -1,0 +1,11 @@
+Eden provides set of build-in functions:
+- [[Length()]]
+- [[Inc()]]
+- [[Print()]]
+- [[PrintLine()]]
+- [[Min()]]
+- [[Max()]]
+- [[SinusR()]]
+- [[SinusD()]]
+- [[CosinusR()]]
+- [[CosinusD()]]
