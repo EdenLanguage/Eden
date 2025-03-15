@@ -19,6 +19,11 @@ namespace EdenClasslibrary.Types.LanguageTypes
             _error = error;
         }
 
+        public static IObject Create(AError error)
+        {
+            return new ErrorObject(error);
+        }
+
         public string AsString()
         {
             return _error.PrintError();

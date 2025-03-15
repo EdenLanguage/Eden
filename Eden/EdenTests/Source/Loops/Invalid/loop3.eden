@@ -1,0 +1,10 @@
+//	This test file contains invalid 'Loop' statement. It will throw error.
+
+Var Int counter = 0i;
+
+//	No ';' after indexer condition
+Loop(Var Int i = 0i; i < 10i i = i + 1i){
+	counter = counter + 1i;
+};
+
+Return counter;

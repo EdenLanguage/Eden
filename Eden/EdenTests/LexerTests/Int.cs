@@ -1,88 +1,58 @@
 ﻿using EdenClasslibrary.Types;
+using EdenTests.Utility;
 
 namespace EdenTests.LexerTests
 {
-    public class Int
+    public class Int : FileTester
     {
-
         [Fact]
-        public void ParseInt_1()
+        public void Int1()
         {
-            string code = $"202020i;";
             Lexer lexer = new Lexer();
-            lexer.SetInput(code);
 
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Int, "202020"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
+            string filename = "int1.eden";
+            string executionLocation = GetLexerSourceFile(filename);
 
+            lexer.LoadFile(executionLocation);
             List<Token> actual = lexer.Tokenize().ToList();
 
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
+            Token[] expected =
+            [
+                // First line
+                new Token(keyword: TokenType.Int, value: "0i", line: 1, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Semicolon, value: ";", line: 1, startPos: 3, filename: filename),
+
+                // Second line
+                new Token(keyword: TokenType.Int, value: "1i", line: 2, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Semicolon, value: ";", line: 2, startPos: 3, filename: filename),
+
+                // Third line
+                new Token(keyword: TokenType.Int, value: "10i", line: 3, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Semicolon, value: ";", line: 3, startPos: 4, filename: filename),
+
+                // Forth line
+                new Token(keyword: TokenType.Int, value: "100i", line: 4, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Semicolon, value: ";", line: 4, startPos: 5, filename: filename),
+
+                // Fifth line
+                new Token(keyword: TokenType.Int, value: "1000i", line: 5, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Semicolon, value: ";", line: 5, startPos: 6, filename: filename),
+
+                new Token(keyword: TokenType.Eof, value: "\0", line: 5, startPos: 7, filename: filename),
+            ];
+
+            Assert.Equal(expected.Length, actual.Count);
+            for (int i = 0; i < expected.Length; i++)
             {
                 Token expectedToken = expected[i];
                 Token actualToken = actual[i];
 
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
+                bool isSame = actualToken.Equals(expectedToken);
 
-        [Fact]
-        public void ParseInt_2()
-        {
-            string code = $"0i;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Int, "0"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
-
-        [Fact]
-        public void ParseInt_3()
-        {
-            string code = $"0i;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Int, "0"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
+                if (isSame == false)
+                {
+                    Assert.Fail($"Tokens at position '{i}' are different!");
+                }
             }
         }
     }

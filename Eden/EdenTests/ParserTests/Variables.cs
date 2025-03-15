@@ -1,5 +1,7 @@
 ﻿using EdenClasslibrary.Parser;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 using Xunit.Abstractions;
 
@@ -57,7 +59,7 @@ namespace EdenTests.ParserTests
                 expectedExpression = expectedExpressions[i];
 
                 parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code) as FileStatement;
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
@@ -81,17 +83,15 @@ namespace EdenTests.ParserTests
         {
             const int testCount = 6;
 
-            string[] codes = new string[testCount]
-            {
+            string[] codes =
+            [
                 "Var Intcounter = 10i;",
                 "Var Bool 4flaga = True;",
                 "Var Strig name = \"Pratt\";",
                 "var Float pi = 3.14f;",
                 "Var Int sum = counter5 - licznik * 10i;",
                 "Var Float funcCall = 3.14f * zmienna / 2i",
-            };
-
-            Parser parser = new Parser();
+            ];
 
             string code = string.Empty;
             string expectedID = string.Empty;
@@ -101,12 +101,13 @@ namespace EdenTests.ParserTests
             {
                 code = codes[i];
 
-                parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                Parser parser = new Parser();
+                Statement ast = parser.Parse(code);
 
-                Assert.Equal(parser.Program.Block.Statements.Length, 1);
-                Assert.Equal(parser.Errors.Length, 1);
-                Assert.True(parser.Program.Block.Statements[0] is InvalidStatement);
+                if (ast is not InvalidStatement asInvalidStmt)
+                {
+                    Assert.Fail($"'{code}' should fail but it didn't!");
+                }
             }
         }
 
@@ -136,7 +137,7 @@ namespace EdenTests.ParserTests
                 expected = expectedOutputs[i];
 
                 parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code) as FileStatement;
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
@@ -155,7 +156,7 @@ namespace EdenTests.ParserTests
                 Assert.Equal(ie.Name, expected[2]);
 
                 // Expression
-                EdenClasslibrary.Types.AbstractSyntaxTree.Expression exp = vds.Expression;
+                EdenClasslibrary.Types.AbstractSyntaxTree.Expressions.Expression exp = vds.Expression;
                 Assert.NotNull(exp);
                 Assert.Equal(exp.ToString(), expected[3]);
 

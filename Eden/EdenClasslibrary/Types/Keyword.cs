@@ -39,8 +39,8 @@ namespace EdenClasslibrary.Types
                 case "Sisyphus": type = TokenType.Sisyphus; break;
                 case "Skip": type = TokenType.Skip; break;
                 case "Quit": type = TokenType.Quit; break;
-                case "Var": 
-                case "Return": 
+                case "Var": type = TokenType.Var; break;
+                case "Return": type = TokenType.Return; break;
                 case "Structure": 
                 case "List": 
                     type = TokenType.Keyword; break;

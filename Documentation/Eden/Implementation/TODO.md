@@ -19,6 +19,7 @@
 		- [ ] Null and Bool Type-objects don't need to have multiple instances. We can just use reference instead of creating new Null-object for every null in program.
 - [ ] [[Lexer]]
 	- [x] Refactor
+	- [ ] If '/n' is provided as raw literal to lexer. For example in tests, it returns illegal error because switch() doesn't handle this case. It does handle when we provide it from source file because in this case it looks like /' // /n /' 
 - [ ] [[Parser]]
 	- [x] Before we start evaluating AST we should refactor whole thing.
 	- [x] Add better errors handling with clear messages.

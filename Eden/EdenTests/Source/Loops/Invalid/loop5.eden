@@ -1,0 +1,11 @@
+//	This test file contains invalid 'Loop' statement. It will throw error.
+
+Var Int counter = 0i;
+
+//	This is not C. This syntax will not come to pass.
+//	If you want an infinite loop, use 'Sisyphus' statement instead.
+Loop(;;){
+	counter = counter + 1i;
+}
+
+Return counter;

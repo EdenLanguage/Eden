@@ -1,26 +1,23 @@
 ﻿using EdenClasslibrary.Parser;
 using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 using Xunit.Abstractions;
 
 namespace EdenTests.ParserTests
 {
-    public class Bool : ConsoleWriter
+    public class Bool
     {
-        public Bool(ITestOutputHelper consoleWriter) : base(consoleWriter) { }
-
         [Fact]
         public void Assignment()
         {
-            PrintTestName($"{nameof(Bool)}.{nameof(Bool.Assignment)}");
-
             string input = "5i != 10i;";
 
             Parser parser = new Parser();
 
-            FileStatement block = parser.Parse(input);
-            string ast = block.ToASTFormat();
+            FileStatement block = parser.Parse(input) as FileStatement;
+            string ast = block.ToAbstractSyntaxTree();
 
             Console.WriteLine(ast);
 
@@ -78,7 +75,7 @@ namespace EdenTests.ParserTests
                 expected = expectedData[i];
 
                 parser = new Parser();
-                FileStatement block = parser.Parse(code);
+                FileStatement block = parser.Parse(code) as FileStatement;
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);

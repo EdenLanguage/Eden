@@ -1,138 +1,68 @@
 ﻿using EdenClasslibrary.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using EdenTests.Utility;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EdenTests.LexerTests
 {
-    public class OperatorsTest
+    public class OperatorsTest : FileTester
     {
         [Fact]
-        public void BasicTokens()
+        public void Operators1()
         {
-            string code = "+{}()=+-;";
             Lexer lexer = new Lexer();
-            lexer.SetInput(code);
 
-            List<Token> expectedTokens = new List<Token>()
-            {
-                new Token(TokenType.Plus, "+"),
-                new Token(TokenType.LeftBracket, "{"),
-                new Token(TokenType.RightBracket, "}"),
-                new Token(TokenType.LeftParenthesis, "("),
-                new Token(TokenType.RightParenthesis, ")"),
-                new Token(TokenType.Assign, "="),
-                new Token(TokenType.Plus, "+"),
-                new Token(TokenType.Minus, "-"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
+            string filename = "operators1.eden";
+            string executionLocation = GetLexerSourceFile(filename);
 
-            List<Token> actualTokens = lexer.Tokenize().ToList();
-
-            Assert.Equal(expectedTokens.Count, actualTokens.Count);
-            for (int i = 0; i < expectedTokens.Count; i++)
-            {
-                Token expectedToken = expectedTokens[i];
-                Token actualToken = actualTokens[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
-
-        [Fact]
-        public void BasicTokensWhiteSpace()
-        {
-            string code = "+{}  ()=+  -;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Plus, "+"),
-                new Token(TokenType.LeftBracket, "{"),
-                new Token(TokenType.RightBracket, "}"),
-                new Token(TokenType.LeftParenthesis, "("),
-                new Token(TokenType.RightParenthesis, ")"),
-                new Token(TokenType.Assign, "="),
-                new Token(TokenType.Plus, "+"),
-                new Token(TokenType.Minus, "-"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
-
+            lexer.LoadFile(executionLocation);
             List<Token> actual = lexer.Tokenize().ToList();
 
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
+            Token[] expected =
+            [
+                //  First line
+                new Token(keyword: TokenType.Plus, value: "+", line: 1, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.LeftBracket, value: "{", line: 1, startPos: 2, filename: filename),
+                new Token(keyword: TokenType.RightBracket, value: "}", line: 1, startPos: 3, filename: filename),
+                new Token(keyword: TokenType.LeftParenthesis, value: "(", line: 1, startPos: 4, filename: filename),
+                new Token(keyword: TokenType.RightParenthesis, value: ")", line: 1, startPos: 5, filename: filename),
+                new Token(keyword: TokenType.Assign, value: "=", line: 1, startPos: 6, filename: filename),
+                new Token(keyword: TokenType.Plus, value: "+", line: 1, startPos: 7, filename: filename),
+                new Token(keyword: TokenType.Minus, value: "-", line: 1, startPos: 8, filename: filename),
+
+                //  Second line
+                new Token(keyword: TokenType.Plus, value: "+", line: 2, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.LeftBracket, value: "{", line: 2, startPos: 2, filename: filename),
+                new Token(keyword: TokenType.RightBracket, value: "}", line: 2, startPos: 3, filename: filename),
+                new Token(keyword: TokenType.LeftParenthesis, value: "(", line: 2, startPos: 6, filename: filename),
+                new Token(keyword: TokenType.RightParenthesis, value: ")", line: 2, startPos: 7, filename: filename),
+                new Token(keyword: TokenType.Assign, value: "=", line: 2, startPos: 8, filename: filename),
+                new Token(keyword: TokenType.Plus, value: "+", line: 2, startPos: 9, filename: filename),
+                new Token(keyword: TokenType.Minus, value: "-", line: 2, startPos: 12, filename: filename),
+
+                new Token(keyword: TokenType.LesserOrEqual, value: "<=", line: 3, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.GreaterOrEqual, value: ">=", line: 4, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Inequal, value: "!=", line: 5, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Equal, value: "==", line: 6, startPos: 1, filename: filename),
+
+                new Token(keyword: TokenType.Eof, value: "\0", line: 7, startPos: 1, filename: filename),
+            ];
+
+            for (int i = 0; i < expected.Length; i++)
             {
                 Token expectedToken = expected[i];
                 Token actualToken = actual[i];
 
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
+                bool isSame = actualToken.Equals(expectedToken);
 
-        [Fact]
-        public void GreaterLesser()
-        {
-            string code = "If(variable <= 0i)";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
+                if (isSame == false)
+                {
+                    StringBuilder sb = new StringBuilder();
 
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.If, "If"),
-                new Token(TokenType.LeftParenthesis, "("),
-                new Token(TokenType.Identifier, "variable"),
-                new Token(TokenType.LesserOrEqual, "<="),
-                new Token(TokenType.Int, "0"),
-                new Token(TokenType.RightParenthesis, ")"),
-                new Token(TokenType.Eof, "\0"),
-            };
+                    sb.AppendLine($"Tokens at position '{i}' are different!");
+                    sb.AppendLine(PrintTokenDiff(actualToken, expectedToken));
 
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
-
-        [Fact]
-        public void Equal()
-        {
-            string code = "counter == 5i";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Identifier, "counter"),
-                new Token(TokenType.Equal, "=="),
-                new Token(TokenType.Int, "5"),
-                new Token(TokenType.Eof, "\0"),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
+                    Assert.Fail(sb.ToString());
+                }
             }
         }
     }

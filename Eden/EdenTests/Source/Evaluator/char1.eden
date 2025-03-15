@@ -1,0 +1,15 @@
+'0' + 100c;			//  Char(148) becasue '0' == 48
+'1' + '2';			//  Char(99) because '1' == 49 and '2' == 50
+200c + 100c;		//  Char(45) because of the overflow > 255
+'\n' + '\n';		//  Char(20)
+"string"" + '1';	//  String("string1")  
+'2';
+'\n';
+'1';
+'\t';
+'\r';
+'5';
+100c;
+0c;
+256c;
+1c;

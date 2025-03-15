@@ -1,0 +1,18 @@
+Var Int counter = 0i;
+Var Int Length = 10i;
+
+//	Loop from 0 to 9 -> 10 iterations
+Loop(Var Int i = 0i; i < Length; i = i + 1i){
+	
+	//	Loop from 0 to 9 -> 10 iterations
+	Loop(Var Int j = 0i; j < Length; j = j + 1i){
+		
+		//	Loop from 0 to 9 -> 10 iterations
+		Loop(Var Int k = 0i; k < Length; k = k + 1i){
+			counter = counter + 1i;
+		};
+	};
+};
+
+//	This should return 1000 because 10*10*10
+Return counter;

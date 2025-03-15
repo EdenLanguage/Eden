@@ -1,0 +1,10 @@
+//	test
+
+Var Int counter = 0i;
+
+//	test
+Loop(Var Int i = 0i; i < 10i; i = i + 1i;){
+	counter = counter + 1i;
+};
+
+Return counter;

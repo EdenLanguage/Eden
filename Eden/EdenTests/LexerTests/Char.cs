@@ -1,146 +1,51 @@
 ﻿using EdenClasslibrary.Types;
+using EdenTests.Utility;
 
 namespace EdenTests.LexerTests
 {
-    public class Char
+    public class Char : FileTester
     {
         [Fact]
-        public void Type()
+        public void Char1()
         {
-            string[] code =
+            Lexer lexer = new Lexer();
+
+            string filename = "char1.eden";
+            string executionLocation = GetLexerSourceFile(filename);
+
+            lexer.LoadFile(executionLocation);
+            List<Token> actual = lexer.Tokenize().ToList();
+
+            Token[] expected =
             [
-                "Char",
-                "Char;",
+                new Token(keyword: TokenType.Char, value: "'a'", line: 1, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'b'", line: 2, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'c'", line: 3, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "' '", line: 4, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'1'", line: 5, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'9'", line: 6, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'\\0'", line: 7, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'\\t'", line: 8, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'\\r'", line: 9, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "'\\n'", line: 10, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "100c", line: 11, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "0c", line: 12, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Char, value: "255c", line: 13, startPos: 1, filename: filename),
+
+                new Token(keyword: TokenType.Eof, value: "\0", line: 13, startPos: 5, filename: filename),
             ];
 
-            string file = string.Empty;
-            string output = string.Empty;
-
-            for (int i = 0; i < code.Length; i++)
+            for (int i = 0; i < expected.Length; i++)
             {
-                file = code[i];
+                Token expectedToken = expected[i];
+                Token actualToken = actual[i];
 
-                Lexer lexer = new Lexer();
-                lexer.SetInput(file);
+                bool isSame = actualToken.Equals(expectedToken);
 
-                List<Token> actual = lexer.Tokenize().ToList();
-            }
-        }
-
-        [Fact]
-        public void RawLiteral()
-        {
-            string[] code =
-            [
-                "'a';",
-                "'b';",
-                "'c';",
-                "' ';",
-                "'1';",
-                "'9';",
-                "'\0';",
-                "'\t';",
-                "'\r';",
-                "'\n';",
-            ];
-
-            string[] expected =
-            [
-                "a",
-                "b",
-                "c",
-                " ",
-                "1",
-                "9",
-                "\0",
-                "\t",
-                "\r",
-                "\n",
-            ];
-
-            Assert.Equal(code.Length, expected.Length);
-
-            string file = string.Empty;
-            string output = string.Empty;
-
-            for(int i = 0; i < code.Length; i++)
-            {
-                file = code[i];
-                output = expected[i];
-
-                Lexer lexer = new Lexer();
-                lexer.SetInput(file);
-
-                List<Token> actual = lexer.Tokenize().ToList();
-
-                Assert.Equal(3, actual.Count);
-
-                Assert.Equal(actual[0].LiteralValue, output);
-            }
-        }
-
-        [Fact]
-        public void MultipleRawLiterals()
-        {
-            string[] code =
-            [
-                "'a''b''c''d''e''f'",
-            ];
-
-            string[] expected =
-            [
-                "abcdef",
-            ];
-
-            Assert.Equal(code.Length, expected.Length);
-
-            string file = string.Empty;
-            string output = string.Empty;
-
-            for (int i = 0; i < code.Length; i++)
-            {
-                file = code[i];
-                output = expected[i];
-
-                Lexer lexer = new Lexer();
-                lexer.SetInput(file);
-
-                List<Token> actual = lexer.Tokenize().ToList();
-
-                //  +1 because of EOF!!
-                Assert.Equal(output.Length + 1, actual.Count);
-
-                for(int j = 0; j < output.Length; j++)
+                if (isSame == false)
                 {
-                    Assert.Equal(output[j].ToString(), actual[j].LiteralValue);
+                    Assert.Fail($"Tokens at position '{i}' are different!");
                 }
-            }
-        }
-
-        [Fact]
-        public void CharIntegral()
-        {
-            string[] code =
-            [
-                "100c",
-                "0c",
-                "255c",
-            ];
-
-            string file = string.Empty;
-            string output = string.Empty;
-
-            for (int i = 0; i < code.Length; i++)
-            {
-                file = code[i];
-
-                Lexer lexer = new Lexer();
-                lexer.SetInput(file);
-
-                List<Token> actual = lexer.Tokenize().ToList();
-
-                //  +1 because of EOF!!
-                Assert.Equal(2, actual.Count);
             }
         }
     }

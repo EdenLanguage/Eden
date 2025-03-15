@@ -1,10 +1,12 @@
-﻿using System.Globalization;
+﻿using EdenClasslibrary.Types.Excpetions;
+using System.Globalization;
 
 namespace EdenClasslibrary.Types
 {
     public class Lexer
     {
         #region Fields
+        private string _filePath;
         private string _filename;
         private string _input;
 
@@ -20,6 +22,7 @@ namespace EdenClasslibrary.Types
         public Lexer()
         {
             _filename = string.Empty;
+            _filePath = string.Empty;
             ClearLexer();
         }
         #endregion
@@ -30,6 +33,7 @@ namespace EdenClasslibrary.Types
             ClearLexer();
             _input = input;
             _filename = "REPL";
+            _filePath = "REPL";
         }
 
         public void LoadFile(string filePath)
@@ -40,7 +44,9 @@ namespace EdenClasslibrary.Types
                 try
                 {
                     _input = File.ReadAllText(filePath);
-                    _filename = filePath;
+                    _filename = Path.GetFileName(filePath);
+                    _filePath = filePath;
+
                 }
                 catch (Exception exception)
                 {
@@ -70,8 +76,8 @@ namespace EdenClasslibrary.Types
                     switch (nextCharacter)
                     {
                         case '=':
+                            NextCharacter();
                             nextToken = CreateNewToken(TokenType.Inequal, "!=");
-                            // This is looking forward. So in case there is matching character. It should 'eat' this next one as well.
                             NextCharacter();
                             break;
                         default:
@@ -83,6 +89,7 @@ namespace EdenClasslibrary.Types
                     switch (nextCharacter)
                     {
                         case '=':
+                            NextCharacter();
                             nextToken = CreateNewToken(TokenType.Equal, "==");
                             NextCharacter();
                             break;
@@ -103,8 +110,8 @@ namespace EdenClasslibrary.Types
                     {
                         case '/':
                             //  Comment detected.
+                            nextToken = CreateNewToken(TokenType.Comment, "//");
                             EatComment();
-                            nextToken = CreateNewToken(TokenType.Comment);
                             break;
                         default:
                             nextToken = CreateNewToken(TokenType.Slash);
@@ -119,21 +126,8 @@ namespace EdenClasslibrary.Types
                 case '}': nextToken = CreateNewToken(TokenType.RightBracket); break;
                 case '\'':
                     string charLiteral = ReadCharLiteral();
-                    if (charLiteral == null)
-                    {
-                        nextToken = CreateNewToken(TokenType.Illegal);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            nextToken = CreateNewToken(TokenType.Char, char.Parse(charLiteral));
-                        }
-                        catch (Exception)
-                        {
-                            nextToken = CreateNewToken(TokenType.Illegal);
-                        }
-                    }
+                    nextToken = CreateNewToken(TokenType.Char, charLiteral);
+                    NextCharacter();
                     break;
                 case '"':
                     string stringLiteral = ReadStringLiteral();
@@ -141,6 +135,7 @@ namespace EdenClasslibrary.Types
                     if (isValidStringLiteral == true)
                     {
                         nextToken = CreateNewToken(TokenType.String, stringLiteral);
+                        NextCharacter();
                     }
                     else
                     {
@@ -151,6 +146,7 @@ namespace EdenClasslibrary.Types
                     switch (nextCharacter)
                     {
                         case '=':
+                            NextCharacter();
                             nextToken = CreateNewToken(TokenType.LesserOrEqual, "<=");
                             NextCharacter();
                             break;
@@ -163,6 +159,7 @@ namespace EdenClasslibrary.Types
                     switch (nextCharacter)
                     {
                         case '=':
+                            NextCharacter();
                             nextToken = CreateNewToken(TokenType.GreaterOrEqual, ">=");
                             NextCharacter();
                             break;
@@ -187,6 +184,7 @@ namespace EdenClasslibrary.Types
                         {
                             nextToken = CreateNewToken(TokenType.Identifier, inputLiteral);
                         }
+                        NextCharacter();
                     }
                     else if (IsCurrentCharNumber())
                     {
@@ -197,30 +195,12 @@ namespace EdenClasslibrary.Types
 
                         if (isTypeChar == true)
                         {
+                            NextCharacter();
                             switch (type)
                             {
                                 case 'c':
-                                    //  Char
-                                    char literalAsChar = '\0';
-                                    int charAsInt = 0;
-
-                                    bool couldConvertToInts = int.TryParse(inputLiteral, out charAsInt);
-                                    if (couldConvertToInts)
-                                    {
-                                        if (charAsInt > 255)
-                                        {
-                                            literalAsChar = (char)(charAsInt % 255);
-                                        }
-                                        else
-                                        {
-                                            literalAsChar = (char)charAsInt;
-                                        }
-                                        nextToken = CreateNewToken(TokenType.Char, literalAsChar);
-                                    }
-                                    else
-                                    {
-                                        nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
-                                    }
+                                     nextToken = CreateNewToken(TokenType.Char, $"{inputLiteral}{type}");
+                                    //NextCharacter();
                                     break;
                                 case 'i':
                                     //  Int
@@ -228,12 +208,13 @@ namespace EdenClasslibrary.Types
                                     bool couldConvertToInt = int.TryParse(inputLiteral, out literalAsInt);
                                     if (couldConvertToInt)
                                     {
-                                        nextToken = CreateNewToken(TokenType.Int, inputLiteral);
+                                        nextToken = CreateNewToken(TokenType.Int, inputLiteral + type);
                                     }
                                     else
                                     {
                                         nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
                                     }
+                                    //NextCharacter();
                                     break;
                                 case 'f':
                                     //  Float
@@ -247,12 +228,13 @@ namespace EdenClasslibrary.Types
                                         {
                                             inputLiteral = inputLiteral.Replace(".", "");
                                         }
-                                        nextToken = CreateNewToken(TokenType.Float, inputLiteral);
+                                        nextToken = CreateNewToken(TokenType.Float, inputLiteral + type);
                                     }
                                     else
                                     {
                                         nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
                                     }
+                                    //NextCharacter();
                                     break;
                                 default:
                                     //  Error
@@ -260,13 +242,12 @@ namespace EdenClasslibrary.Types
                                     break;
                             }
                             NextCharacter();
-
                         }
                         else
                         {
-                            nextToken = CreateNewToken(TokenType.Illegal, inputLiteral);
+                            NextCharacter();
+                            nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
                         }
-                        //NextCharacter();
 
                     }
                     else
@@ -276,9 +257,9 @@ namespace EdenClasslibrary.Types
                     break;
             }
 
-            NextCharacter();
+            //NextCharacter();
 
-            //if (nextToken.Keyword == TokenType.Illegal) throw new Exception($"Lexer encountered illegal token: {nextToken.PrintTokenDetails()}");
+            //if (nextToken.Keyword == TokenType.Illegal) throw new CurrentTokenIsIllegal();
 
             if (nextToken.Keyword == TokenType.Comment)
             {
@@ -344,15 +325,36 @@ namespace EdenClasslibrary.Types
         {
             NextCharacter();
             NextCharacter();
-            while (!IsNewLine() && !(ReadCurrentCharacter() == '/' && PeekNextCharacter() == '/') && !(PeekNextCharacter() == '\0'))
+            while (!IsNewLine() && !(ReadCurrentCharacter() == '/' && PeekNextCharacter() == '/') /*&& !(PeekNextCharacter() == '\0')*/)
             {
                 NextCharacter();
+                if (ReadCurrentCharacter() == '\0') break;
             }
             if (ReadCurrentCharacter() == '/' && PeekNextCharacter() == '/')
             {
                 NextCharacter();
+                NextCharacter();
             }
             if (ReadCurrentCharacter() == '\r' && PeekNextCharacter() == '\n')
+            {
+                SkipEnter();
+            }
+        }
+
+        private void SkipEnter()
+        {
+            if (ReadCurrentCharacter() == '\r' && PeekNextCharacter() == '\n')
+            {
+                NextCharacter();
+                NextCharacter();
+            }
+            IncrementLinePointer();
+            ClearCurrentLinePosition();
+        }
+
+        private void SkipTab()
+        {
+            if (ReadCurrentCharacter() == '\t')
             {
                 NextCharacter();
             }
@@ -368,13 +370,22 @@ namespace EdenClasslibrary.Types
             bool canEat = IsCurrentCharacterEatable();
             while (canEat == true)
             {
-                char currChar = ReadCurrentCharacter();
-                NextCharacter();
-                if (currChar == '\n')
+                char nextchar = PeekNextCharacter();
+
+                if(_currentChar == '\r' && nextchar == '\n')
                 {
-                    IncrementLinePointer();
-                    ClearCurrentLinePosition();
+                    SkipEnter();
                 }
+                else if(_currentChar == '\t')
+                {
+                    SkipTab();
+                }
+                else
+                {
+                    // ' '
+                    NextCharacter();
+                }
+
                 canEat = IsCurrentCharacterEatable();
             }
         }
@@ -389,7 +400,17 @@ namespace EdenClasslibrary.Types
             {
                 _currentChar = _input[_nextReadPosition];
             }
-            IncrementLineReadPositionPointer();
+
+            //if(_currentChar == '\n')
+            //{
+            //    IncrementLinePointer();
+            //    ClearCurrentLinePosition();
+            //}
+            //else
+            //{
+                IncrementLineReadPositionPointer();
+            //}
+
             _readPosition = _nextReadPosition;
             _nextReadPosition++;
         }
@@ -431,8 +452,9 @@ namespace EdenClasslibrary.Types
 
         private bool IsNewLine()
         {
-            char nextChar = ReadCurrentCharacter();
-            if (nextChar == '\n' || nextChar == '\r')
+            char currentChar = ReadCurrentCharacter();
+            char nextChar = PeekNextCharacter();
+            if (nextChar == '\n' && currentChar == '\r')
             {
                 return true;
             }
@@ -441,8 +463,9 @@ namespace EdenClasslibrary.Types
 
         private bool IsCurrentCharacterEatable()
         {
-            char nextChar = ReadCurrentCharacter();
-            if (nextChar == '\n' || nextChar == '\t' || nextChar == '\r' || nextChar == ' ')
+            char currentChar = ReadCurrentCharacter();
+            char nextChar = PeekNextCharacter();
+            if ((currentChar == '\r' || nextChar == '\n' ) || currentChar == '\t' || currentChar == ' ')
             {
                 return true;
             }
@@ -597,6 +620,10 @@ namespace EdenClasslibrary.Types
                         metStrSymbol++;
                     }
                 }
+                if(PeekNextCharacter() == '\0')
+                {
+                    return stringLiteral;
+                }
                 NextCharacter();
             }
             return stringLiteral;
@@ -607,7 +634,7 @@ namespace EdenClasslibrary.Types
             string input = string.Empty;
             char currentChar = ReadCurrentCharacter();
 
-            //input += currentChar;
+            input += currentChar;
 
             if (currentChar != '\'')
             {
@@ -620,19 +647,19 @@ namespace EdenClasslibrary.Types
                 input += ReadCurrentCharacter();
                 NextCharacter();
             }
-            //input += ReadCurrentCharacter();
+            input += ReadCurrentCharacter();
 
             char symbol = '\0';
 
-            bool canParseToChar = char.TryParse(input, out symbol);
-            if (canParseToChar == true)
-            {
+            //bool canParseToChar = char.TryParse(input, out symbol);
+            //if (canParseToChar == true)
+            //{
                 return input;
-            }
-            else
-            {
-                return null;
-            }
+            //}
+            //else
+            //{
+             //   return null;
+            //}
         }
 
         private bool IsValidStringLiteral(string literal)
@@ -661,10 +688,12 @@ namespace EdenClasslibrary.Types
 
             int tokenInLineBegPtr = _currentLinePosition;
 
-            toker.SetAttributes(type, _currentChar, _currentLine, tokenInLineBegPtr, _filename);
+            toker.SetAttributes(keyword: type, value: _currentChar, line: _currentLine, startPos: _currentLinePosition, filename: _filename);
+
+            NextCharacter();
+
             return toker;
         }
-
 
         /// <summary>
         /// Creates new 'Token' from literal parsed value.
@@ -678,7 +707,7 @@ namespace EdenClasslibrary.Types
 
             int tokenInLineBegPtr = _currentLinePosition - (value.Length - 1);
 
-            toker.SetAttributes(type, value, _currentLine, tokenInLineBegPtr, _filename);
+            toker.SetAttributes(keyword: type, value: value, line: _currentLine, startPos: tokenInLineBegPtr, filename: _filename);
             return toker;
         }
 
@@ -688,7 +717,10 @@ namespace EdenClasslibrary.Types
 
             int tokenInLineBegPtr = _currentLinePosition - 1;
 
-            toker.SetAttributes(type, value, _currentLine, tokenInLineBegPtr, _filename);
+            toker.SetAttributes(keyword: type, value: value, line: _currentLine, startPos: _currentLinePosition, filename: _filename);
+            
+            NextCharacter();
+
             return toker;
         }
         #endregion

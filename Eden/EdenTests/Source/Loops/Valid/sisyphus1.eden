@@ -1,0 +1,23 @@
+//	Define counter variabl, it will be incremented inside of Sisyphus loop.
+Var Int counter = 0i;
+
+//	This code will be executed endlessly, unless 'Quit' statement is called.
+Sisyphus{
+
+	//	Inner loop counter
+	Var Int innerTimes = 0i;
+	Sisyphus{
+		counter = counter + 1i;
+		innerTimes = innerTimes + 1i;
+		If(innerTimes >= 10i){
+			Quit;
+		};
+	};
+
+	If(counter >= 100i){
+		Quit;
+	};
+};
+
+//	This should return 100
+Return counter;

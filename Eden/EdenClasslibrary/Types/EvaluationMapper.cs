@@ -1,4 +1,6 @@
 ﻿using EdenClasslibrary.Errors;
+using EdenClasslibrary.Errors.RuntimeErrors;
+using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Types
@@ -291,7 +293,7 @@ namespace EdenClasslibrary.Types
             if(exists == false)
             {
                 //  TODO: Handle error -> I think every return null in this class should return ErrorObj with details about what happend. This will clear the evaluation by a great bit.
-                RegisterError(ErrorUndefinedOperation.Create(leftObj, opToken.Keyword, rightObj));
+                RegisterError(ErrorSemanticalUndefBinaryOp.Create(leftObj, opToken.Keyword, rightObj));
                 return null;
             }
 
@@ -305,7 +307,8 @@ namespace EdenClasslibrary.Types
             if (exists == false)
             {
                 //  TODO: Handle error -> I think every return null in this class should return ErrorObj with details about what happend. This will clear the evaluation by a great bit.
-                RegisterError(ErrorUndefinedUnaryOperation.Create(opToken.Keyword, rightObj));
+                RegisterError(ErrorSemanticalUndefUnaryOp.Create(opToken.Keyword, rightObj));
+                //return ErrorSemanticalUndefUnaryOp.CreateErrorObject(opToken.Keyword, rightObj);
                 return null;
             }
 
@@ -390,7 +393,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
             }
         }
         private IObject Char_Subtract_Char_Func(IObject left, IObject right)
@@ -412,7 +415,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right);
             }
         }
         private IObject Char_Multiply_Char_Func(IObject left, IObject right)
@@ -426,7 +429,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right);
             }
         }
         private IObject Char_Divide_Char_Func(IObject left, IObject right)
@@ -440,7 +443,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Slash, right);
             }
         }
         #endregion
@@ -462,12 +465,12 @@ namespace EdenClasslibrary.Types
                 }
                 else
                 {
-                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
                 }
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
             }
         }
 
@@ -481,12 +484,12 @@ namespace EdenClasslibrary.Types
                 }
                 else
                 {
-                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
                 }
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
             }
         }
 
@@ -500,12 +503,12 @@ namespace EdenClasslibrary.Types
                 }
                 else
                 {
-                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
                 }
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
             }
         }
 
@@ -527,12 +530,12 @@ namespace EdenClasslibrary.Types
                 }
                 else
                 {
-                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
                 }
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
             }
         }
         private IObject Int_Add_Int_Func(IObject left, IObject right)
@@ -543,7 +546,7 @@ namespace EdenClasslibrary.Types
             }
             catch(Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
             }
         }
         private IObject Char_Equal_Char_Func(IObject left, IObject right)
@@ -554,7 +557,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
             }
         }
         private IObject Char_InEqual_Char_Func(IObject left, IObject right)
@@ -565,7 +568,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
             }
         }
         private IObject Char_Smaller_Char_Func(IObject left, IObject right)
@@ -576,7 +579,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right);
             }
         }
         private IObject Char_Greater_Char_Func(IObject left, IObject right)
@@ -587,7 +590,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.RightArrow, right);
             }
         }
         private IObject Char_SmallerEqual_Char_Func(IObject left, IObject right)
@@ -598,7 +601,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right);
             }
         }
         private IObject Char_BiggerEqual_Char_Func(IObject left, IObject right)
@@ -609,7 +612,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
             }
         }
         #region String
@@ -650,7 +653,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
             }
         }
         #endregion
@@ -688,7 +691,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
             }
         }
 
@@ -725,7 +728,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right);
             }
         }
 
@@ -762,7 +765,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right);
             }
         }
 
@@ -778,7 +781,7 @@ namespace EdenClasslibrary.Types
             {
                 if(right is IntObject RaI && RaI.Value == 0 || right is IntObject RaF && RaF.Value == 0)
                 {
-                    RegisterError(ErrorDevideByZero.Create());
+                    return ErrorRuntimeDivideByZero.CreateErrorObject();
                 }
 
 
@@ -805,7 +808,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeDivideByZero.CreateErrorObject();
             }
         }
 
@@ -842,7 +845,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
             }
         }
 
@@ -873,7 +876,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
             }
         }
 
@@ -904,7 +907,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
             }
         }
 
@@ -935,7 +938,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right);
             }
         }
 
@@ -966,7 +969,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
             }
         }
 
@@ -997,7 +1000,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Plus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right);
             }
         }
 
@@ -1009,7 +1012,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Minus, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right);
             }
         }
 
@@ -1021,7 +1024,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Star, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right);
             }
         }
 
@@ -1031,13 +1034,13 @@ namespace EdenClasslibrary.Types
             {
                 if(right is IntObject isInt && isInt.Value == 0)
                 {
-                    RegisterError(ErrorDevideByZero.Create());
+                    return ErrorRuntimeDivideByZero.CreateErrorObject();
                 }
                 return IntObject.Create((left as IntObject).Value / (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Slash, right));
+                return ErrorRuntimeDivideByZero.CreateErrorObject();
             }
         }
 
@@ -1049,7 +1052,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.LeftArrow, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right);
             }
         }
 
@@ -1061,7 +1064,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.RightArrow, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.RightArrow, right);
             }
         }
 
@@ -1073,7 +1076,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Equal, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
             }
         }
 
@@ -1085,7 +1088,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Inequal, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
             }
         }
 
@@ -1097,7 +1100,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.GreaterOrEqual, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
             }
         }
 
@@ -1109,7 +1112,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.LesserOrEqual, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right);
             }
         }
 
@@ -1122,7 +1125,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Equal, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
             }
         }
 
@@ -1134,7 +1137,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Inequal, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
             }
         }
         #endregion
@@ -1148,7 +1151,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Equal, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
             }
         }
 
@@ -1160,7 +1163,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Inequal, right));
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
             }
         }
         #endregion
@@ -1178,7 +1181,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorUnaryOperationFailed.Create(TokenType.Minus, type));
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Minus, type);
             }
         }
 
@@ -1191,7 +1194,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorUnaryOperationFailed.Create(TokenType.ExclemationMark, type));
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.ExclemationMark, type);
             }
         }
 
@@ -1203,7 +1206,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorUnaryOperationFailed.Create(TokenType.ExclemationMark, type));
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.ExclemationMark, type);
             }
         }
 
@@ -1215,7 +1218,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorUnaryOperationFailed.Create(TokenType.Tilde, type));
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Tilde, type);
             }
         }
 
@@ -1227,7 +1230,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorUnaryOperationFailed.Create(TokenType.Tilde, type));
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Tilde, type);
             }
         }
 
@@ -1241,7 +1244,7 @@ namespace EdenClasslibrary.Types
             }
             catch (Exception exception)
             {
-                return RegisterError(ErrorUnaryOperationFailed.Create(TokenType.QuenstionMark, type));
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.QuenstionMark, type);
             }
         }
         #endregion

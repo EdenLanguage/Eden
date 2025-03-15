@@ -1,0 +1,20 @@
+Var Int PowerBase = 2i;
+Var Int Result = 1i;
+Var Int PowerOf = 10i;
+
+//	Inner loop counter
+Var Int loopCounter = 0i;
+Sisyphus{
+	//	Multiply
+	Result = Result * PowerBase;
+	
+	// Increment loop counter
+	loopCounter = loopCounter + 1i;
+
+	//	Quit loop
+	If(loopCounter >= PowerOf) {
+		Quit;
+	};
+};
+
+Return Result;

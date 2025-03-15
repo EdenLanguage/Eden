@@ -1,5 +1,5 @@
 ﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 
 namespace EdenTests.ParserTests
@@ -13,8 +13,8 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            FileStatement block = parser.Parse(code);
-            string AST = block.ToASTFormat();
+            FileStatement block = parser.Parse(code) as FileStatement;
+            string AST = block.ToAbstractSyntaxTree();
 
             Assert.True(parser.Errors.Length == 0);
             Assert.True(block.Block.Statements.Length == 1);
@@ -27,7 +27,7 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            FileStatement block = parser.Parse(code);
+            FileStatement block = parser.Parse(code) as FileStatement;
             string AST = block.ToString();
 
             Assert.True(parser.Errors.Length == 0);
@@ -42,7 +42,7 @@ namespace EdenTests.ParserTests
 
             Parser parser = new Parser();
 
-            FileStatement block = parser.ParseFile(executionLocation);
+            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
             string AST = block.ToString();
 
             Assert.True(parser.Errors.Length == 0);

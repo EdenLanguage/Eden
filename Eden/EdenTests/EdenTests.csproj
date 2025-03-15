@@ -33,4 +33,11 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AbstractSyntaxTreeTests\" />
+    <Folder Include="Source\Loops\Invalid\" />
+    <Folder Include="Source\Lexer\" />
+    <Folder Include="Source\Evaluator\" />
+  </ItemGroup>
+
 </Project>

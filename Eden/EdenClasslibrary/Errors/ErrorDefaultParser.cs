@@ -20,7 +20,7 @@ namespace EdenClasslibrary.Errors
 
         public override string GetDetails()
         {
-            return $"File: '{Path.GetFileName(_parserToken.Filename)}'. Line: '{_parserToken.Line}'. Column:'{_parserToken.TokenStartingLinePosition}'.";
+            return $"File: '{Path.GetFileName(_parserToken.Filename)}'. Line: '{_parserToken.Line}'. Column:'{_parserToken.Start}'.";
         }
 
         public override string GetMessage()
