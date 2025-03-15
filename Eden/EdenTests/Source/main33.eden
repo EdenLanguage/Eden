@@ -1,0 +1,16 @@
+Var Int counter = 0i;
+Sisyphus{
+	Var Int innerTimes = 0i;
+	Sisyphus{
+		counter = counter + 1i;
+		innerTimes = innerTimes + 1i;
+		If(innerTimes == 10i){
+			Quit;
+		};
+	};
+
+	If(counter >= 100i){
+		Quit;
+	};
+};
+Return counter;

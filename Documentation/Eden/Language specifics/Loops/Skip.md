@@ -1,0 +1,1 @@
+Allow user to skip current evaluation of the [[Loops]] by returning evaluation point at the end of the loop.

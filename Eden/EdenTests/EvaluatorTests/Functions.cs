@@ -386,5 +386,49 @@ namespace EdenTests.EvaluatorTests
                 Assert.Equal(expected, (result as StringObject).Value);
             }
         }
+
+        [Fact]
+        public void Inc()
+        {
+            string[] code =
+            [
+                "Inc(1i);",
+                "Inc(3.14f);",
+                "Inc(6c);",
+                "Inc(\"Hello\");",
+            ];
+
+            string[] expectedResults =
+            [
+                "2",
+                "4.1400003",
+                "7",
+                "Hello ",
+            ];
+
+            Assert.Equal(code.Length, expectedResults.Length);
+
+
+            string input = string.Empty;
+            string expected = string.Empty;
+
+            for (int i = 0; i < code.Length; i++)
+            {
+                input = code[i];
+                expected = expectedResults[i];
+
+                Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator();
+                Environment env = new Environment();
+
+                FileStatement block = parser.Parse(input);
+                string STR = block.ToString();
+                string AST = block.ToASTFormat();
+
+                IObject result = evaluator.Evaluate(block, env);
+
+                Assert.Equal(expected, result.AsString());
+            }
+        }
     }
 }

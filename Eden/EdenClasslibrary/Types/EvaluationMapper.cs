@@ -88,6 +88,20 @@ namespace EdenClasslibrary.Types
             _unaryMappings = new Dictionary<UnaryFuncArgsWrapper, Func<IObject, IObject>>();
 
             #region Register binary functions
+
+            //  Assign
+            RegisterMethod(typeof(IntObject), TokenType.Assign, typeof(IntObject), Int_Assign_All_Func);
+            RegisterMethod(typeof(IntObject), TokenType.Assign, typeof(CharObject), Int_Assign_All_Func);
+            RegisterMethod(typeof(IntObject), TokenType.Assign, typeof(FloatObject), Int_Assign_All_Func);
+            
+            RegisterMethod(typeof(CharObject), TokenType.Assign, typeof(CharObject), Char_Assign_All_Func);
+
+            RegisterMethod(typeof(FloatObject), TokenType.Assign, typeof(FloatObject), Float_Assign_All_Func);
+            RegisterMethod(typeof(FloatObject), TokenType.Assign, typeof(IntObject), Float_Assign_All_Func);
+            RegisterMethod(typeof(FloatObject), TokenType.Assign, typeof(CharObject), Float_Assign_All_Func);
+
+            RegisterMethod(typeof(StringObject), TokenType.Assign, typeof(StringObject), String_Assign_String_Func);
+            
             //  Int
             RegisterMethod(typeof(IntObject), TokenType.Plus, typeof(IntObject), Int_Add_Int_Func);
             RegisterMethod(typeof(IntObject), TokenType.Plus, typeof(FloatObject), Func_Float_Add_Float);
@@ -430,6 +444,97 @@ namespace EdenClasslibrary.Types
             }
         }
         #endregion
+        private IObject Int_Assign_All_Func(IObject left, IObject right)
+        {
+            try
+            {
+                if(right is IntObject IsInt)
+                {
+                    return IntObject.Create(IsInt.Value);
+                }
+                else if(right is CharObject AsChar)
+                {
+                    return IntObject.Create(AsChar.Value);
+                }
+                else if (right is FloatObject AsFloat)
+                {
+                    return FloatObject.Create(AsFloat.Value);
+                }
+                else
+                {
+                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                }
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+            }
+        }
+
+        private IObject Char_Assign_All_Func(IObject left, IObject right)
+        {
+            try
+            {
+                if (right is CharObject AsChar)
+                {
+                    return CharObject.Create(AsChar.Value);
+                }
+                else
+                {
+                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                }
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+            }
+        }
+
+        private IObject String_Assign_String_Func(IObject left, IObject right)
+        {
+            try
+            {
+                if (right is StringObject AsString)
+                {
+                    return StringObject.Create(AsString.Value);
+                }
+                else
+                {
+                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                }
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+            }
+        }
+
+        private IObject Float_Assign_All_Func(IObject left, IObject right)
+        {
+            try
+            {
+                if (right is IntObject IsInt)
+                {
+                    return FloatObject.Create(IsInt.Value);
+                }
+                else if (right is CharObject AsChar)
+                {
+                    return FloatObject.Create(AsChar.Value);
+                }
+                else if (right is FloatObject AsFloat)
+                {
+                    return FloatObject.Create(AsFloat.Value);
+                }
+                else
+                {
+                    return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+                }
+            }
+            catch (Exception exception)
+            {
+                return RegisterError(ErrorOperationFailed.Create(left, TokenType.Assign, right));
+            }
+        }
         private IObject Int_Add_Int_Func(IObject left, IObject right)
         {
             try

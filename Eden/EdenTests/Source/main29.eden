@@ -1,0 +1,13 @@
+Var Int counter = 0i;
+Loop(Var Int i = 0i; i < 10i; i = i + 1i){
+	//Var Float pip = 9.14f;
+	//If(i >= 1i){
+	//	Var Float pi = 3.14f;
+	//}
+	//Else {
+	//	Skip;
+	//};
+
+	counter = counter + 1i;
+	//Var Float popo = 1.23f;
+};

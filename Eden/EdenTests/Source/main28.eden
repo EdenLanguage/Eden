@@ -1,0 +1,17 @@
+Loop(Var Int i = 0i; i < 10i; i = i + 1i){
+	Skip;	//	Skips evaluation of upcoming statements. Goes back to beginning and checks condition.
+	Quit;	//	Escapes last encountered Loop.
+};
+
+Sisyphus {
+	Skip;	//	Goes to next evaluation.
+	Quit;	//	Escapes loop.
+};
+
+Loop(Var Int i = 0i; i < 100i; i = i + 1i){
+	Loop(Var Int j = 0i; j < 100i; j = j + 1i){
+		If(i*j >= 10i){
+			Quit;
+		};	
+	};
+};

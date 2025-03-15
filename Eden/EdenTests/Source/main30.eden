@@ -1,0 +1,13 @@
+Var Int Limit = 10i;
+
+Var Int counter = 0i;
+
+Loop(Var Int i = 0i; i < Limit; i = i + 1i){
+	Loop(Var Int j = 0i; j < Limit; j = j + 1i){
+		Loop(Var Int k = 0i; k < Limit; k = k + 1i){
+			counter = counter + 1i;
+		};
+	};
+};
+
+Return counter;
