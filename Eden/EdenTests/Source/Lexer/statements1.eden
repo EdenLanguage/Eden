@@ -1,0 +1,11 @@
+Var Int zmienna = 5i;
+
+Function Int Calculator(Var Int A){
+	Return A;
+};
+
+Var Int result = Calculator(5i);
+
+If(counter == 5i) Return 10i;
+
+Else If(counter == True) Return 20i;

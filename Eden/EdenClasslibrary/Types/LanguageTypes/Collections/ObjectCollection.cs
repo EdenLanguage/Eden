@@ -1,5 +1,4 @@
-﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
-using System.Text;
+﻿using System.Text;
 
 namespace EdenClasslibrary.Types.LanguageTypes.Collections
 {
@@ -50,7 +49,7 @@ namespace EdenClasslibrary.Types.LanguageTypes.Collections
             sb.Append("[");
             for (int i = 0; i < Collection.Count; i++)
             {
-                sb.Append($"{(Collection[i] as IPrintable).PrettyPrint()}");
+                sb.Append($"{Collection[i].AsString()}");
                 if (i < Collection.Count - 1)
                 {
                     sb.Append(", ");

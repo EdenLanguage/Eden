@@ -1,5 +1,4 @@
-﻿using EdenClasslibrary.Types.AbstractSyntaxTree;
-using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Types.EnvironmentTypes
@@ -54,7 +53,7 @@ namespace EdenClasslibrary.Types.EnvironmentTypes
 
         public override string ToString()
         {
-            return $"{(Body as IPrintable).PrettyPrint()}";
+            return $"{Body.Print()}";
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
-using EdenClasslibrary.Utility;
+﻿using EdenClasslibrary.Utility;
 
 namespace EdenClasslibrary.Types.LanguageTypes
 {
-    public class CharObject : IObject, IPrintable
+    public class CharObject : IObject
     {
         public Type Type
         {
@@ -27,21 +26,21 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public override string ToString()
         {
-            return PrettyPrint();
+            return Print();
         }
 
-        public string ToASTFormat()
+        public string ToAbstractSyntaxTree()
         {
-            return PrettyPrintAST();
+            return ToAbstractSyntaxTree();
         }
 
-        public string PrettyPrintAST(int indent = 0)
+        public string ToAbstractSyntaxTree(int indent = 0)
         {
             string symbol = ((int)Value).ToString();
             return $"{Common.IndentCreator(indent)}{nameof(CharObject)} {{ {symbol} }}";
         }
 
-        public string PrettyPrint(int indents = 0)
+        public string Print(int indents = 0)
         {
             string symbol = ((int)Value).ToString();
             return $"{Common.IndentCreator(indents)}{symbol}";
@@ -54,7 +53,7 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public string AsString()
         {
-            return PrettyPrint();
+            return Print();
         }
     }
 }

@@ -1,0 +1,6 @@
+add(5i, 5i*10i);
+delete(True);
+update(3.14f, 1i/2i);
+UpdateUser("Jarek", 10i);
+Add(Evaluate(5i,10i), Multiply(10i, 3.14f), devide(2i));
+Length("Test");

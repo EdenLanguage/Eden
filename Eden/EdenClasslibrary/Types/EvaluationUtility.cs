@@ -4,7 +4,7 @@ namespace EdenClasslibrary.Types
 {
     public static class EvaluationUtility
     {
-        public static ASTreeNode CheckValidity<T>(ASTreeNode instace) where T : ASTreeNode
+        public static AbstractSyntaxTreeNode CheckValidity<T>(AbstractSyntaxTreeNode instace) where T : AbstractSyntaxTreeNode
         {
             if((instace as T) is not null)
             {

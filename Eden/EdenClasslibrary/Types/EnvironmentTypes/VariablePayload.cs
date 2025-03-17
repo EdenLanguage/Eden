@@ -1,5 +1,4 @@
-﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Interfaces;
-using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Types.EnvironmentTypes
 {

@@ -1,0 +1,3 @@
+Function StringConcat(Var String arg){
+	return arg;
+};

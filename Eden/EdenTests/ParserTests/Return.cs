@@ -1,9 +1,6 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
-using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
+using EdenClasslibrary.Parser;
 using EdenTests.Utility;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.ParserTests
 {
@@ -12,85 +9,92 @@ namespace EdenTests.ParserTests
         [Fact]
         public void Valid()
         {
-            string[] codes = new string[]
-            {
-                "Return 50i;",
-                "Return False;",
-                "Return Bool;",
-                "Return INt;",
-                "Return IN5sd5",
-                "Return zmienna;",
-                "Return zm6ienna;",
-                "Return 50i*50i;",
-                "Return 0.1f+0.2f;",
-            };
+            string[][] data =
+            [
+                ["Return 50i;", "50"],
+                ["Return False;", "False"],
+                ["Return INt;", "INt"],
+                ["Return zmienna;", "zmienna"],
+                ["Return 50i*50i;", "(50*50)"],
+                ["Return 0.1f+0.2f;", "(0.1+0.2)"],
+            ];
 
-            string[] expecteds = new string[]
-            {
-                "50",
-                "False",
-                null,
-                "INt",
-                null,
-                "zmienna",
-                null,
-                "(50*50)",
-                "(0.1+0.2)",
-            };
-
-            bool equal = codes.Length == expecteds.Length;
-            Assert.True(equal);
-
-            Parser parser = new Parser();
-
-            string code = string.Empty;
+            string[] testset = new string[] { };
+            string input = string.Empty;
             string expected = string.Empty;
+            string actual = string.Empty;
 
-            for (int i = 0; i < codes.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
-                code = codes[i];
-                expected = expecteds[i];
+                testset = data[i];
 
-                parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                input = testset[0];
+                expected = testset[1];
 
-                if(expected == null)
+                Parser parser = new Parser();
+                Statement ast = parser.Parse(input);
+
+                if (ast is InvalidStatement asInvalidStmt)
                 {
-                    //  Invalid
-                    Assert.Equal(parser.Program.Block.Statements.Length, 1);
-                    Assert.Equal(parser.Errors.Length, 1);
-                    Assert.True(parser.Program.Block.Statements[0] is InvalidStatement);
+                    Assert.Fail(asInvalidStmt.Print());
                 }
-                else
-                {
-                    //  Valid
-                    Assert.Equal(parser.Program.Block.Statements.Length, 1);
-                    Assert.Equal(parser.Errors.Length, 0);
-                    Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
 
-                    ReturnStatement vds = parser.Program.Block.Statements[0] as ReturnStatement;
+                Assert.Equal(parser.Program.Block.Statements.Length, 1);
+                Assert.Equal(parser.Errors.Length, 0);
+                Assert.True(parser.Program.Block.Statements[0] is not InvalidStatement);
+
+                ReturnStatement vds = parser.Program.Block.Statements[0] as ReturnStatement;
+            }
+        }
+
+        [Fact]
+        public void Invalid()
+        {
+            string[][] data =
+            [
+                ["Return Bool;", null],
+                ["Return IN5sd5;", null],
+                ["Return zm6ienna;", null],
+            ];
+
+            string[] testset = new string[] { };
+            string input = string.Empty;
+            string expected = string.Empty;
+            string actual = string.Empty;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                testset = data[i];
+
+                input = testset[0];
+                expected = testset[1];
+
+                Parser parser = new Parser();
+                Statement ast = parser.Parse(input);
+
+                if (ast is not InvalidStatement asInvalidStmt)
+                {
+                    Assert.Fail($"'{input}' should fail but it didn't!");
                 }
             }
         }
 
         [Fact]
-        public void NestedBlockReturn()
+        public void Return1()
         {
-            string filename = "main14.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
+            string filename = "return1.eden";
+            string executionLocation = GetParserSourceFile(filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Statement ast = parser.ParseFile(executionLocation);
 
-            FileStatement block = parser.ParseFile(executionLocation);
-            string AST = block.ToString();
+            if (ast is InvalidStatement asInvalidStatement)
+            {
+                Assert.Fail(asInvalidStatement.Print());
+            }
 
-            IObject result = evaluator.Evaluate(block, env);
-            Assert.Equal((result as IntObject).Value, 1);
-
-            Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Block.Statements.Length == 1);
+            string AST = ast.ToAbstractSyntaxTree();
+            string STR = ast.ToString();
         }
     }
 }

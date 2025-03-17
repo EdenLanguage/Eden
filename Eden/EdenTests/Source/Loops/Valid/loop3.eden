@@ -1,0 +1,12 @@
+Var String literal = "";
+Var Int Length = 10i;
+
+//	Loop from 0 to 9 -> 10 iterations
+Loop(Var Int i = 0i; i < Length; i = i + 1i){
+	
+	//	Appending string with 'a' char
+	literal = literal + 'a';
+};
+
+//	This should return "aaaaaaaaaa" because 10 iterations
+Return literal;

@@ -1,6 +1,6 @@
 ﻿using EdenClasslibrary.Parser;
 using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
 using Environment = EdenClasslibrary.Types.Environment;
@@ -53,8 +53,8 @@ namespace EdenTests.EvaluatorTests
                 Environment env = new Environment();
 
                 //  Parsing
-                FileStatement ast = parser.Parse(statement);
-                string AST = ast.ToASTFormat();
+                FileStatement ast = parser.Parse(statement) as FileStatement;
+                string AST = ast.ToAbstractSyntaxTree();
                 string STR = ast.ToString();
                 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);

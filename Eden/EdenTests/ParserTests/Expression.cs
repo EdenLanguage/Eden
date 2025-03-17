@@ -1,5 +1,5 @@
 ﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 using Xunit.Abstractions;
 
@@ -45,7 +45,7 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code) as FileStatement;
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
@@ -61,44 +61,26 @@ namespace EdenTests.ParserTests
         [Fact]
         public void VariableType()
         {
-            const int testCount = 3;
-
-            string[] codes = new string[testCount]
-            {
+            string[] codes =
+            [
                 "Int;",
                 "Float;",
                 "String;",
-            };
-
-            string[] expecteds = new string[testCount]
-            {
-                "Parser encountered invalid statement!",
-                "Parser encountered invalid statement!",
-                "Parser encountered invalid statement!",
-            };
-
-            Parser parser = new Parser();
+            ];
 
             string code = string.Empty;
-            string expected = string.Empty;
 
-            for (int i = 0; i < testCount; i++)
+            for (int i = 0; i < codes.Length; i++)
             {
                 code = codes[i];
-                expected = expecteds[i];
 
-                parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                Parser parser = new Parser();
+                Statement ast = parser.Parse(code);
 
-                Assert.Equal(parser.Program.Block.Statements.Length, 1);
-                Assert.Equal(parser.Errors.Length, 1);
-
-                InvalidStatement invExp = parser.Program.Block.Statements[0] as InvalidStatement;
-                Assert.NotNull(invExp);
-
-
-                Log.WriteLine($"{expected} <- Expected");
-
+                if (ast is not InvalidStatement asInvalidStmt)
+                {
+                    Assert.Fail($"'{code}' should fail but it didn't!");
+                }
             }
         }
 
@@ -136,7 +118,7 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code) as FileStatement;
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
@@ -194,7 +176,7 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code) as FileStatement;
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);
@@ -240,7 +222,7 @@ namespace EdenTests.ParserTests
                 expected = expecteds[i];
 
                 parser = new Parser();
-                FileStatement ast = parser.Parse(code);
+                FileStatement ast = parser.Parse(code) as FileStatement;
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
                 Assert.Equal(parser.Errors.Length, 0);

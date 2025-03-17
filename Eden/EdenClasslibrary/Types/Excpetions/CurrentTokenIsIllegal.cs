@@ -1,4 +1,5 @@
 ﻿using EdenClasslibrary.Errors;
+using EdenClasslibrary.Errors.LexicalErrors;
 
 namespace EdenClasslibrary.Types.Excpetions
 {
@@ -6,7 +7,7 @@ namespace EdenClasslibrary.Types.Excpetions
     {
         public AError CreateError(Token token)
         {
-            return ErrorIllegalToken.Create(token);
+            return ErrorLexicalIllegalToken.Create(token);
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using EdenClasslibrary.Errors;
+using EdenClasslibrary.Errors.RuntimeErrors;
+using EdenClasslibrary.Errors.SemanticalErrors;
+using EdenClasslibrary.Errors.SyntacticalErrors;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.InteropServices;
 
 namespace EdenClasslibrary.Types
 {
@@ -19,8 +21,13 @@ namespace EdenClasslibrary.Types
             _errorManager = new ErrorsManager();
         }
 
-        public IObject Evaluate(ASTreeNode root, Environment env)
+        public IObject Evaluate(AbstractSyntaxTreeNode root, Environment env)
         {
+            if(root.HasErrors == true)
+            {
+                return ErrorSemanticalCantEvaluateAST.CreateErrorObject(root);
+            }
+
             if (root is Expression)
             {
                 return EvaluateExpression(root as Expression, env);
@@ -35,7 +42,7 @@ namespace EdenClasslibrary.Types
             }
         }
         #region Helper methods
-        private IObject EvaluateExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             if (root is IntExpression)
             {
@@ -95,7 +102,7 @@ namespace EdenClasslibrary.Types
             }
         }
 
-        private IObject EvaluateStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             if (root is FileStatement)
             {
@@ -151,7 +158,7 @@ namespace EdenClasslibrary.Types
             }
         }
         #region Statements evaluators
-        private IObject EvaluateFileStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateFileStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             BlockStatement block = (root as FileStatement).Block;
 
@@ -169,7 +176,7 @@ namespace EdenClasslibrary.Types
             return result;
         }
 
-        private IObject EvaluateBlockStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateBlockStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             BlockStatement block = root as BlockStatement;
 
@@ -201,7 +208,7 @@ namespace EdenClasslibrary.Types
             return result;
         }
 
-        private IObject EvaluateReturnStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateReturnStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             ReturnStatement retStmt = root as ReturnStatement;
 
@@ -210,9 +217,9 @@ namespace EdenClasslibrary.Types
             return new ReturnObject(returnExp);
         }
 
-        private IObject EvaluateInvalidStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateInvalidStatement(AbstractSyntaxTreeNode root, Environment env)
         {
-            return ErrorInvalidStatement.CreateErrorObject();
+            return ErrorSyntacticalInvalidStatement.CreateErrorObject();
         }
 
         /// <summary>
@@ -221,7 +228,7 @@ namespace EdenClasslibrary.Types
         /// </summary>
         /// <param name="root"></param>
         /// <returns></returns>
-        private IObject EvaluateVariableDeclarationStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateVariableDeclarationStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             /*  In future it is important to create function on eval mapper that allows to assign value to variable. This will allow to check whether there was a type missmatch.
              */
@@ -244,7 +251,7 @@ namespace EdenClasslibrary.Types
             bool varAlreadyDefined = env.VariableExistsRoot(identifier.Name);
             if (varAlreadyDefined == true)
             {
-                return ErrorVariableAlreadyDefined.CreateErrorObject(identifier.Name);
+                return ErrorSemanticalVarRefined.CreateErrorObject(identifier.Name);
             }
             else
             {
@@ -252,7 +259,7 @@ namespace EdenClasslibrary.Types
             }
         }
 
-        private IObject EvaluateListDeclarationStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateListDeclarationStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             ListDeclarationStatement list = root as ListDeclarationStatement;
 
@@ -272,17 +279,17 @@ namespace EdenClasslibrary.Types
             return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
         }
 
-        private IObject EvaluateQuitStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateQuitStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             return QuitObject.Create();
         }
 
-        private IObject EvaluateSkipStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateSkipStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             return SkipObject.Create();
         }
 
-        private IObject EvaluateLoopStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateLoopStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             LoopStatement loop = root as LoopStatement;
 
@@ -322,7 +329,7 @@ namespace EdenClasslibrary.Types
             return NullObject.Create();
         }
 
-        private IObject EvaluateSisyphusStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateSisyphusStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             SisyphusStatement loop = root as SisyphusStatement;
 
@@ -354,7 +361,7 @@ namespace EdenClasslibrary.Types
             }
         }
 
-        private IObject EvaluateExpressionStatement(ASTreeNode root, Environment env)
+        private IObject EvaluateExpressionStatement(AbstractSyntaxTreeNode root, Environment env)
         {
             ExpressionStatement expStatement = root as ExpressionStatement;
             Expression exp = expStatement.Expression;
@@ -399,7 +406,7 @@ namespace EdenClasslibrary.Types
         #endregion
 
         #region Expression evaluators
-        private IObject EvaluateIntExpression(ASTreeNode root)
+        private IObject EvaluateIntExpression(AbstractSyntaxTreeNode root)
         {
             IntExpression intExp = root as IntExpression;
             if (intExp is null)
@@ -409,7 +416,7 @@ namespace EdenClasslibrary.Types
             return IntObject.Create(intExp.Value);
         }
 
-        private IObject EvaluateFloatExpression(ASTreeNode root)
+        private IObject EvaluateFloatExpression(AbstractSyntaxTreeNode root)
         {
             FloatExpression floatExp = root as FloatExpression;
             if (floatExp is null)
@@ -419,7 +426,7 @@ namespace EdenClasslibrary.Types
             return FloatObject.Create(floatExp.Value);
         }
 
-        private IObject EvaluateStringExpression(ASTreeNode root)
+        private IObject EvaluateStringExpression(AbstractSyntaxTreeNode root)
         {
             StringExpression stringExp = root as StringExpression;
             if (stringExp is null)
@@ -429,7 +436,7 @@ namespace EdenClasslibrary.Types
             return StringObject.Create(stringExp.Value);
         }
 
-        private IObject EvaluateCharExpression(ASTreeNode root)
+        private IObject EvaluateCharExpression(AbstractSyntaxTreeNode root)
         {
             CharExpression charExp = root as CharExpression;
             if (charExp is null)
@@ -439,7 +446,7 @@ namespace EdenClasslibrary.Types
             return CharObject.Create(charExp.Value);
         }
 
-        private IObject EvaluateBoolExpression(ASTreeNode root)
+        private IObject EvaluateBoolExpression(AbstractSyntaxTreeNode root)
         {
             BoolExpresion boolExp = root as BoolExpresion;
             if (boolExp is null)
@@ -449,7 +456,7 @@ namespace EdenClasslibrary.Types
             return BoolObject.Create(boolExp.Value);
         }
 
-        private IObject EvaluateNullExpression(ASTreeNode root)
+        private IObject EvaluateNullExpression(AbstractSyntaxTreeNode root)
         {
             NullExpression nullExp = root as NullExpression;
             if (nullExp is null)
@@ -459,7 +466,7 @@ namespace EdenClasslibrary.Types
             return NullObject.Create();
         }
 
-        private IObject EvaluateUnaryExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateUnaryExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             UnaryExpression unaryExp = root as UnaryExpression;
             if (unaryExp is null)
@@ -480,7 +487,7 @@ namespace EdenClasslibrary.Types
             return unaryFunc(insideEval);
         }
 
-        private IObject[] EvaluateExpressions(ASTreeNode root, Environment env, Expression[] expressions)
+        private IObject[] EvaluateExpressions(AbstractSyntaxTreeNode root, Environment env, Expression[] expressions)
         {
             IObject[] expressionResults = new IObject[expressions.Length];
 
@@ -492,7 +499,7 @@ namespace EdenClasslibrary.Types
             return expressionResults;
         }
 
-        private IObject EvaluateBinaryExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateBinaryExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             BinaryExpression binExp = root as BinaryExpression;
             if (binExp is null)
@@ -538,19 +545,19 @@ namespace EdenClasslibrary.Types
             return result;
         }
 
-        private IObject EvaluateIdentifierExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateIdentifierExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             IdentifierExpression identifier = root as IdentifierExpression;
             return env.GetVariable(identifier.Name);
         }
 
-        private IObject EvaluateVariableDeclarationExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateVariableDeclarationExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             VariableDefinitionExpression varDef = root as VariableDefinitionExpression;
             return VariableSignatureObject.Create(varDef.Name.Name, varDef.Type.Type);
         }
 
-        private IObject EvaluateListDeclarationExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateListDeclarationExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             ListArgumentsExpression listArgs = root as ListArgumentsExpression;
 
@@ -563,7 +570,7 @@ namespace EdenClasslibrary.Types
 
                     if (value.Type != listArgs.Type.Type)
                     {
-                        return ErrorCollectionArgumentTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type);
+                        return ErrorSemanticalCollectionArgTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type);
                     }
 
                     argsValues.Add(value);
@@ -577,7 +584,7 @@ namespace EdenClasslibrary.Types
 
                     if (value.Type != listArgs.Type.Type)
                     {
-                        return ErrorCollectionArgumentTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type);
+                        return ErrorSemanticalCollectionArgTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type);
                     }
 
                     argsValues.Add(value);
@@ -587,7 +594,7 @@ namespace EdenClasslibrary.Types
             return ObjectCollection.Create(listArgs.Type.Type, argsValues.ToArray());
         }
 
-        private IObject EvaluateIndexExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateIndexExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             IndexExpression indexExp = root as IndexExpression;
             IObject obj = EvaluateExpression(indexExp.Object, env);
@@ -596,12 +603,12 @@ namespace EdenClasslibrary.Types
 
             if (obj is not IIndexable notIndexableError)
             {
-                return ErrorObjectTypeIsNotIndexable.CreateErrorObject(obj);
+                return ErrorSemanticalTypeNotIndexable.CreateErrorObject(obj);
             }
 
             if (idx is not IntObject notIntIndexer || (idx is IntObject asIntObj && asIntObj.Value < 0))
             {
-                return ErrorIndexNotValid.CreateErrorObject(idx);
+                return ErrorSemanticalIndexTypeInvalid.CreateErrorObject(idx);
             }
 
             try
@@ -610,13 +617,13 @@ namespace EdenClasslibrary.Types
             }
             catch (ArgumentOutOfRangeException exception)
             {
-                return ErrorArgumentOutOfRange.CreateErrorObject(obj as IIndexable, idx as IntObject);
+                return ErrorRuntimeArgOutOfRange.CreateErrorObject(obj as IIndexable, idx as IntObject);
             }
 
             return result;
         }
 
-        private IObject EvaluateCallExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateCallExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             CallExpression callExp = root as CallExpression;
 
@@ -633,7 +640,7 @@ namespace EdenClasslibrary.Types
 
                 if (funcExists == false)
                 {
-                    return ErrorFunctionNotDefined.CreateErrorObject();
+                    return ErrorRuntimeFuncNotDefined.CreateErrorObject(funcName);
                 }
             }
 
@@ -663,7 +670,7 @@ namespace EdenClasslibrary.Types
             bool signatureOK = funcSigPayload.ArgumentsSignatureMatch(arguments);
             if (signatureOK == false)
             {
-                return ErrorFunctionInvalidArguments.CreateErrorObject();
+                return ErrorSemanticalFunInvalidArgs.CreateErrorObject(funcName, arguments);
             }
 
             //  Call evaluate function body with given arguments.
@@ -695,20 +702,20 @@ namespace EdenClasslibrary.Types
             return env.CallBuildInFunc(name, arguments);
         }
 
-        private IObject EvaluateFunctionExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateFunctionExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             FunctionExpression funcExp = root as FunctionExpression;
 
-            IObject funcBody = FunctionObject.Create(funcExp.Body, funcExp.Arguments);
+            IObject funcBody = FunctionObject.Create(funcExp.Body as BlockStatement, funcExp.Arguments);
 
             IObject[] argumentSignatures = EvaluateExpressions(root, env, funcExp.Arguments);
             ObjectSignature[] variablePayload = FunctionPayload.GenerateArgumentsSignature(argumentSignatures);
-            env.DefineFunction(funcExp.Name.Name, FunctionPayload.Create(funcExp.Type.Type, variablePayload, funcExp.Body));
+            env.DefineFunction(funcExp.Name.Name, FunctionPayload.Create(funcExp.Type.Type, variablePayload, funcExp.Body as BlockStatement));
 
             return funcBody;
         }
 
-        private IObject EvaluateConditionalExpression(ASTreeNode root, Environment env)
+        private IObject EvaluateConditionalExpression(AbstractSyntaxTreeNode root, Environment env)
         {
             IfExpression ifExp = root as IfExpression;
             if (ifExp is null)

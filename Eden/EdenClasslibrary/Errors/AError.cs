@@ -4,6 +4,7 @@ namespace EdenClasslibrary.Errors
 {
     public abstract class AError
     {
+        public virtual string ErrorType { get; }
         public abstract string GetMessage();
         public virtual string GetTip()
         {
@@ -14,12 +15,22 @@ namespace EdenClasslibrary.Errors
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"> {GetMessage()}");
-            sb.AppendLine($"-> {GetDetails()}");
+            sb.AppendLine($"-> [TYPE]");
+            sb.AppendLine($"-> {GetMessage()}");
+
+            string isDetails = GetDetails();
+            string details = isDetails == "" ? "" : "-> " + isDetails;
+            if(details != "")
+            {
+                sb.AppendLine($"{details}");
+            }
 
             string isTip = GetTip();
             string tip = isTip == "" ? "" : "-> " + isTip;
-            sb.AppendLine($"{tip}");
+            if(tip != "")
+            {
+                sb.AppendLine($"{tip}");
+            }
 
             string result = sb.ToString();
             return result;

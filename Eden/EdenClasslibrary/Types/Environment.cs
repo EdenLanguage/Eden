@@ -1,4 +1,4 @@
-﻿using EdenClasslibrary.Errors;
+﻿using EdenClasslibrary.Errors.RuntimeErrors;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 
@@ -27,7 +27,7 @@ namespace EdenClasslibrary.Types
                 _variables.Add(name, variable);
                 return variable.Variable;
             }
-            return ErrorVariableUndefined.CreateErrorObject(name);
+            return ErrorRuntimeVarUndef.CreateErrorObject(name);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                return ErrorVariableUndefined.CreateErrorObject(name);
+                return ErrorRuntimeVarUndef.CreateErrorObject(name);
             }
         }
 
@@ -108,7 +108,7 @@ namespace EdenClasslibrary.Types
             {
                 return _variables[name].Variable;
             }
-            return ErrorVariableUndefined.CreateErrorObject(name);
+            return ErrorRuntimeVarUndef.CreateErrorObject(name);
         }
 
         public IObject GetVariable(string name)

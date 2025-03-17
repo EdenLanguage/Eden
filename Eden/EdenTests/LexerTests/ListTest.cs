@@ -1,5 +1,5 @@
 ﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 
 namespace EdenTests.LexerTests
@@ -14,8 +14,8 @@ namespace EdenTests.LexerTests
 
             Parser parser = new Parser();
 
-            FileStatement block = parser.ParseFile(executionLocation);
-            string AST = block.ToASTFormat();
+            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
+            string AST = block.ToAbstractSyntaxTree();
             string STR = block.ToString();
         }
     }

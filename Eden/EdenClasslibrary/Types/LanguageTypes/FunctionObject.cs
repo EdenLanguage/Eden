@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Types.AbstractSyntaxTree;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 
 namespace EdenClasslibrary.Types.LanguageTypes
 {

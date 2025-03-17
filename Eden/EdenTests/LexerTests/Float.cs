@@ -1,196 +1,80 @@
 ﻿using EdenClasslibrary.Types;
+using EdenTests.Utility;
 
 namespace EdenTests.LexerTests
 {
-    public class Float
+    public class Float : FileTester
     {
 
         [Fact]
-        public void ParseFloat_1()
+        public void Float1()
         {
-            string code = $"3.14f;";
             Lexer lexer = new Lexer();
-            lexer.SetInput(code);
 
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Float, "3.14"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
+            string filename = "float1.eden";
+            string executionLocation = GetLexerSourceFile(filename);
 
+            lexer.LoadFile(executionLocation);
             List<Token> actual = lexer.Tokenize().ToList();
 
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
+            Token[] expected =
+            [
+                new Token(keyword: TokenType.Float, value: "3.14f", line: 1, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Float, value: "34224.2424442f", line: 2, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Float, value: "0.0009f", line: 3, startPos: 1, filename: filename),
+
+                new Token(keyword: TokenType.Var, value: "Var", line: 4, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.VariableType, value: "Float", line: 4, startPos: 5, filename: filename),
+                new Token(keyword: TokenType.Identifier, value: "pi", line: 4, startPos: 11, filename: filename),
+                new Token(keyword: TokenType.Assign, value: "=", line: 4, startPos: 14, filename: filename),
+                new Token(keyword: TokenType.Float, value: "3.14f", line: 4, startPos: 16, filename: filename),
+                new Token(keyword: TokenType.Semicolon, value: ";", line: 4, startPos: 21, filename: filename),
+
+                new Token(keyword: TokenType.Eof, value: "\0", line: 4, startPos: 22, filename: filename),
+            ];
+
+            for (int i = 0; i < expected.Length; i++)
             {
                 Token expectedToken = expected[i];
                 Token actualToken = actual[i];
 
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
+                bool isSame = actualToken.Equals(expectedToken);
+
+                if (isSame == false)
+                {
+                    Assert.Fail($"Tokens at position '{i}' are different!");
+                }
             }
         }
 
         [Fact]
-        public void ParseFloat_2()
+        public void FloatIllegal1()
         {
-            string code = $"34224.2424442f;";
             Lexer lexer = new Lexer();
-            lexer.SetInput(code);
 
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Float, "34224.2424442"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
+            string filename = "floatIllegarl1.eden";
+            string executionLocation = GetLexerSourceFile(filename);
 
+            lexer.LoadFile(executionLocation);
             List<Token> actual = lexer.Tokenize().ToList();
 
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
+            Token[] expected =
+            [
+                new Token(keyword: TokenType.Identifier, value: "dssd", line: 1, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Illegal, value: "0.0009d", line: 1, startPos: 5, filename: filename),
+            ];
+
+            for (int i = 0; i < expected.Length; i++)
             {
                 Token expectedToken = expected[i];
                 Token actualToken = actual[i];
 
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
+                bool isSame = actualToken.Equals(expectedToken);
 
-        [Fact]
-        public void ParseFloat_3()
-        {
-            string code = $"34224.;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Illegal, "34224."),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
-
-        [Fact]
-        public void ParseFloat_4()
-        {
-            string code = $"0.0009f;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Float, "0.0009"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
-
-        [Fact]
-        public void ParseFloat_5()
-        {
-            string code = $"dssd0.0009dssd;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Identifier, "dssd"),
-                new Token(TokenType.Illegal, "0.0009"),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
-
-        [Fact]
-        public void ParseFloat_6()
-        {
-            string code = $"dssd0.0009.dssd;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Identifier, "dssd"),
-                new Token(TokenType.Illegal, "0.0009"),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
-            }
-        }
-
-        [Fact]
-        public void ParseFloat_7()
-        {
-            string code = $"Var Float pi = 3.14f;";
-            Lexer lexer = new Lexer();
-            lexer.SetInput(code);
-
-            List<Token> expected = new List<Token>()
-            {
-                new Token(TokenType.Keyword, "Var"),
-                new Token(TokenType.VariableType, "Float"),
-                new Token(TokenType.Identifier, "pi"),
-                new Token(TokenType.Assign, "="),
-                new Token(TokenType.Float, "3.14"),
-                new Token(TokenType.Semicolon, ";"),
-                new Token(TokenType.Eof, "\0"),
-            };
-
-            List<Token> actual = lexer.Tokenize().ToList();
-
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
-            {
-                Token expectedToken = expected[i];
-                Token actualToken = actual[i];
-
-                Assert.Equal(expectedToken.Keyword, actualToken.Keyword);
-                Assert.Equal(expectedToken.LiteralValue, actualToken.LiteralValue);
+                if (isSame == false)
+                {
+                    Assert.Fail($"Tokens at position '{i}' are different!");
+                }
             }
         }
     }

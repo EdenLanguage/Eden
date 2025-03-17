@@ -1,0 +1,11 @@
+Var Int Length = 10i;
+
+Var Int Result = 0i;
+
+//	Empty iteration
+Loop(Var Int i = Length; i < Length; i = i + 1i){
+	Result = Result + 1i;
+};
+
+//	This should return 0 because of empty iterations
+Return Result;

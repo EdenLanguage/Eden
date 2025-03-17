@@ -1,0 +1,11 @@
+Function Bool PowOfTwo(Var Int A){
+	Return A*A;
+};
+
+Function Bool PowOfThree(Var Int A){
+	Return A*A*A;
+};
+
+Var Int x = PowOfTwo(2i);
+Var Int y = PowOfThree(2i);
+Var Int sum = x + y;

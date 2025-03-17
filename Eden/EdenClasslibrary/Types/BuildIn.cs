@@ -1,4 +1,6 @@
 ﻿using EdenClasslibrary.Errors;
+using EdenClasslibrary.Errors.RuntimeErrors;
+using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
@@ -54,8 +56,7 @@ namespace EdenClasslibrary.Types
                 case "CosinusD":
                     return CosinusD(arguments);
                 default:
-                    //  TODO: Fix
-                    return new ErrorObject(new ErrorInvalidBuildInFuncCall());
+                    return ErrorRuntimeFuncNotDefined.CreateErrorObject(name);
             }
         }
 
@@ -72,7 +73,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorObjectTypeIsNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
             }
             return result;
         }
@@ -94,7 +95,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorObjectTypeIsNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
             }
             return result;
         }
@@ -112,7 +113,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorObjectTypeIsNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
             }
             return result;
         }
@@ -134,7 +135,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorObjectTypeIsNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
             }
             return result;
         }
@@ -147,7 +148,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorObjectTypeIsNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
             }
             return result;
         }
@@ -174,12 +175,12 @@ namespace EdenClasslibrary.Types
                 }
                 else
                 {
-                    result = ErrorIncFunctionInvalidArgument.CreateErrorObject(arguments[0]);
+                    result = ErrorRuntimeFunctionInvalidArg.CreateErrorObject("Inc", arguments[0]);
                 }
             }
             else
             {
-                result = ErrorIncFunctionInvalidArgument.CreateErrorObject(arguments[0]);
+                result = ErrorRuntimeFunctionInvalidArg.CreateErrorObject("Inc", arguments[0]);
             }
             return result;
         }
@@ -263,7 +264,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorObjectTypeIsNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
             }
             return result;
         }
@@ -308,7 +309,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorObjectTypeIsNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
             }
             return result;
         }

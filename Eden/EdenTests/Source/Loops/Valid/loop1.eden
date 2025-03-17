@@ -1,0 +1,9 @@
+Var Int counter = 0i;
+
+//	Loop from 0 to 9 -> 10 iterations
+Loop(Var Int i = 0i; i < 10i; i = i + 1i){
+	counter = counter + 1i;
+};
+
+//	This should return 10
+Return counter;

@@ -65,8 +65,8 @@ namespace EdenClasslibrary.Types
         #region Properties
         public TokenType Keyword { get; set; }
         public string LiteralValue { get; set; }
-        public int TokenStartingLinePosition { get; set; }
-        public int TokenEndingLinePosition { get; set; }
+        public int Start { get; set; }
+        public int End { get; set; }
         public int Line { get; set; }
         public string Filename { get; set; }
         #endregion
@@ -82,8 +82,8 @@ namespace EdenClasslibrary.Types
         {
             Keyword = keyword;
             LiteralValue = value;
-            TokenStartingLinePosition = 1;
-            TokenEndingLinePosition = 1;
+            Start = 1;
+            End = 1;
             Line = 1;
             Filename = string.Empty;
         }
@@ -92,8 +92,8 @@ namespace EdenClasslibrary.Types
         {
             Keyword = keyword;
             LiteralValue = value;
-            TokenStartingLinePosition = startPos;
-            TokenEndingLinePosition = startPos + value.Length - 1;
+            Start = startPos;
+            End = startPos + value.Length - 1;
             Line = line;
             Filename = filename;
         }
@@ -103,11 +103,18 @@ namespace EdenClasslibrary.Types
         #endregion
         public bool Equals(Token other)
         {
-            if (Keyword != other.Keyword || LiteralValue != other.LiteralValue || TokenStartingLinePosition != other.TokenStartingLinePosition || TokenEndingLinePosition != other.TokenEndingLinePosition || Line != other.Line || Filename != other.Filename)
+            bool keyword = Keyword == other.Keyword;
+            bool literal = LiteralValue == other.LiteralValue;
+            bool start = Start == other.Start;
+            bool end = End == other.End;
+            bool line = Line == other.Line;
+            bool filename = Filename == other.Filename;
+
+            if(keyword && literal && start && end && line && filename)
             {
-                return false;
+                return true;
             }
-            else return true;
+            return false;
         }
 
         public override string ToString()
@@ -144,8 +151,8 @@ namespace EdenClasslibrary.Types
             sb.AppendLine("{");
             sb.AppendLine($"/tKeyword: {Keyword}");
             sb.AppendLine($"/tLine: {Line}");
-            sb.AppendLine($"/tStart position: {TokenStartingLinePosition}");
-            sb.AppendLine($"/tEnd position: {TokenEndingLinePosition}");
+            sb.AppendLine($"/tStart position: {Start}");
+            sb.AppendLine($"/tEnd position: {End}");
             sb.AppendLine($"/tFilename: {Filename}");
             sb.AppendLine("}");
             return sb.ToString();
@@ -162,8 +169,8 @@ namespace EdenClasslibrary.Types
             Keyword = keyword;
             LiteralValue = value;
             Line = line;
-            TokenStartingLinePosition = startPos;
-            TokenEndingLinePosition = startPos + value.Length - 1;
+            Start = startPos;
+            End = startPos + value.Length - 1;
             Filename = filename;
         }
 
@@ -172,8 +179,8 @@ namespace EdenClasslibrary.Types
             Keyword = keyword;
             LiteralValue = value.ToString();
             Line = line;
-            TokenStartingLinePosition = startPos;
-            TokenEndingLinePosition = startPos;    // Same as starting because 'char' type has 1 length. So Start is equal to begining.
+            Start = startPos;
+            End = startPos;    // Same as starting because 'char' type has 1 length. So Start is equal to begining.
             Filename = filename;
         }
 

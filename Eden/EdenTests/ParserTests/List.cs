@@ -1,5 +1,5 @@
 ﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 
 namespace EdenTests.ParserTests
@@ -31,9 +31,9 @@ namespace EdenTests.ParserTests
                 statement = code[i];
 
                 parser = new Parser();
-                FileStatement ast = parser.Parse(statement);
+                FileStatement ast = parser.Parse(statement) as FileStatement;
 
-                string AST = ast.ToASTFormat();
+                string AST = ast.ToAbstractSyntaxTree();
                 string STR = ast.ToString();
 
                 Assert.Equal(parser.Program.Block.Statements.Length, 1);
