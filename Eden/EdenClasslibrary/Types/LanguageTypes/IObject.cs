@@ -2,6 +2,7 @@
 {
     public interface IObject
     {
+        Token Token { get; }
         Type Type { get; }
         bool IsSameType(IObject other);
         string AsString();

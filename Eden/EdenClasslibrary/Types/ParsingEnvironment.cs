@@ -4,17 +4,19 @@ using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Types
 {
-    public class Environment
+    public class ParsingEnvironment
     {
         private Dictionary<string, VariablePayload> _variables;
         private Dictionary<string, FunctionPayload> _functions;
         private BuildIn _buildIn;
-        public Environment OutterEnvironment { get; set; }
-        public Environment()
+        private Parser _parser;
+        public ParsingEnvironment OutterEnvironment { get; set; }
+        public ParsingEnvironment(Parser parser, BuildIn buildIn)
         {
+            _parser = parser;
+            _buildIn = buildIn;
             _variables = new Dictionary<string, VariablePayload>();
             _functions = new Dictionary<string, FunctionPayload>();
-            _buildIn = BuildIn.GetInstance();
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace EdenClasslibrary.Types
                 _variables.Add(name, variable);
                 return variable.Variable;
             }
-            return ErrorRuntimeVarUndef.CreateErrorObject(name);
+            return ErrorRuntimeVarUndef.CreateErrorObject(name, variable.Variable.Token, _parser.Lexer.GetLine(variable.Variable.Token));
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                return ErrorRuntimeVarUndef.CreateErrorObject(name);
+                return ErrorRuntimeVarUndef.CreateErrorObject(name, value.Token, _parser.Lexer.GetLine(value.Token));
             }
         }
 
@@ -77,7 +79,7 @@ namespace EdenClasslibrary.Types
 
         public IObject CallBuildInFunc(string name, params IObject[] arguments)
         {
-            return BuildIn.GetInstance().CallBuildInFunc(name, arguments);
+            return _buildIn.CallBuildInFunc(name, arguments);
         }
 
         public bool IsBuildInFunction(string name)
@@ -90,9 +92,9 @@ namespace EdenClasslibrary.Types
             return _buildIn.GetFunctionSignature(name);
         }
 
-        public Environment ExtendEnvironment()
+        public ParsingEnvironment ExtendEnvironment()
         {
-            Environment newEnv = new Environment();
+            ParsingEnvironment newEnv = new ParsingEnvironment(_parser, _buildIn);
             newEnv.OutterEnvironment = this;
             return newEnv;
         }
@@ -102,22 +104,22 @@ namespace EdenClasslibrary.Types
         /// </summary>
         /// <param name="variableName"></param>
         /// <returns></returns>
-        public IObject GetVariableScope(string name)
+        public IObject GetVariableScope(Token token, string name)
         {
             if (VariableExists(name))
             {
                 return _variables[name].Variable;
             }
-            return ErrorRuntimeVarUndef.CreateErrorObject(name);
+            return ErrorRuntimeVarUndef.CreateErrorObject(name, token, _parser.Lexer.GetLine(token));
         }
 
-        public IObject GetVariable(string name)
+        public IObject GetVariable(Token token, string name)
         {
-            IObject variable = GetVariableScope(name);
+            IObject variable = GetVariableScope(token, name);
 
             if (variable is ErrorObject && OutterEnvironment != null)
             {
-                return OutterEnvironment.GetVariable(name);
+                return OutterEnvironment.GetVariable(token, name);
             }
 
             return variable;

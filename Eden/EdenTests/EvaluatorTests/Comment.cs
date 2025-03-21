@@ -1,9 +1,7 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenTests.Utility;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -16,15 +14,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             if(result is ErrorObject AsError)
             {

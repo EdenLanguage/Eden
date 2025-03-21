@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.SemanticalErrors
 {
@@ -7,30 +8,25 @@ namespace EdenClasslibrary.Errors.SemanticalErrors
         private Type _expected;
         private Type _actual;
 
-        private ErrorSemanticalCollectionArgTypeMismatch(Type expected, Type actual)
+        public ErrorSemanticalCollectionArgTypeMismatch(Type expected, Type actual, Token token, string line) : base(token, line)
         {
             _expected = expected;
             _actual = actual;
         }
 
-        public static AError Create(Type expected, Type actual)
+        public static AError Create(Type expected, Type actual, Token token, string line)
         {
-            return new ErrorSemanticalCollectionArgTypeMismatch(expected, actual);
+            return new ErrorSemanticalCollectionArgTypeMismatch(expected, actual, token, line);
         }
 
-        public static IObject CreateErrorObject(Type expected, Type actual)
+        public static IObject CreateErrorObject(Type expected, Type actual, Token token, string line)
         {
-            return new ErrorObject(Create(expected, actual));
-        }
-
-        public override string GetDetails()
-        {
-            return $"Collection is of type '{_expected}' but provided value is of type '{_actual}'!";
+            return new ErrorObject(token, Create(expected, actual, token, line));
         }
 
         public override string GetMessage()
         {
-            return $"Collection argument faced mismatch!";
+            return $"Collection is of type '{_expected}' but provided value is of type '{_actual}'!";
         }
     }
 }

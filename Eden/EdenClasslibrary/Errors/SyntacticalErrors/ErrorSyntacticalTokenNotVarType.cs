@@ -2,28 +2,23 @@
 
 namespace EdenClasslibrary.Errors.SyntacticalErrors
 {
-    class ErrorSyntacticalTokenNotVarType : AError
+    public class ErrorSyntacticalTokenNotVarType : SyntacticalError
     {
         private Token _actual;
 
-        private ErrorSyntacticalTokenNotVarType(Token actual)
+        public ErrorSyntacticalTokenNotVarType(Token token, string line) : base(token, line)
         {
-            _actual = actual;
+            _actual = token;
         }
 
-        public static AError Create(Token actual)
+        public static AError Create(Token actual, string line)
         {
-            return new ErrorSyntacticalTokenNotVarType(actual);
-        }
-
-        public override string GetDetails()
-        {
-            return $"Expected token should be of Variable type but acutal token is '{_actual.Keyword}' with value '{_actual.LiteralValue}'. File: '{_actual.Filename}' Line: '{_actual.Line}' Column: '{_actual.Start}'";
+            return new ErrorSyntacticalTokenNotVarType(actual, line);
         }
 
         public override string GetMessage()
         {
-            return $"Token is not Variable type!";
+            return $"Token '{_actual.LiteralValue}' is not variable type!";
         }
     }
 }

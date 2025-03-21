@@ -13,14 +13,17 @@ namespace EdenClasslibrary.Types.LanguageTypes
         }
         public int Value { get; set; }
 
-        private IntObject(int value)
+        public Token Token { get; }
+
+        private IntObject(Token token, int value)
         {
+            Token = token;
             Value = value;
         }
 
-        public static IObject Create(int value)
+        public static IObject Create(Token token, int value)
         {
-            return new IntObject(value);
+            return new IntObject(token, value);
         }
 
         public bool IsSameType(IObject other)

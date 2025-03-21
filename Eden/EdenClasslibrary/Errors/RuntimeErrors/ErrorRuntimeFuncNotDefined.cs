@@ -1,33 +1,30 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.RuntimeErrors
 {
     public class ErrorRuntimeFuncNotDefined : RuntimeError
     {
         private string _funcName;
-        private ErrorRuntimeFuncNotDefined(string funcname)
+
+        public ErrorRuntimeFuncNotDefined(Token token, string line) : base(token, line)
         {
-            _funcName = funcname;
+            _funcName = token.LiteralValue;
         }
 
-        public static AError Create(string funcname)
+        public static AError Create(Token token, string line)
         {
-            return new ErrorRuntimeFuncNotDefined(funcname);
+            return new ErrorRuntimeFuncNotDefined(token, line);
         }
 
-        public static IObject CreateErrorObject(string funcname)
+        public static IObject CreateErrorObject(Token token, string line)
         {
-            return new ErrorObject(Create(funcname));
-        }
-
-        public override string GetDetails()
-        {
-            return $"Function with name '{_funcName}' is not defined!";
+            return new ErrorObject(token, Create(token, line));
         }
 
         public override string GetMessage()
         {
-            return $"Function not defined!";
+            return $"Function '{_funcName}()' is not defined!";
         }
     }
 }

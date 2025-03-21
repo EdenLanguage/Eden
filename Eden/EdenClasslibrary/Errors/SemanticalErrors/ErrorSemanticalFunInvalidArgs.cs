@@ -1,4 +1,5 @@
 ﻿using EdenClasslibrary.Errors.SemanticalErrors;
+using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.RuntimeErrors
@@ -8,30 +9,25 @@ namespace EdenClasslibrary.Errors.RuntimeErrors
         private string _funcName;
         private IObject[] _args;
 
-        private ErrorSemanticalFunInvalidArgs(string funcname, IObject[] args)
+        public ErrorSemanticalFunInvalidArgs(string funcname, IObject[] args, Token token, string line) : base(token, line)
         {
             _funcName = funcname;
             _args = args;
         }
 
-        public static AError Create(string funcname, IObject[] args)
+        public static AError Create(string funcname, IObject[] args, Token token, string line)
         {
-            return new ErrorSemanticalFunInvalidArgs(funcname, args);
+            return new ErrorSemanticalFunInvalidArgs(funcname, args, token, line);
         }
 
-        public static IObject CreateErrorObject(string funcname, IObject[] args)
+        public static IObject CreateErrorObject(string funcname, IObject[] args, Token token, string line)
         {
-            return new ErrorObject(Create(funcname, args));
-        }
-
-        public override string GetDetails()
-        {
-            return $"There is no definition for '{_funcName}()' function with {_args.Length} arguments!";
+            return new ErrorObject(token, Create(funcname, args, token, line));
         }
 
         public override string GetMessage()
         {
-            return $"Invalid function call!";
+            return $"There is no definition for '{_funcName}()' function with {_args.Length} arguments!";
         }
     }
 }

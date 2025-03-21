@@ -1,0 +1,9 @@
+Var String input = "lala";
+Var String reversed = "alal";
+Var Int length = Length(input);
+	
+Loop(Var Int i = 0i; i < length; i = i + 1i){
+	If(input[i] != reversed[i]){
+		Return False;
+	};
+};

@@ -14,14 +14,17 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public char Value { get; set; }
 
-        private CharObject(char value)
+        public Token Token { get; }
+
+        private CharObject(Token token, char value)
         {
+            Token = token;
             Value = value;
         }
 
-        public static IObject Create(char value)
+        public static IObject Create(Token token, char value)
         {
-            return new CharObject(value);
+            return new CharObject(token, value);
         }
 
         public override string ToString()

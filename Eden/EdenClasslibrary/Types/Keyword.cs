@@ -41,8 +41,8 @@ namespace EdenClasslibrary.Types
                 case "Quit": type = TokenType.Quit; break;
                 case "Var": type = TokenType.Var; break;
                 case "Return": type = TokenType.Return; break;
+                case "List": type = TokenType.List; break;
                 case "Structure": 
-                case "List": 
                     type = TokenType.Keyword; break;
                 case "Null":
                     type = TokenType.Null; break;

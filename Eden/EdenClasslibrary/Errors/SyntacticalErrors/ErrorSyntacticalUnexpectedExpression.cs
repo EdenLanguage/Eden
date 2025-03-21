@@ -6,24 +6,19 @@ namespace EdenClasslibrary.Errors.SyntacticalErrors
     {
         private Token _actual;
 
-        private ErrorSyntacticalUnexpectedExpression(Token actual)
+        public ErrorSyntacticalUnexpectedExpression(Token token, string line) : base(token, line)
         {
-            _actual = actual;
+            _actual = token;
         }
 
-        public static AError Create(Token actual)
+        public static AError Create(Token token, string line)
         {
-            return new ErrorSyntacticalUnexpectedExpression(actual);
-        }
-
-        public override string GetDetails()
-        {
-            return $"Token '{_actual.Keyword}' was unexpected. File: '{_actual.Filename}' Line: '{_actual.Line}' Column: '{_actual.Start}'";
+            return new ErrorSyntacticalUnexpectedExpression(token, line);
         }
 
         public override string GetMessage()
         {
-            return $"Unexpected token encountered!";
+            return $"Token '{_actual.Keyword}' was unexpected.";
         }
     }
 }

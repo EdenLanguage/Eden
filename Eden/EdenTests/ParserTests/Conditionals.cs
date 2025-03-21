@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Parser;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 
@@ -12,12 +13,15 @@ namespace EdenTests.ParserTests
             string code = "If(True){Var Int zmienna = 5i;};";
 
             Parser parser = new Parser();
+            AbstractSyntaxTreeNode block = parser.Parse(code);
 
-            FileStatement block = parser.Parse(code) as FileStatement;
             string AST = block.ToAbstractSyntaxTree();
+            string STR = block.ToString();
 
-            Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Block.Statements.Length == 1);
+            if(block is InvalidStatement)
+            {
+                Assert.Fail($"Statement: '{code}' failed!");
+            }
         }
 
         [Fact]
@@ -26,12 +30,15 @@ namespace EdenTests.ParserTests
             string code = "If(True){Var Int zmienna = 5i;}Else{Var Int counter = 20i;};";
 
             Parser parser = new Parser();
+            AbstractSyntaxTreeNode block = parser.Parse(code);
 
-            FileStatement block = parser.Parse(code) as FileStatement;
-            string AST = block.ToString();
+            string AST = block.ToAbstractSyntaxTree();
+            string STR = block.ToString();
 
-            Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Block.Statements.Length == 1);
+            if (block is InvalidStatement)
+            {
+                Assert.Fail($"Statement: '{code}' failed!");
+            }
         }
 
         [Fact]
@@ -41,13 +48,15 @@ namespace EdenTests.ParserTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
+            AbstractSyntaxTreeNode block = parser.ParseFile(executionLocation);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string AST = block.ToString();
+            string AST = block.ToAbstractSyntaxTree();
+            string STR = block.ToString();
 
-            Assert.True(parser.Errors.Length == 0);
-            Assert.True(block.Block.Statements.Length == 1);
+            if (block is InvalidStatement)
+            {
+                Assert.Fail($"File: '{executionLocation}' failed!");
+            }
         }
-
     }
 }

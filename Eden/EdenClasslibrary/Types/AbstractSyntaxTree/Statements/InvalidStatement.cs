@@ -5,11 +5,10 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Statements
 {
     public class InvalidStatement : Statement
     {
-        private AError _error;
+        public AError Error { get; }
         public InvalidStatement(Token token, AError error) : base(token)
         {
-            _error = error;
-            HasErrors = true;
+            Error = error;
         }
 
         public static Statement Create(Token token, AError error)
@@ -24,7 +23,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Statements
 
         public override string Print(int indents = 0)
         {
-            return _error.PrintError();
+            return Error.PrintError();
         }
 
         public string ToAbstractSyntaxTree()
@@ -34,12 +33,12 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Statements
 
         public override string ToAbstractSyntaxTree(int indent = 0)
         {
-            return $"{Common.IndentCreator(indent)}{nameof(InvalidStatement)} {{{_error.GetMessage() }}};";
+            return $"{Common.IndentCreator(indent)}{nameof(InvalidStatement)} {{{Error.GetMessage() }}};";
         }
 
         public override string ToString()
         {
-            return _error.PrintError();
+            return Error.PrintError();
         }
     }
 }

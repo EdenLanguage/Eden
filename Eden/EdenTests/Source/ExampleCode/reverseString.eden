@@ -1,0 +1,26 @@
+Function String Reverse(Var String input){
+	Var Int length = Length(input);
+
+	Var String reversed = "";
+
+	Loop(Var Int i = length - 1i; i >= 0i; i = i - 1i){
+		reversed = reversed + input[i];
+	};
+
+	Return reversed;
+};
+
+Var String test = "abracadabra";
+Var String reversed = "arbadacarba";
+
+If(Reverse(test) != reversed){
+	Return "Reverse(abracadabra) != arbadacarba";
+};
+
+If(Reverse(Reverse(test)) != test){
+	Return "Reverse(Reverse(abracadabra)) != abracadabra";
+};
+
+If(Reverse("aabb") != "bbaa"){
+	Return "Reverse(aabb) != bbaa";
+};

@@ -1,5 +1,5 @@
-﻿using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
-using EdenClasslibrary.Parser;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 
 namespace EdenTests.ParserTests

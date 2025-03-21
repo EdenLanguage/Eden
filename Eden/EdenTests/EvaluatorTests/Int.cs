@@ -1,9 +1,7 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types.AbstractSyntaxTree;
+﻿using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types;
 using System.Text;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -121,24 +119,18 @@ namespace EdenTests.EvaluatorTests
                 input = testset[i][0];
                 expected = testset[i][1];
 
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
                 Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
 
-                AbstractSyntaxTreeNode ast = parser.Parse(input);
+                IObject result = evaluator.Evaluate(input);
 
-                string AST = ast.ToAbstractSyntaxTree();
-                string STR = ast.ToString();
-
-                IObject actual = evaluator.Evaluate(ast, env);
-
-                if (expected != actual.AsString())
+                if (expected != result.AsString())
                 {
                     StringBuilder sb = new StringBuilder();
 
                     sb.AppendLine($"Expression: '{input}' failed!");
                     sb.AppendLine($"Expected: '{expected}'");
-                    sb.AppendLine($"Actual: '{actual}'");
+                    sb.AppendLine($"Actual: '{result}'");
 
                     Assert.Fail(sb.ToString());
                 }

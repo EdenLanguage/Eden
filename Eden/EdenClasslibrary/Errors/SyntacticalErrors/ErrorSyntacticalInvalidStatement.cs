@@ -1,28 +1,26 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.SyntacticalErrors
 {
     public class ErrorSyntacticalInvalidStatement : SyntacticalError
     {
-        private ErrorSyntacticalInvalidStatement() { }
-
-        public static AError Create()
+        public ErrorSyntacticalInvalidStatement(Token token, string line) : base(token, line)
         {
-            return new ErrorSyntacticalInvalidStatement();
-        }
-        public static IObject CreateErrorObject()
-        {
-            return new ErrorObject(Create());
         }
 
-        public override string GetDetails()
+        public static AError Create(Token token, string line)
         {
-            return $"Invalid statement!";
+            return new ErrorSyntacticalInvalidStatement(token, line);
+        }
+        public static IObject CreateErrorObject(Token token, string line)
+        {
+            return new ErrorObject(token, Create(token, line));
         }
 
         public override string GetMessage()
         {
-            return $"Provided statement is not valid!";
+            return $"Invalid statement!";
         }
     }
 }

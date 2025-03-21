@@ -9,30 +9,26 @@ namespace EdenClasslibrary.Errors.RuntimeErrors
         private TokenType _operatorToken;
         private IObject _right;
 
-        private ErrorRuntimeBinaryOpFailed(IObject left, TokenType operatorToken, IObject right)
+        public ErrorRuntimeBinaryOpFailed(IObject left, TokenType operatorToken, IObject right, string line) : base(left.Token, line)
         {
             _left = left;
             _operatorToken = operatorToken;
             _right = right;
         }
 
-        public static AError Create(IObject left, TokenType operatorToken, IObject right)
+        public static AError Create(IObject left, TokenType operatorToken, IObject right, string line)
         {
-            return new ErrorRuntimeBinaryOpFailed(left, operatorToken, right);
+            return new ErrorRuntimeBinaryOpFailed(left, operatorToken, right, line);
         }
-        public static IObject CreateErrorObject(IObject left, TokenType operatorToken, IObject right)
+        public static IObject CreateErrorObject(IObject left, TokenType operatorToken, IObject right, string line)
         {
-            return new ErrorObject(Create(left, operatorToken, right));
+            return new ErrorObject(left.Token, Create(left, operatorToken, right, line));
         }
 
-        public override string GetDetails()
-        {
-            return $"Expression evaluation failed: {_left.Type} {_operatorToken} {_right.Type}";
-        }
 
         public override string GetMessage()
         {
-            return $"There was a fatal error while evaluating expression";
+            return $"Fatal error during '{_left.Type}' '{_operatorToken}' '{_right.Type}' operation!";
         }
     }
 }

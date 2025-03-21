@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Errors\ErrorEnums.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Pastel" Version="6.0.1" />
   </ItemGroup>
 

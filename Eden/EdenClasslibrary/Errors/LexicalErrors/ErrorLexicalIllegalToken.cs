@@ -4,24 +4,15 @@ namespace EdenClasslibrary.Errors.LexicalErrors
 {
     public class ErrorLexicalIllegalToken : LexicalError
     {
-        private Token _illegalToken;
-        private ErrorLexicalIllegalToken(Token token)
-        {
-            _illegalToken = token;
-        }
+        public ErrorLexicalIllegalToken(Token token, string line) : base(token, line) { }
 
-        public static AError Create(Token token)
+        public static AError Create(Token token, string line)
         {
-            return new ErrorLexicalIllegalToken(token);
+            return new ErrorLexicalIllegalToken(token, line);
         }
-        public override string GetDetails()
-        {
-            return $"Token literal: '{_illegalToken.LiteralValue}'. Line: '{_illegalToken.Line}'. Column: '{_illegalToken.Start}'. File: '{_illegalToken.Filename}'";
-        }
-
         public override string GetMessage()
         {
-            return $"Lexer encountered illegal token!";
+            return $"Token '{Token.LiteralValue}' is illegal!";
         }
     }
 }

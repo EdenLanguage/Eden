@@ -76,6 +76,7 @@ namespace EdenTests.Utility
             return Path.Combine(GetParserInvalidSourceDir(), name);
         }
         #endregion
+
         #region Evaluator
         public static string GetEvaluatorSourceDir()
         {
@@ -86,6 +87,29 @@ namespace EdenTests.Utility
             return Path.Combine(GetEvaluatorSourceDir(), name);
         }
         #endregion
+
+        #region Errors
+        public static string GetErrorsSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "Errors"]);
+        }
+        public static string GetErrorsSourceFile(string name)
+        {
+            return Path.Combine(GetErrorsSourceDir(), name);
+        }
+        #endregion
+
+        #region Example code
+        public static string GetExampleCodeSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "ExampleCode"]);
+        }
+        public static string GetExampleCodeSourcePath(string name)
+        {
+            return Path.Combine(GetExampleCodeSourceDir(), name);
+        }
+        #endregion
+
         #endregion
     }
 }

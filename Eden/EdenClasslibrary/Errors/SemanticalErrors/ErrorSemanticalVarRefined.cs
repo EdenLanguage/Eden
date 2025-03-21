@@ -1,33 +1,30 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.SemanticalErrors
 {
     class ErrorSemanticalVarRefined : SemanticalError
     {
         private string _variableName;
-        private ErrorSemanticalVarRefined(string variableName)
+
+        public ErrorSemanticalVarRefined(string varname, Token token, string line) : base(token, line)
         {
-            _variableName = variableName;
+            _variableName = varname;
         }
 
-        public static AError Create(string variableName)
+        public static AError Create(string varname, Token token, string line)
         {
-            return new ErrorSemanticalVarRefined(variableName);
+            return new ErrorSemanticalVarRefined(varname, token, line);
         }
 
-        public static IObject CreateErrorObject(string variableName)
+        public static IObject CreateErrorObject(string varname, Token token, string line)
         {
-            return new ErrorObject(Create(variableName));
-        }
-
-        public override string GetDetails()
-        {
-            return $"Variable redefined!";
+            return new ErrorObject(token, Create(varname, token, line));
         }
 
         public override string GetMessage()
         {
-            return $"Variable with name '{_variableName}' is already defined!";
+            return $"Variable '{_variableName}' is already defined!";
         }
     }
 }

@@ -6,7 +6,6 @@
     public abstract class AbstractSyntaxTreeNode
     {
         public Token NodeToken { get; set; }
-        public bool HasErrors { get; set; }
         public AbstractSyntaxTreeNode(Token token)
         {
             NodeToken = token;

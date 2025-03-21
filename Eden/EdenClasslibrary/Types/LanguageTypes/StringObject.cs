@@ -1,10 +1,8 @@
 ﻿using EdenClasslibrary.Types.LanguageTypes.Collections;
+using System.Text;
 
 namespace EdenClasslibrary.Types.LanguageTypes
 {
-    /// <summary>
-    /// TODO: Implement that, it is placeholder.
-    /// </summary>
     public class StringObject : IObjectComparable, IIndexable
     {
         public Type Type
@@ -17,34 +15,41 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public string Value { get; set; }
 
-        public IntObject Length
+        public int Length
         {
             get
             {
-                return IntObject.Create(Value.Length) as IntObject;
+                return Value.Length;
             }
         }
+
+        public Token Token { get; }
 
         public IObject this[int index]
         {
             get
             {
-                throw new NotImplementedException();
+                char val = Value[index];
+                return CharObject.Create(Token, val);
             }
             set
             {
-                throw new NotImplementedException();
+                StringBuilder sb = new StringBuilder(Value);
 
+                sb[index] = (value as CharObject).Value;
+
+                Value = sb.ToString();
             }
         }
 
-        public static IObject Create(string initialValue)
+        public static IObject Create(Token token, string initialValue)
         {
-            return new StringObject(initialValue);
+            return new StringObject(token, initialValue);
         }
 
-        private StringObject(string value)
+        private StringObject(Token token, string value)
         {
+            Token = token;
             Value = value;
         }
 
@@ -60,43 +65,26 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public bool IsSameType(IObject other)
         {
-            throw new NotImplementedException();
+            if (Type == other.Type)
+            {
+                return true;
+            }
+            else return false;
         }
 
         public bool Greater(IObjectComparable other)
         {
-            if (IsSameType(other))
-            {
-                return Value.Length > (other as StringObject).Value.Length;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            return Value.Length > (other as StringObject).Value.Length;
         }
 
         public bool Lesser(IObjectComparable other)
         {
-            if (IsSameType(other))
-            {
-                return Value.Length < (other as StringObject).Value.Length;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            return Value.Length < (other as StringObject).Value.Length;
         }
 
         public bool Equal(IObjectComparable other)
         {
-            if (IsSameType(other))
-            {
-                return Value == (other as StringObject).Value;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            return Value == (other as StringObject).Value;
         }
     }
 }

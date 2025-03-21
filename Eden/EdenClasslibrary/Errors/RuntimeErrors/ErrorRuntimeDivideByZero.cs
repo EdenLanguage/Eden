@@ -4,20 +4,19 @@ namespace EdenClasslibrary.Errors.RuntimeErrors
 {
     public class ErrorRuntimeDivideByZero : RuntimeError
     {
-        private ErrorRuntimeDivideByZero() { }
-
-        public static AError Create()
+        private IObject _devidedByZero;
+        public ErrorRuntimeDivideByZero(IObject obj, string line) : base(obj.Token, line)
         {
-            return new ErrorRuntimeDivideByZero();
-        }
-        public static IObject CreateErrorObject()
-        {
-            return new ErrorObject(Create());
+            _devidedByZero = obj;
         }
 
-        public override string GetDetails()
+        public static AError Create(IObject obj, string line)
         {
-            return $"Dividing by zero is not defied!";
+            return new ErrorRuntimeDivideByZero(obj,line);
+        }
+        public static IObject CreateErrorObject(IObject obj, string line)
+        {
+            return new ErrorObject(obj.Token, Create(obj, line));
         }
 
         public override string GetMessage()

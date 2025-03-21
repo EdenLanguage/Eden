@@ -1,20 +1,19 @@
-﻿using EdenClasslibrary.Errors;
-using EdenClasslibrary.Errors.RuntimeErrors;
+﻿using EdenClasslibrary.Errors.RuntimeErrors;
 using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
-using System.Reflection;
 using System.Text;
 
 namespace EdenClasslibrary.Types
 {
     public class BuildIn
     {
-        private static BuildIn instance;
         private Dictionary<string, FunctionPayload> _functions;
-        private BuildIn()
+        private Parser _parser;
+        public BuildIn(Parser parser)
         {
+            _parser = parser;
             _functions = new Dictionary<string, FunctionPayload>();
 
             RegisterFunc("PrintLine", FunctionPayload.Create(typeof(IObject), [ObjectSignature.Create("input", typeof(IObject))], null));
@@ -56,7 +55,7 @@ namespace EdenClasslibrary.Types
                 case "CosinusD":
                     return CosinusD(arguments);
                 default:
-                    return ErrorRuntimeFuncNotDefined.CreateErrorObject(name);
+                    return ErrorRuntimeFuncNotDefined.CreateErrorObject(arguments[0].Token, name);
             }
         }
 
@@ -65,15 +64,15 @@ namespace EdenClasslibrary.Types
             IObject result = null;
             if (arguments[0] is IntObject)
             {
-                result = FloatObject.Create(MathF.Sin((arguments[0] as IntObject).Value));
+                result = FloatObject.Create(arguments[0].Token, MathF.Sin((arguments[0] as IntObject).Value));
             }
             else if (arguments[0] is FloatObject)
             {
-                result = FloatObject.Create(MathF.Sin((arguments[0] as FloatObject).Value));
+                result = FloatObject.Create(arguments[0].Token, MathF.Sin((arguments[0] as FloatObject).Value));
             }
             else
             {
-                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -85,17 +84,17 @@ namespace EdenClasslibrary.Types
             {
                 float input = ((arguments[0] as IntObject).Value * MathF.PI) / 180;
                 float value = MathF.Sin(input);
-                result = FloatObject.Create(value);
+                result = FloatObject.Create(arguments[0].Token, value);
             }
             else if (arguments[0] is FloatObject)
             {
                 float input = ((arguments[0] as FloatObject).Value * MathF.PI) / 180;
                 float value = MathF.Sin(input);
-                result = FloatObject.Create(value);
+                result = FloatObject.Create(arguments[0].Token, value);
             }
             else
             {
-                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -105,15 +104,15 @@ namespace EdenClasslibrary.Types
             IObject result = null;
             if (arguments[0] is IntObject)
             {
-                result = FloatObject.Create(MathF.Cos((arguments[0] as IntObject).Value));
+                result = FloatObject.Create(arguments[0].Token, MathF.Cos((arguments[0] as IntObject).Value));
             }
             else if (arguments[0] is FloatObject)
             {
-                result = FloatObject.Create(MathF.Cos((arguments[0] as FloatObject).Value));
+                result = FloatObject.Create(arguments[0].Token, MathF.Cos((arguments[0] as FloatObject).Value));
             }
             else
             {
-                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -125,17 +124,17 @@ namespace EdenClasslibrary.Types
             {
                 float input = ((arguments[0] as IntObject).Value * MathF.PI) / 180;
                 float value = MathF.Cos(input);
-                result = FloatObject.Create(value);
+                result = FloatObject.Create(arguments[0].Token, value);
             }
             else if (arguments[0] is FloatObject)
             {
                 float input = ((arguments[0] as FloatObject).Value * MathF.PI) / 180;
                 float value = MathF.Cos(input);
-                result = FloatObject.Create(value);
+                result = FloatObject.Create(arguments[0].Token, value);
             }
             else
             {
-                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -144,11 +143,12 @@ namespace EdenClasslibrary.Types
             IObject result = null;
             if (arguments[0] is IIndexable asIndexable)
             {
-                result = asIndexable.Length;
+                //result = asIndexable.Length;
+                result = IntObject.Create(arguments[0].Token, asIndexable.Length);
             }
             else
             {
-                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -159,28 +159,28 @@ namespace EdenClasslibrary.Types
             {
                 if(AsIObj is IntObject AsInt)
                 {
-                    result = IntObject.Create(AsInt.Value + 1);
+                    result = IntObject.Create(arguments[0].Token, AsInt.Value + 1);
                 }
                 else if (AsIObj is FloatObject AsFloat)
                 {
-                    result = FloatObject.Create(AsFloat.Value + 1);
+                    result = FloatObject.Create(arguments[0].Token, AsFloat.Value + 1);
                 }
                 else if (AsIObj is CharObject AsChar)
                 {
-                    result = CharObject.Create(++AsChar.Value);
+                    result = CharObject.Create(arguments[0].Token, ++AsChar.Value);
                 }
                 else if (AsIObj is StringObject AsString)
                 {
-                    result = StringObject.Create(AsString.Value + " ");
+                    result = StringObject.Create(arguments[0].Token, AsString.Value + " ");
                 }
                 else
                 {
-                    result = ErrorRuntimeFunctionInvalidArg.CreateErrorObject("Inc", arguments[0]);
+                    result = ErrorRuntimeFunctionInvalidArg.CreateErrorObject("Inc", arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
                 }
             }
             else
             {
-                result = ErrorRuntimeFunctionInvalidArg.CreateErrorObject("Inc", arguments[0]);
+                result = ErrorRuntimeFunctionInvalidArg.CreateErrorObject("Inc", arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -198,10 +198,9 @@ namespace EdenClasslibrary.Types
             }
             string result = sb.ToString();
 
-            
             Console.WriteLine(result);
 
-            return StringObject.Create(result);
+            return NoneObject.Create(arguments[0].Token);
         }
 
         public IObject Print(IObject[] arguments)
@@ -220,7 +219,7 @@ namespace EdenClasslibrary.Types
 
             Console.Write(result);
 
-            return StringObject.Create(result);
+            return NoneObject.Create(arguments[0].Token);
         }
 
         public IObject Min(IObject[] arguments)
@@ -232,10 +231,10 @@ namespace EdenClasslibrary.Types
                 {
                     IIndexable obj = arguments[0] as IIndexable;
 
-                    if (obj.Length.Value > 0)
+                    if (obj.Length > 0)
                     {
                         IObject min = obj[0];
-                        for(int i = 0; i < obj.Length.Value; i++)
+                        for(int i = 0; i < obj.Length; i++)
                         {
                             if(min is IObjectComparable && obj[i] is IObjectComparable)
                             {
@@ -253,7 +252,7 @@ namespace EdenClasslibrary.Types
                     }
                     else
                     {
-                        return NullObject.Create();
+                        return NullObject.Create(arguments[0].Token);
                     }
                 }
                 else
@@ -264,7 +263,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -277,10 +276,10 @@ namespace EdenClasslibrary.Types
                 {
                     IIndexable obj = arguments[0] as IIndexable;
 
-                    if (obj.Length.Value > 0)
+                    if (obj.Length > 0)
                     {
                         IObject max = obj[0];
-                        for (int i = 0; i < obj.Length.Value; i++)
+                        for (int i = 0; i < obj.Length; i++)
                         {
                             if (max is IObjectComparable && obj[i] is IObjectComparable)
                             {
@@ -298,7 +297,7 @@ namespace EdenClasslibrary.Types
                     }
                     else
                     {
-                        return NullObject.Create();
+                        return NullObject.Create(arguments[0].Token);
                     }
                 }
                 else
@@ -309,7 +308,7 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0]);
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(arguments[0], arguments[0].Token, _parser.Lexer.GetLine(arguments[0].Token));
             }
             return result;
         }
@@ -330,15 +329,6 @@ namespace EdenClasslibrary.Types
         private void RegisterFunc(string name, FunctionPayload data)
         {
             _functions.Add(name, data);
-        }
-
-        public static BuildIn GetInstance()
-        {
-            if(instance == null)
-            {
-                instance = new BuildIn();
-            }
-            return instance;
         }
     }
 }

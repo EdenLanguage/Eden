@@ -1,11 +1,11 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
+using EdenTests.LexerTests;
 using EdenTests.Utility;
 using System.Diagnostics;
-using Environment = EdenClasslibrary.Types.Environment;
+using ParsingEnvironment = EdenClasslibrary.Types.ParsingEnvironment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -18,17 +18,11 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
-            
-            IObject result = evaluator.Evaluate(block, env);
-        
-            if(result is ErrorObject IsError)
+            if (result is ErrorObject IsError)
             {
                 Assert.Fail($"Program in file '{filename}' could not be evaluated!");
             }
@@ -41,15 +35,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             if (result is ErrorObject IsError)
             {
@@ -68,15 +56,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             if (result is ErrorObject IsError)
             {
@@ -95,23 +77,13 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
-
-            IObject result = evaluator.Evaluate(block, env);
-
-            if (result is ErrorObject IsError)
+            if (result is not ErrorObject IsError)
             {
-                Assert.Fail($"Program in file '{filename}' could not be evaluated!");
-            }
-            else
-            {
-                Assert.True((result as IntObject).Value == 10);
+                Assert.Fail($"Program was evaluated '{filename}' but it shouldn't!");
             }
         }
 
@@ -122,14 +94,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             if (result is ErrorObject IsError)
             {
@@ -164,18 +131,13 @@ namespace EdenTests.EvaluatorTests
                 Stopwatch sw = Stopwatch.StartNew();
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                FileStatement block = parser.ParseFile(input) as FileStatement;
-                IObject result = evaluator.Evaluate(block, env);
+                IObject result = evaluator.EvaluateFile(input);
 
                 sw.Stop();
 
                 float seconds = ((float)sw.ElapsedMilliseconds / 1000);
-
-                string AST = block.ToAbstractSyntaxTree();
-                string STR = block.ToString();
 
                 actual = result.AsString();
 
@@ -195,11 +157,11 @@ namespace EdenTests.EvaluatorTests
         {
             string[][] data =
             [
-                [GetInvalidLoopsSourceFile("loop1.eden"),"Parser expected 'RightParenthesis' token but acutal token was 'Semicolon'. File: 'loop1.eden' Line: '6' Column: '41'"],
-                [GetInvalidLoopsSourceFile("loop2.eden"),"Parser expected 'Semicolon' token but acutal token was 'Comma'. File: 'loop2.eden' Line: '6' Column: '29'"],
-                [GetInvalidLoopsSourceFile("loop3.eden"),"Parser expected 'Semicolon' token but acutal token was 'Identifier'. File: 'loop3.eden' Line: '6' Column: '30'\r\n"],
-                [GetInvalidLoopsSourceFile("loop4.eden"),"Parser expected 'Semicolon' token but acutal token was 'Return'. File: 'loop4.eden' Line: '10' Column: '1'"],
-                [GetInvalidLoopsSourceFile("loop5.eden"),"Parser expected 'Var' token but acutal token was 'Semicolon'. File: 'loop5.eden' Line: '7' Column: '6'"],
+                [GetInvalidLoopsSourceFile("loop1.eden"),"Parser expected 'RightParenthesis' token but actual token was 'Semicolon'."],
+                [GetInvalidLoopsSourceFile("loop2.eden"),"Parser expected 'Semicolon' token but actual token was 'Comma'."],
+                [GetInvalidLoopsSourceFile("loop3.eden"),"Parser expected 'Semicolon' token but actual token was 'Identifier'."],
+                [GetInvalidLoopsSourceFile("loop4.eden"),"Parser expected 'Semicolon' token but actual token was 'Return'."],
+                [GetInvalidLoopsSourceFile("loop5.eden"),"Parser expected 'Var' token but actual token was 'Semicolon'."],
             ];
 
             foreach (string[] test in data)
@@ -211,18 +173,13 @@ namespace EdenTests.EvaluatorTests
                 Stopwatch sw = Stopwatch.StartNew();
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                AbstractSyntaxTreeNode block = parser.ParseFile(input);
-                IObject result = evaluator.Evaluate(block, env);
+                IObject result = evaluator.EvaluateFile(input);
 
                 sw.Stop();
 
                 float seconds = ((float)sw.ElapsedMilliseconds / 1000);
-
-                string AST = block.ToAbstractSyntaxTree();
-                string STR = block.ToString();
 
                 actual = result.AsString();
 

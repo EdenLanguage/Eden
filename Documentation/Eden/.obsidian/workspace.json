@@ -170,12 +170,14 @@
   },
   "active": "ae0559620886a586",
   "lastOpenFiles": [
+    "Implementation/Errors/Error printing.md",
+    "Implementation/TODO.md",
+    "Implementation/Errors",
     "Language specifics/Loops/Sisyphus.md",
     "Language specifics/Loops/Loops.md",
     "Language specifics/Declarations/Block.md",
     "Language specifics/Declarations/BlocksImage.excalidraw.md",
     "Implementation/Abstract Syntax Tree/Statements.md",
-    "Implementation/TODO.md",
     "Implementation/Parser/TODO.md",
     "Language specifics/Declarations/Scope.md",
     "Language specifics/Declarations",
@@ -198,13 +200,11 @@
     "Evaluator.md",
     "Tests.md",
     "Language specifics/Whitepaper",
-    "Language specifics/Types/Type indicator.md",
     "Language specifics/Functions",
     "Language specifics/Types",
     "Language specifics/Variables",
     "Language specifics/Loops",
     "Language specifics",
-    "Releases",
-    "Implementation/Abstract Syntax Tree"
+    "Releases"
   ]
 }

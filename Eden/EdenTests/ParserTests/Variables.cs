@@ -1,4 +1,4 @@
-﻿using EdenClasslibrary.Parser;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;

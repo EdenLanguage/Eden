@@ -1,7 +1,5 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types;
-using Environment = EdenClasslibrary.Types.Environment;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 
 namespace EdenTests.EvaluatorTests
@@ -21,8 +19,8 @@ namespace EdenTests.EvaluatorTests
             string[] expectedOutput = new string[]
             {
                 "10",
-                "Null",
-                "Null",
+                "None",
+                "None",
             };
 
             Assert.Equal(input.Length, expectedOutput.Length);
@@ -33,16 +31,9 @@ namespace EdenTests.EvaluatorTests
                 string expected = expectedOutput[i];
 
                 Parser parser = new Parser();
-                FileStatement output = parser.Parse(inputCode) as FileStatement;
+                Evaluator evaluator = new Evaluator(parser);
 
-                Assert.True(parser.Errors.Length == 0);
-
-                string AST = output.ToString();
-                string toSTR = output.ToAbstractSyntaxTree();
-
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
-                IObject result = evaluator.Evaluate(output, env);
+                IObject result = evaluator.Evaluate(inputCode);
 
                 string actualAsString = result.AsString();
 
@@ -75,16 +66,9 @@ namespace EdenTests.EvaluatorTests
                 string expected = expectedOutput[i];
 
                 Parser parser = new Parser();
-                FileStatement output = parser.Parse(inputCode) as FileStatement;
+                Evaluator evaluator = new Evaluator(parser);
 
-                Assert.True(parser.Errors.Length == 0);
-
-                string AST = output.ToString();
-                string toSTR = output.ToAbstractSyntaxTree();
-
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
-                IObject result = evaluator.Evaluate(output, env);
+                IObject result = evaluator.Evaluate(inputCode);
 
                 string actualAsString = result.AsString();
 

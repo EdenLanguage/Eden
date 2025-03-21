@@ -5,15 +5,18 @@
         public string Name { get; set; }
         public Type Type { get; set; }
 
-        private VariableSignatureObject(string name, Type type)
+        public Token Token { get; }
+
+        private VariableSignatureObject(Token token, string name, Type type)
         {
+            Token = token;
             Name = name;
             Type = type;
         }
 
-        public static IObject Create(string name, Type type)
+        public static IObject Create(Token token, string name, Type type)
         {
-            return new VariableSignatureObject(name, type);
+            return new VariableSignatureObject(token, name, type);
         }
 
         public override string ToString()

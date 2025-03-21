@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.SemanticalErrors
 {
@@ -6,29 +7,24 @@ namespace EdenClasslibrary.Errors.SemanticalErrors
     {
         private IObject _index;
 
-        private ErrorSemanticalIndexTypeInvalid(IObject index)
+        public ErrorSemanticalIndexTypeInvalid(IObject index, Token token, string line) : base(token, line)
         {
             _index = index;
         }
 
-        public static AError Create(IObject index)
+        public static AError Create(IObject index, Token token, string line)
         {
-            return new ErrorSemanticalIndexTypeInvalid(index);
+            return new ErrorSemanticalIndexTypeInvalid(index, token, line);
         }
 
-        public static IObject CreateErrorObject(IObject index)
+        public static IObject CreateErrorObject(IObject index, Token token, string line)
         {
-            return new ErrorObject(Create(index));
-        }
-
-        public override string GetDetails()
-        {
-            return $"Used indexer: '{_index.Type}'";
+            return new ErrorObject(token, Create(index, token, line));
         }
 
         public override string GetMessage()
         {
-            return $"Indexer is not valid!";
+            return $"Indexer '{_index.AsString()}' is not valid!";
         }
     }
 }
