@@ -36,6 +36,47 @@ namespace EdenClasslibrary.Types
             _filePath = "REPL";
         }
 
+        public string GetLine(Token token)
+        {
+            string line = string.Empty;
+            if (!string.IsNullOrEmpty(_input))
+            {
+                try
+                {
+                    int startPos = 0;
+                    int endPos = 0;
+                    string tmp = _input;
+                    //  Line - 1 becuase 'Line' is giving lines from 1, and we need it from 0.
+                    for(int i = 0; i < token.Line; i++)
+                    {
+                        startPos = tmp.IndexOf("\r\n") + 2;
+                        if(tmp.IndexOf("\r\n") == -1)
+                        {
+                            break;
+                        }
+                        else if(i == token.Line - 1)
+                        {
+                            tmp = tmp.Substring(0, startPos - 2);
+                        }
+                        else
+                        {
+                            tmp = tmp.Substring(startPos);
+                        }
+                    }
+
+                    //  Skip tabs
+                    //tmp = tmp.Replace("\t", "");
+
+                    line = tmp;
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            return line;
+        }
+
         public void LoadFile(string filePath)
         {
             bool fileExists = File.Exists(filePath);
@@ -95,6 +136,32 @@ namespace EdenClasslibrary.Types
                             break;
                         default:
                             nextToken = CreateNewToken(TokenType.Assign);
+                            break;
+                    }
+                    break;
+                case '&':
+                    switch (nextCharacter)
+                    {
+                        case '&':
+                            NextCharacter();
+                            nextToken = CreateNewToken(TokenType.And, "&&");
+                            NextCharacter();
+                            break;
+                        default:
+                            nextToken = CreateNewToken(TokenType.Illegal);
+                            break;
+                    }
+                    break;
+                case '|':
+                    switch (nextCharacter)
+                    {
+                        case '|':
+                            NextCharacter();
+                            nextToken = CreateNewToken(TokenType.Or, "||");
+                            NextCharacter();
+                            break;
+                        default:
+                            nextToken = CreateNewToken(TokenType.Illegal);
                             break;
                     }
                     break;

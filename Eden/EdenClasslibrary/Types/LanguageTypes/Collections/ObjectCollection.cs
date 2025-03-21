@@ -11,11 +11,19 @@ namespace EdenClasslibrary.Types.LanguageTypes.Collections
         /// </summary>
         public Type Type { get; set; }
 
-        public IntObject Length
+        public int Length
         {
             get
             {
-                return IntObject.Create(Collection.Count) as IntObject;
+                return Collection.Count;
+            }
+        }
+
+        public Token Token
+        {
+            get
+            {
+                return null;
             }
         }
 

@@ -7,8 +7,8 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Expressions
     public class FunctionExpression : Expression
     {
         private List<Expression> _functionArguments;
-        public IdentifierExpression Name { get; set; }
-        public VariableTypeExpression Type { get; set; }
+        public Expression Name { get; set; }
+        public Expression Type { get; set; }
         public Expression[] Arguments
         {
             get

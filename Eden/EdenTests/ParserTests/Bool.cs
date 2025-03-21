@@ -1,9 +1,6 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
-using EdenTests.Utility;
-using Xunit.Abstractions;
 
 namespace EdenTests.ParserTests
 {

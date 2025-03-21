@@ -15,15 +15,18 @@ namespace EdenClasslibrary.Types.LanguageTypes
         public Expression[] Arguments { get; set; }
         public BlockStatement Body { get; set; }
 
-        private FunctionObject(BlockStatement body, params Expression[] arguments)
+        public Token Token { get; }
+
+        private FunctionObject(Token token, BlockStatement body, params Expression[] arguments)
         {
+            Token = token;
             Arguments = arguments;
             Body = body;
         }
 
-        public static IObject Create(BlockStatement body, params Expression[] arguments)
+        public static IObject Create(Token token, BlockStatement body, params Expression[] arguments)
         {
-            return new FunctionObject(body, arguments);
+            return new FunctionObject(token, body, arguments);
         }
 
         public override string ToString()

@@ -1,5 +1,6 @@
 ﻿using EdenClasslibrary.Errors;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
+using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Utility;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree
@@ -15,6 +16,11 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public static Expression Create(Token token, AError error)
         {
             return new InvalidExpression(token, error);
+        }
+
+        public static Expression Create(InvalidStatement invalidStatement)
+        {
+            return new InvalidExpression(invalidStatement.NodeToken, invalidStatement.Error);
         }
 
         public override string ToString()

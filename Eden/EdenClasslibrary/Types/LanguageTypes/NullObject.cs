@@ -14,14 +14,17 @@
         }
         public object Value { get; set; }
 
-        private NullObject(object value)
+        public Token Token { get; }
+
+        private NullObject(Token token, object value)
         {
+            Token = token;
             Value = value;
         }
 
-        public static IObject Create()
+        public static IObject Create(Token token)
         {
-            return new NullObject(null);
+            return new NullObject(token, null);
         }
 
         public bool IsSameType(IObject other)

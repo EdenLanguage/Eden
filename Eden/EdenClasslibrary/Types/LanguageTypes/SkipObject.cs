@@ -3,14 +3,17 @@ namespace EdenClasslibrary.Types.LanguageTypes
 {
     public class SkipObject : IObject
     {
-        public SkipObject()
+        public SkipObject(Token token)
         {
+            Token = token;
         }
-        public static IObject Create()
+        public static IObject Create(Token token)
         {
-            return new SkipObject();
+            return new SkipObject(token);
         }
         public Type Type => throw new NotImplementedException();
+
+        public Token Token { get; }
 
         public string AsString()
         {

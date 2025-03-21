@@ -1,0 +1,5 @@
+Loop(Var Int i = 0i; i < 10i; i = i + 1i){
+	Loop(Var Int j = 0i; j < 10i; j = j + 1i;){
+		Var Int zmienna = 20i;
+	};	
+};

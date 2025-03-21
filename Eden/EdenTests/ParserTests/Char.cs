@@ -1,4 +1,4 @@
-﻿using EdenClasslibrary.Parser;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 
@@ -13,7 +13,6 @@ namespace EdenTests.ParserTests
             string executionLocation = GetParserSourceFile(filename);
 
             Parser parser = new Parser();
-
             Statement ast = parser.ParseFile(executionLocation);
 
             if(ast is InvalidStatement asInvalidStatement)

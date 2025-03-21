@@ -9,30 +9,25 @@ namespace EdenClasslibrary.Errors
         private TokenType _operationToken;
         private IObject _type;
 
-        private ErrorSemanticalUndefUnaryOp(TokenType operationToken, IObject type)
+        public ErrorSemanticalUndefUnaryOp(TokenType op, IObject type, string line) : base(type.Token, line)
         {
-            _operationToken = operationToken;
+            _operationToken = op;
             _type = type;
         }
 
-        public static AError Create(TokenType operationToken, IObject type)
+        public static AError Create(TokenType op, IObject type, string line)
         {
-            return new ErrorSemanticalUndefUnaryOp(operationToken, type);
+            return new ErrorSemanticalUndefUnaryOp(op, type, line);
         }
 
-        public static IObject CreateErrorObject(TokenType operationToken, IObject type)
+        public static IObject CreateErrorObject(TokenType op, IObject type, string line)
         {
-            return ErrorObject.Create(Create(operationToken, type));
-        }
-
-        public override string GetDetails()
-        {
-            return $"Operation '{_operationToken}{_type.Type}' is not defined!";
+            return ErrorObject.Create(type.Token, Create(op, type, line));
         }
 
         public override string GetMessage()
         {
-            return $"Undefined unary operation!";
+            return $"Operation '{_operationToken}{_type.Type}' is not defined!";
         }
     }
 }

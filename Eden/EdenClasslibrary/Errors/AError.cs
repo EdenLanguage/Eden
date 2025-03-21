@@ -1,49 +1,90 @@
-﻿using System.Text;
+﻿using EdenClasslibrary.Types;
+using System.Text;
 
 namespace EdenClasslibrary.Errors
 {
     public abstract class AError
     {
+        public Token Token { get; }
         public virtual string ErrorType { get; }
-        public abstract string GetMessage();
-        public virtual string GetTip()
+        public string Line { get; }
+     
+        public AError(Token token, string line)
         {
-            return string.Empty;
+            Token = token;
+            Line = line;
         }
-        public abstract string GetDetails();
+
+        public abstract string GetMessage();
+        public string GetDetails()
+        {
+            return $"File: '{Token.Filename}', Line: '{Token.Line}', Column: '{Token.Start}'";
+        }
+        public string GetLineDetails()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if(string.IsNullOrEmpty(Line))
+            {
+                return "";
+            }
+
+            string line = Line.Replace("\t","");
+
+            int tabAmount = 0;
+            foreach(char letter in Line)
+            {
+                if(letter == '\t')
+                {
+                    tabAmount++;
+                }
+            }
+
+            string lineMark = string.Empty;
+            int point = Token.Start - (tabAmount + 1);
+
+            for(int i = 0; i < point; i++)
+            {
+                lineMark += " ";
+            }
+            lineMark += "^";
+
+            while(lineMark.Length < Line.Length - 1)
+            {
+                lineMark += "-";
+            }
+
+            sb.AppendLine();
+            sb.AppendLine(line);
+#if DEBUG
+            sb.Append($"{lineMark}");
+#else
+            sb.Append($"{lineMark}".Pastel(Color.Red));
+#endif
+            string result = sb.ToString();
+
+            return result;
+        }
         public string PrintError()
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"-> [TYPE]");
-            sb.AppendLine($"-> {GetMessage()}");
+            string message = GetMessage();
+            string details = GetDetails();
+            string lineDetails = GetLineDetails();
 
-            string isDetails = GetDetails();
-            string details = isDetails == "" ? "" : "-> " + isDetails;
-            if(details != "")
-            {
-                sb.AppendLine($"{details}");
-            }
+#if DEBUG
+            sb.AppendLine($"[{ErrorType}]");
+#else
+            sb.AppendLine($"[{ErrorType.Pastel(Color.Red)}]");
+#endif
 
-            string isTip = GetTip();
-            string tip = isTip == "" ? "" : "-> " + isTip;
-            if(tip != "")
-            {
-                sb.AppendLine($"{tip}");
-            }
+            sb.AppendLine($"{message}");
+            sb.AppendLine($"{details}");
+            sb.AppendLine($"{lineDetails}");
 
             string result = sb.ToString();
             return result;
-        }
-
-        public bool HasTip()
-        {
-            return GetTip() != string.Empty;
-        }
-
-        public bool HasErrorMessage()
-        {
-            return (GetMessage() != null) && (GetMessage() != string.Empty);
         }
     }
 }

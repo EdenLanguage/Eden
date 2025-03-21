@@ -1,8 +1,6 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -19,14 +17,9 @@ namespace EdenTests.EvaluatorTests
             string expected = "10";
 
             Parser parser = new Parser();
-            FileStatement output = parser.Parse(input) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string AST = output.ToAbstractSyntaxTree();
-            string STR = output.ToString();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(output, env);
+            IObject result = evaluator.Evaluate(input);
 
             Assert.True(result is IntObject);
 
@@ -44,14 +37,9 @@ namespace EdenTests.EvaluatorTests
             string expected = "10";
 
             Parser parser = new Parser();
-            FileStatement output = parser.Parse(input) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string AST = output.ToAbstractSyntaxTree();
-            string STR = output.ToString();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(output, env);
+            IObject result = evaluator.Evaluate(input);
 
             Assert.True(result is IntObject);
 

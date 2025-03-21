@@ -1,10 +1,8 @@
 ﻿using System.Text;
-using EdenClasslibrary.Parser;
 using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenTests.Utility;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -107,16 +105,15 @@ namespace EdenTests.EvaluatorTests
                 input = testset[i][0];
                 expected = testset[i][1];
 
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
                 Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
 
                 AbstractSyntaxTreeNode ast = parser.Parse(input);
 
                 string AST = ast.ToAbstractSyntaxTree();
                 string STR = ast.ToString();
 
-                IObject actual = evaluator.Evaluate(ast, env);
+                IObject actual = evaluator.Evaluate(ast);
 
                 if(expected != actual.AsString())
                 {
@@ -158,16 +155,10 @@ namespace EdenTests.EvaluatorTests
                 input = testset[i][0];
                 expected = testset[i][1];
 
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
                 Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
 
-                AbstractSyntaxTreeNode ast = parser.Parse(input);
-
-                string AST = ast.ToAbstractSyntaxTree();
-                string STR = ast.ToString();
-
-                IObject actual = evaluator.Evaluate(ast, env);
+                IObject actual = evaluator.Evaluate(input);
 
                 if (expected != actual.AsString())
                 {

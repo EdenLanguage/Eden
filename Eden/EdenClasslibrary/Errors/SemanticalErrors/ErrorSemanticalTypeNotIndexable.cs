@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.SemanticalErrors
 {
@@ -6,24 +7,19 @@ namespace EdenClasslibrary.Errors.SemanticalErrors
     {
         private IObject _object;
 
-        private ErrorSemanticalTypeNotIndexable(IObject obj)
+        public ErrorSemanticalTypeNotIndexable(IObject obj, Token token, string line) : base(token, line)
         {
             _object = obj;
         }
 
-        public static AError Create(IObject obj)
+        public static AError Create(IObject obj, Token token, string line)
         {
-            return new ErrorSemanticalTypeNotIndexable(obj);
+            return new ErrorSemanticalTypeNotIndexable(obj, token, line);
         }
 
-        public static IObject CreateErrorObject(IObject obj)
+        public static IObject CreateErrorObject(IObject obj, Token token, string line)
         {
-            return new ErrorObject(Create(obj));
-        }
-
-        public override string GetDetails()
-        {
-            return $"Object of type '{_object.Type}' doesn't have defined indexer!";
+            return new ErrorObject(token, Create(obj, token, line));
         }
 
         public override string GetMessage()

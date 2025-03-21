@@ -12,8 +12,11 @@ namespace EdenClasslibrary.Types.LanguageTypes
             }
         }
 
-        public ReturnObject(IObject wrappedObj)
+        public Token Token { get; }
+
+        public ReturnObject(Token token, IObject wrappedObj)
         {
+            Token = token;
             WrappedObject = wrappedObj;
         }
         public string AsString()

@@ -4,9 +4,16 @@
     {
         public Type Type => throw new NotImplementedException();
 
-        public static IObject Create()
+        public Token Token { get; }
+
+        private QuitObject(Token token)
         {
-            return new QuitObject();
+            Token = token;
+        }
+
+        public static IObject Create(Token token)
+        {
+            return new QuitObject(token);
         }
 
         public string AsString()

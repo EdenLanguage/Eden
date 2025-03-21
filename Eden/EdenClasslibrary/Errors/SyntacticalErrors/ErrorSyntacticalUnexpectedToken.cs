@@ -7,25 +7,20 @@ namespace EdenClasslibrary.Errors.SyntacticalErrors
         private Token _actual;
         private TokenType _expected;
 
-        private ErrorSyntacticalUnexpectedToken(Token actual, TokenType expected)
+        public ErrorSyntacticalUnexpectedToken(TokenType expected, Token token, string line) : base(token, line)
         {
-            _actual = actual;
+            _actual = token;
             _expected = expected;
         }
 
-        public static AError Create(Token actual, TokenType expected)
+        public static AError Create(TokenType expected, Token token, string line)
         {
-            return new ErrorSyntacticalUnexpectedToken(actual, expected);
-        }
-
-        public override string GetDetails()
-        {
-            return $"Parser expected '{_expected}' token but acutal token was '{_actual.Keyword}'. File: '{_actual.Filename}' Line: '{_actual.Line}' Column: '{_actual.Start}'";
+            return new ErrorSyntacticalUnexpectedToken(expected, token, line);
         }
 
         public override string GetMessage()
         {
-            return $"Unexpected token encountered!";
+            return $"Parser expected '{_expected}' token but actual token was '{_actual.Keyword}'.";
         }
     }
 }

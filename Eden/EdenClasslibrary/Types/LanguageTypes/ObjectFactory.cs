@@ -2,25 +2,25 @@
 {
     public static class ObjectFactory
     {
-        public static IObject Create(Type type)
+        public static IObject Create(Token token, Type type)
         {
             IObject result = null;
             switch (type.Name)
             {
                 case "IntObject":
-                    result = IntObject.Create(0);
+                    result = IntObject.Create(token, 0);
                     break;
                 case "FloatObject":
-                    result = FloatObject.Create(0);
+                    result = FloatObject.Create(token, 0);
                     break;
                 case "NullObject":
-                    result = NullObject.Create();
+                    result = NullObject.Create(token);
                     break;
                 case "StringObject":
-                    result = StringObject.Create("");
+                    result = StringObject.Create(token, "");
                     break;
                 default:
-                    result = NullObject.Create();
+                    result = NullObject.Create(token);
                     break;
             }
             return result;

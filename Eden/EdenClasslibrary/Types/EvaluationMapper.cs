@@ -77,14 +77,16 @@ namespace EdenClasslibrary.Types
         #endregion
 
         #region Fields
+        private Parser _parser;
         private ErrorsManager _errorsManager;
         private Dictionary<BinaryFuncArgsWrapper, Func<IObject, IObject, IObject>> _binaryMappings;
         private Dictionary<UnaryFuncArgsWrapper, Func<IObject, IObject>> _unaryMappings;
         #endregion
 
         #region Constructor
-        public EvaluationMapper()
+        public EvaluationMapper(Parser parser)
         {
+            _parser = parser;
             _errorsManager = new ErrorsManager();
             _binaryMappings = new Dictionary<BinaryFuncArgsWrapper, Func<IObject, IObject, IObject>>();
             _unaryMappings = new Dictionary<UnaryFuncArgsWrapper, Func<IObject, IObject>>();
@@ -179,6 +181,8 @@ namespace EdenClasslibrary.Types
             //  Bool
             RegisterMethod(typeof(BoolObject), TokenType.Equal, typeof(BoolObject), Bool_Equal_Bool_Func);
             RegisterMethod(typeof(BoolObject), TokenType.Inequal, typeof(BoolObject), Bool_InEqual_Bool_Func);
+            RegisterMethod(typeof(BoolObject), TokenType.And, typeof(BoolObject), Bool_And_Bool_Func);
+            RegisterMethod(typeof(BoolObject), TokenType.Or, typeof(BoolObject), Bool_Or_Bool_Func);
 
             //  Float
             RegisterMethod(typeof(FloatObject), TokenType.Plus, typeof(FloatObject), Func_Float_Add_Float);
@@ -292,9 +296,7 @@ namespace EdenClasslibrary.Types
 
             if(exists == false)
             {
-                //  TODO: Handle error -> I think every return null in this class should return ErrorObj with details about what happend. This will clear the evaluation by a great bit.
-                RegisterError(ErrorSemanticalUndefBinaryOp.Create(leftObj, opToken.Keyword, rightObj));
-                return null;
+                return InvalidBinaryFuncCall;
             }
 
             return _binaryMappings[BinaryFuncArgsWrapper.Create(leftObj.Type, opToken.Keyword, rightObj.Type)];
@@ -306,10 +308,7 @@ namespace EdenClasslibrary.Types
 
             if (exists == false)
             {
-                //  TODO: Handle error -> I think every return null in this class should return ErrorObj with details about what happend. This will clear the evaluation by a great bit.
-                RegisterError(ErrorSemanticalUndefUnaryOp.Create(opToken.Keyword, rightObj));
-                //return ErrorSemanticalUndefUnaryOp.CreateErrorObject(opToken.Keyword, rightObj);
-                return null;
+                return InvalidUnaryFuncCall;
             }
 
             return _unaryMappings[UnaryFuncArgsWrapper.Create(opToken.Keyword, rightObj.Type)];
@@ -335,18 +334,9 @@ namespace EdenClasslibrary.Types
 
             bool alreadyExists = CheckEvaluationFunc(leftObj, opToken, rightObj);
 
-            if(alreadyExists == true)
+            if(alreadyExists == false)
             {
-                //  TODO: Implement
-            }
-            else
-            {
-                bool addedSuccessfully = _binaryMappings.TryAdd(argPacket, func);
-
-                if(addedSuccessfully == false)
-                {
-                    //  TODO: Handle error
-                }
+                _binaryMappings.TryAdd(argPacket, func);
             }
         }
 
@@ -356,31 +346,21 @@ namespace EdenClasslibrary.Types
 
             bool alreadyExists = CheckEvaluationFunc(opToken, typeObj);
 
-            if (alreadyExists == true)
+            if (alreadyExists == false)
             {
-                //  TODO: Implement
+                _unaryMappings.TryAdd(argPacket, func);
             }
-            else
-            {
-                bool addedSuccessfully = _unaryMappings.TryAdd(argPacket, func);
-
-                if (addedSuccessfully == false)
-                {
-                    //  TODO: Handle error
-                }
-            }
-        }
-        #endregion
-
-        #region Helper methods
-        private IObject RegisterError(AError error)
-        {
-            _errorsManager.AppendError(error);
-            return new ErrorObject(error);
         }
         #endregion
 
         #region Binary evaluation functions
+
+        #region Invalid function call
+        #endregion
+        private IObject InvalidBinaryFuncCall(IObject left, IObject right)
+        {
+            return ErrorSemanticalUndefBinaryOp.CreateErrorObject(left, TokenType.Illegal, right, _parser.Lexer.GetLine(left.Token));
+        }
         #region Char
         private IObject Char_Add_Char_Func(IObject left, IObject right)
         {
@@ -389,11 +369,11 @@ namespace EdenClasslibrary.Types
                 int result = (left as CharObject).Value + (right as CharObject).Value;
                 int r = result % 255;
                 char resAsChar = (char)r;
-                return CharObject.Create(resAsChar);
+                return CharObject.Create(left.Token, resAsChar);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_Subtract_Char_Func(IObject left, IObject right)
@@ -411,11 +391,11 @@ namespace EdenClasslibrary.Types
                 {
                     res = (char)r;
                 }
-                return CharObject.Create(res);
+                return CharObject.Create(left.Token, res);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_Multiply_Char_Func(IObject left, IObject right)
@@ -425,11 +405,11 @@ namespace EdenClasslibrary.Types
                 int result = (left as CharObject).Value * (right as CharObject).Value;
                 int r = result % 255;
                 char resAsChar = (char)r;
-                return CharObject.Create(resAsChar);
+                return CharObject.Create(left.Token, resAsChar);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_Divide_Char_Func(IObject left, IObject right)
@@ -439,11 +419,11 @@ namespace EdenClasslibrary.Types
                 int result = (left as CharObject).Value / (right as CharObject).Value;
                 int r = result % 255;
                 char resAsChar = (char)r;
-                return CharObject.Create(resAsChar);
+                return CharObject.Create(left.Token, resAsChar);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Slash, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Slash, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         #endregion
@@ -453,24 +433,24 @@ namespace EdenClasslibrary.Types
             {
                 if(right is IntObject IsInt)
                 {
-                    return IntObject.Create(IsInt.Value);
+                    return IntObject.Create(left.Token, IsInt.Value);
                 }
                 else if(right is CharObject AsChar)
                 {
-                    return IntObject.Create(AsChar.Value);
+                    return IntObject.Create(left.Token, AsChar.Value);
                 }
                 else if (right is FloatObject AsFloat)
                 {
-                    return FloatObject.Create(AsFloat.Value);
+                    return FloatObject.Create(left.Token, AsFloat.Value);
                 }
                 else
                 {
-                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -480,16 +460,16 @@ namespace EdenClasslibrary.Types
             {
                 if (right is CharObject AsChar)
                 {
-                    return CharObject.Create(AsChar.Value);
+                    return CharObject.Create(left.Token, AsChar.Value);
                 }
                 else
                 {
-                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -499,16 +479,16 @@ namespace EdenClasslibrary.Types
             {
                 if (right is StringObject AsString)
                 {
-                    return StringObject.Create(AsString.Value);
+                    return StringObject.Create(left.Token, AsString.Value);
                 }
                 else
                 {
-                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -518,101 +498,101 @@ namespace EdenClasslibrary.Types
             {
                 if (right is IntObject IsInt)
                 {
-                    return FloatObject.Create(IsInt.Value);
+                    return FloatObject.Create(left.Token, IsInt.Value);
                 }
                 else if (right is CharObject AsChar)
                 {
-                    return FloatObject.Create(AsChar.Value);
+                    return FloatObject.Create(left.Token, AsChar.Value);
                 }
                 else if (right is FloatObject AsFloat)
                 {
-                    return FloatObject.Create(AsFloat.Value);
+                    return FloatObject.Create(left.Token, AsFloat.Value);
                 }
                 else
                 {
-                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Int_Add_Int_Func(IObject left, IObject right)
         {
             try
             {
-                return IntObject.Create((left as IntObject).Value + (right as IntObject).Value);
+                return IntObject.Create(left.Token, (left as IntObject).Value + (right as IntObject).Value);
             }
             catch(Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_Equal_Char_Func(IObject left, IObject right)
         {
             try
             {
-                return BoolObject.Create((left as CharObject).Value == (right as CharObject).Value);
+                return BoolObject.Create(left.Token, (left as CharObject).Value == (right as CharObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_InEqual_Char_Func(IObject left, IObject right)
         {
             try
             {
-                return BoolObject.Create((left as CharObject).Value != (right as CharObject).Value);
+                return BoolObject.Create(left.Token, (left as CharObject).Value != (right as CharObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_Smaller_Char_Func(IObject left, IObject right)
         {
             try
             {
-                return BoolObject.Create((left as CharObject).Value < (right as CharObject).Value);
+                return BoolObject.Create(left.Token, (left as CharObject).Value < (right as CharObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_Greater_Char_Func(IObject left, IObject right)
         {
             try
             {
-                return BoolObject.Create((left as CharObject).Value > (right as CharObject).Value);
+                return BoolObject.Create(left.Token, (left as CharObject).Value > (right as CharObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.RightArrow, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.RightArrow, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_SmallerEqual_Char_Func(IObject left, IObject right)
         {
             try
             {
-                return BoolObject.Create((left as CharObject).Value <= (right as CharObject).Value);
+                return BoolObject.Create(left.Token, (left as CharObject).Value <= (right as CharObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         private IObject Char_BiggerEqual_Char_Func(IObject left, IObject right)
         {
             try
             {
-                return BoolObject.Create((left as CharObject).Value >= (right as CharObject).Value);
+                return BoolObject.Create(left.Token, (left as CharObject).Value >= (right as CharObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         #region String
@@ -649,11 +629,11 @@ namespace EdenClasslibrary.Types
                 {
 
                 }
-                return StringObject.Create((left as StringObject).Value += value);
+                return StringObject.Create(left.Token, (left as StringObject).Value += value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         #endregion
@@ -670,28 +650,28 @@ namespace EdenClasslibrary.Types
             {
                 if(left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return FloatObject.Create(OnlyLF.Value + RI.Value);
+                    return FloatObject.Create(left.Token, OnlyLF.Value + RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return FloatObject.Create(OnlyRF.Value + LI.Value);
+                    return FloatObject.Create(left.Token, OnlyRF.Value + LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return IntObject.Create(LeftChar.Value + RightInt.Value);
+                    return IntObject.Create(left.Token, LeftChar.Value + RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return IntObject.Create(LeftInt.Value + RightChar.Value);
+                    return IntObject.Create(left.Token, LeftInt.Value + RightChar.Value);
                 }
                 else
                 {
-                    return FloatObject.Create((left as FloatObject).Value + (right as FloatObject).Value);
+                    return FloatObject.Create(left.Token, (left as FloatObject).Value + (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -707,28 +687,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return FloatObject.Create(OnlyLF.Value - RI.Value);
+                    return FloatObject.Create(left.Token, OnlyLF.Value - RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return FloatObject.Create(LI.Value - OnlyRF.Value);
+                    return FloatObject.Create(left.Token, LI.Value - OnlyRF.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return IntObject.Create(LeftChar.Value - RightInt.Value);
+                    return IntObject.Create(left.Token, LeftChar.Value - RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return IntObject.Create(LeftInt.Value - RightChar.Value);
+                    return IntObject.Create(left.Token, LeftInt.Value - RightChar.Value);
                 }
                 else
                 {
-                    return FloatObject.Create((left as FloatObject).Value - (right as FloatObject).Value);
+                    return FloatObject.Create(left.Token, (left as FloatObject).Value - (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -744,28 +724,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return FloatObject.Create(OnlyLF.Value * RI.Value);
+                    return FloatObject.Create(left.Token, OnlyLF.Value * RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return FloatObject.Create(OnlyRF.Value * LI.Value);
+                    return FloatObject.Create(left.Token, OnlyRF.Value * LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return IntObject.Create(LeftChar.Value * RightInt.Value);
+                    return IntObject.Create(left.Token, LeftChar.Value * RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return IntObject.Create(LeftInt.Value * RightChar.Value);
+                    return IntObject.Create(left.Token, LeftInt.Value * RightChar.Value);
                 }
                 else
                 {
-                    return FloatObject.Create((left as FloatObject).Value * (right as FloatObject).Value);
+                    return FloatObject.Create(left.Token, (left as FloatObject).Value * (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -781,34 +761,34 @@ namespace EdenClasslibrary.Types
             {
                 if(right is IntObject RaI && RaI.Value == 0 || right is IntObject RaF && RaF.Value == 0)
                 {
-                    return ErrorRuntimeDivideByZero.CreateErrorObject();
+                    return ErrorRuntimeDivideByZero.CreateErrorObject(left, _parser.Lexer.GetLine(left.Token));
                 }
 
 
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return FloatObject.Create(OnlyLF.Value / RI.Value);
+                    return FloatObject.Create(left.Token, OnlyLF.Value / RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return FloatObject.Create(LI.Value / OnlyRF.Value);
+                    return FloatObject.Create(left.Token, LI.Value / OnlyRF.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return IntObject.Create(LeftChar.Value / RightInt.Value);
+                    return IntObject.Create(left.Token, LeftChar.Value / RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return IntObject.Create(LeftInt.Value / RightChar.Value);
+                    return IntObject.Create(left.Token, LeftInt.Value / RightChar.Value);
                 }
                 else
                 {
-                    return FloatObject.Create((left as FloatObject).Value / (right as FloatObject).Value);
+                    return FloatObject.Create(left.Token, (left as FloatObject).Value / (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeDivideByZero.CreateErrorObject();
+                return ErrorRuntimeDivideByZero.CreateErrorObject(left, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -824,28 +804,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return BoolObject.Create(OnlyLF.Value == RI.Value);
+                    return BoolObject.Create(left.Token, OnlyLF.Value == RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return BoolObject.Create(OnlyRF.Value == LI.Value);
+                    return BoolObject.Create(left.Token, OnlyRF.Value == LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return BoolObject.Create(LeftChar.Value == RightInt.Value);
+                    return BoolObject.Create(left.Token, LeftChar.Value == RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return BoolObject.Create(LeftInt.Value == RightChar.Value);
+                    return BoolObject.Create(left.Token, LeftInt.Value == RightChar.Value);
                 }
                 else
                 {
-                    return BoolObject.Create((left as FloatObject).Value == (right as FloatObject).Value);
+                    return BoolObject.Create(left.Token, (left as FloatObject).Value == (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -855,28 +835,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return BoolObject.Create(OnlyLF.Value != RI.Value);
+                    return BoolObject.Create(left.Token, OnlyLF.Value != RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return BoolObject.Create(OnlyRF.Value != LI.Value);
+                    return BoolObject.Create(left.Token, OnlyRF.Value != LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return BoolObject.Create(LeftChar.Value != RightInt.Value);
+                    return BoolObject.Create(left.Token, LeftChar.Value != RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return BoolObject.Create(LeftInt.Value != RightChar.Value);
+                    return BoolObject.Create(left.Token, LeftInt.Value != RightChar.Value);
                 }
                 else
                 {
-                    return BoolObject.Create((left as FloatObject).Value != (right as FloatObject).Value);
+                    return BoolObject.Create(left.Token, (left as FloatObject).Value != (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -886,28 +866,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return BoolObject.Create(OnlyLF.Value > RI.Value);
+                    return BoolObject.Create(left.Token, OnlyLF.Value > RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return BoolObject.Create(OnlyRF.Value > LI.Value);
+                    return BoolObject.Create(left.Token, OnlyRF.Value > LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return BoolObject.Create(LeftChar.Value > RightInt.Value);
+                    return BoolObject.Create(left.Token, LeftChar.Value > RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return BoolObject.Create(LeftInt.Value > RightChar.Value);
+                    return BoolObject.Create(left.Token, LeftInt.Value > RightChar.Value);
                 }
                 else
                 {
-                    return BoolObject.Create((left as FloatObject).Value > (right as FloatObject).Value);
+                    return BoolObject.Create(left.Token, (left as FloatObject).Value > (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -917,28 +897,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return BoolObject.Create(OnlyLF.Value < RI.Value);
+                    return BoolObject.Create(left.Token, OnlyLF.Value < RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return BoolObject.Create(OnlyRF.Value < LI.Value);
+                    return BoolObject.Create(left.Token, OnlyRF.Value < LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return BoolObject.Create(LeftChar.Value < RightInt.Value);
+                    return BoolObject.Create(left.Token, LeftChar.Value < RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return BoolObject.Create(LeftInt.Value < RightChar.Value);
+                    return BoolObject.Create(left.Token, LeftInt.Value < RightChar.Value);
                 }
                 else
                 {
-                    return BoolObject.Create((left as FloatObject).Value < (right as FloatObject).Value);
+                    return BoolObject.Create(left.Token, (left as FloatObject).Value < (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -948,28 +928,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return BoolObject.Create(OnlyLF.Value >= RI.Value);
+                    return BoolObject.Create(left.Token, OnlyLF.Value >= RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return BoolObject.Create(OnlyRF.Value >= LI.Value);
+                    return BoolObject.Create(left.Token, OnlyRF.Value >= LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return BoolObject.Create(LeftChar.Value >= RightInt.Value);
+                    return BoolObject.Create(left.Token, LeftChar.Value >= RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return BoolObject.Create(LeftInt.Value >= RightChar.Value);
+                    return BoolObject.Create(left.Token, LeftInt.Value >= RightChar.Value);
                 }
                 else
                 {
-                    return BoolObject.Create((left as FloatObject).Value >= (right as FloatObject).Value);
+                    return BoolObject.Create(left.Token, (left as FloatObject).Value >= (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -979,28 +959,28 @@ namespace EdenClasslibrary.Types
             {
                 if (left is FloatObject OnlyLF && right is IntObject RI)
                 {
-                    return BoolObject.Create(OnlyLF.Value <= RI.Value);
+                    return BoolObject.Create(left.Token, OnlyLF.Value <= RI.Value);
                 }
                 else if (right is FloatObject OnlyRF && left is IntObject LI)
                 {
-                    return BoolObject.Create(OnlyRF.Value <= LI.Value);
+                    return BoolObject.Create(left.Token, OnlyRF.Value <= LI.Value);
                 }
                 else if (left is CharObject LeftChar && right is IntObject RightInt)
                 {
-                    return BoolObject.Create(LeftChar.Value <= RightInt.Value);
+                    return BoolObject.Create(left.Token, LeftChar.Value <= RightInt.Value);
                 }
                 else if (left is IntObject LeftInt && right is CharObject RightChar)
                 {
-                    return BoolObject.Create(LeftInt.Value <= RightChar.Value);
+                    return BoolObject.Create(left.Token, LeftInt.Value <= RightChar.Value);
                 }
                 else
                 {
-                    return BoolObject.Create((left as FloatObject).Value <= (right as FloatObject).Value);
+                    return BoolObject.Create(left.Token, (left as FloatObject).Value <= (right as FloatObject).Value);
                 }
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1008,11 +988,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return IntObject.Create((left as IntObject).Value - (right as IntObject).Value);
+                return IntObject.Create(left.Token, (left as IntObject).Value - (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Minus, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1020,11 +1000,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return IntObject.Create((left as IntObject).Value * (right as IntObject).Value);
+                return IntObject.Create(left.Token, (left as IntObject).Value * (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Star, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1034,13 +1014,13 @@ namespace EdenClasslibrary.Types
             {
                 if(right is IntObject isInt && isInt.Value == 0)
                 {
-                    return ErrorRuntimeDivideByZero.CreateErrorObject();
+                    return ErrorRuntimeDivideByZero.CreateErrorObject(left, _parser.Lexer.GetLine(left.Token));
                 }
-                return IntObject.Create((left as IntObject).Value / (right as IntObject).Value);
+                return IntObject.Create(left.Token, (left as IntObject).Value / (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeDivideByZero.CreateErrorObject();
+                return ErrorRuntimeDivideByZero.CreateErrorObject(left, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1048,11 +1028,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as IntObject).Value < (right as IntObject).Value);
+                return BoolObject.Create(left.Token, (left as IntObject).Value < (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LeftArrow, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1060,11 +1040,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as IntObject).Value > (right as IntObject).Value);
+                return BoolObject.Create(left.Token, (left as IntObject).Value > (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.RightArrow, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.RightArrow, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1072,11 +1052,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as IntObject).Value == (right as IntObject).Value);
+                return BoolObject.Create(left.Token, (left as IntObject).Value == (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1084,11 +1064,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as IntObject).Value != (right as IntObject).Value);
+                return BoolObject.Create(left.Token, (left as IntObject).Value != (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1096,11 +1076,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as IntObject).Value >= (right as IntObject).Value);
+                return BoolObject.Create(left.Token, (left as IntObject).Value >= (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.GreaterOrEqual, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1108,11 +1088,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as IntObject).Value <= (right as IntObject).Value);
+                return BoolObject.Create(left.Token, (left as IntObject).Value <= (right as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.LesserOrEqual, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1121,11 +1101,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as BoolObject).Value == (right as BoolObject).Value);
+                return BoolObject.Create(left.Token, (left as BoolObject).Value == (right as BoolObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1133,11 +1113,35 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as BoolObject).Value != (right as BoolObject).Value);
+                return BoolObject.Create(left.Token, (left as BoolObject).Value != (right as BoolObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right, _parser.Lexer.GetLine(left.Token));
+            }
+        }
+
+        private IObject Bool_And_Bool_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create(left.Token, (left as BoolObject).Value && (right as BoolObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.And, right, _parser.Lexer.GetLine(left.Token));
+            }
+        }
+
+        private IObject Bool_Or_Bool_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create(left.Token, (left as BoolObject).Value || (right as BoolObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Or, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         #endregion
@@ -1147,11 +1151,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as NullObject).Value == (right as NullObject).Value);
+                return BoolObject.Create(left.Token, (left as NullObject).Value == (right as NullObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
 
@@ -1159,11 +1163,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create((left as NullObject).Value != (right as NullObject).Value);
+                return BoolObject.Create(left.Token, (left as NullObject).Value != (right as NullObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right);
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         #endregion
@@ -1172,16 +1176,21 @@ namespace EdenClasslibrary.Types
         #endregion
 
         #region Unary evaluation functions
+        private IObject InvalidUnaryFuncCall(IObject type)
+        {
+            return ErrorSemanticalUndefUnaryOp.CreateErrorObject(TokenType.Illegal, type, _parser.Lexer.GetLine(type.Token));
+        }
+
         private IObject Unary_Minus_Numberic(IObject type)
         {
             try
             {
-                if(type is IntObject AsInt) return IntObject.Create(-1 * AsInt.Value);
-                else return FloatObject.Create(-1 * (type as FloatObject).Value);
+                if(type is IntObject AsInt) return IntObject.Create(type.Token, -1 * AsInt.Value);
+                else return FloatObject.Create(type.Token, -1 * (type as FloatObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Minus, type);
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Minus, type, _parser.Lexer.GetLine(type.Token));
             }
         }
 
@@ -1189,12 +1198,12 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                if (type is IntObject AsInt) return IntObject.Create(-1 * AsInt.Value);
-                else return FloatObject.Create(-1 * (type as FloatObject).Value);
+                if (type is IntObject AsInt) return IntObject.Create(type.Token, -1 * AsInt.Value);
+                else return FloatObject.Create(type.Token, -1 * (type as FloatObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.ExclemationMark, type);
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.ExclemationMark, type, _parser.Lexer.GetLine(type.Token));
             }
         }
 
@@ -1202,11 +1211,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create(!(type as BoolObject).Value);
+                return BoolObject.Create(type.Token, !(type as BoolObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.ExclemationMark, type);
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.ExclemationMark, type, _parser.Lexer.GetLine(type.Token));
             }
         }
 
@@ -1214,11 +1223,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return IntObject.Create(~(type as IntObject).Value);
+                return IntObject.Create(type.Token, ~(type as IntObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Tilde, type);
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Tilde, type, _parser.Lexer.GetLine(type.Token));
             }
         }
 
@@ -1226,11 +1235,11 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                return BoolObject.Create(!(type as BoolObject).Value);
+                return BoolObject.Create(type.Token, !(type as BoolObject).Value);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Tilde, type);
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Tilde, type, _parser.Lexer.GetLine(type.Token));
             }
         }
 
@@ -1238,13 +1247,13 @@ namespace EdenClasslibrary.Types
         {
             try
             {
-                if (type is IntObject AsInt) return BoolObject.Create(AsInt.Value == 0);
-                else if (type is FloatObject AsFloat) return BoolObject.Create(AsFloat.Value == 0f);
-                else return BoolObject.Create((type as BoolObject).Value == false);
+                if (type is IntObject AsInt) return BoolObject.Create(type.Token, AsInt.Value == 0);
+                else if (type is FloatObject AsFloat) return BoolObject.Create(type.Token, AsFloat.Value == 0f);
+                else return BoolObject.Create(type.Token, (type as BoolObject).Value == false);
             }
             catch (Exception exception)
             {
-                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.QuenstionMark, type);
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.QuenstionMark, type, _parser.Lexer.GetLine(type.Token));
             }
         }
         #endregion

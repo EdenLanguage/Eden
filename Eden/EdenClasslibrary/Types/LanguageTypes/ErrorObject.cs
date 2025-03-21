@@ -14,14 +14,17 @@ namespace EdenClasslibrary.Types.LanguageTypes
             }
         }
 
-        public ErrorObject(AError error)
+        public Token Token { get; }
+
+        public ErrorObject(Token token, AError error)
         {
+            Token = token;
             _error = error;
         }
 
-        public static IObject Create(AError error)
+        public static IObject Create(Token token, AError error)
         {
-            return new ErrorObject(error);
+            return new ErrorObject(token, error);
         }
 
         public string AsString()

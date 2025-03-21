@@ -1,0 +1,3 @@
+Function Int multiply(Var Float a, Var Int b)
+	Return a*b;
+};

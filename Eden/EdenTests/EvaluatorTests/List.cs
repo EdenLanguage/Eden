@@ -1,9 +1,6 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -49,38 +46,25 @@ namespace EdenTests.EvaluatorTests
                 results = isOutcomeValid[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                //  Parsing
-                FileStatement ast = parser.Parse(statement) as FileStatement;
-                string AST = ast.ToAbstractSyntaxTree();
-                string STR = ast.ToString();
-                
-                Assert.Equal(parser.Program.Block.Statements.Length, 1);
-                Assert.Equal(parser.Errors.Length, 0);
-                
-                ListDeclarationStatement expressionStmnt = parser.Program.Block.Statements[0] as ListDeclarationStatement;
-                Assert.NotNull(expressionStmnt);
-
-                //  Evaluation
-                IObject evalResult = evaluator.Evaluate(ast, env);
+                IObject result = evaluator.Evaluate(statement);
                 if (results[0] == "false")
                 {
-                    Assert.True(evalResult is ErrorObject);
+                    Assert.True(result is ErrorObject);
                 }
                 else
                 {
-                    Assert.True(evalResult is not ErrorObject);
+                    Assert.True(result is not ErrorObject);
 
                     //  Check type
-                    Assert.Equal(results[2], evalResult.Type.Name);
+                    Assert.Equal(results[2], result.Type.Name);
 
                     //  Check count
-                    Assert.Equal(results[1], (evalResult as IObjectCollection).Collection.Count.ToString());
+                    Assert.Equal(results[1], (result as IObjectCollection).Collection.Count.ToString());
 
                     //  Check collection's item's types
-                    IObjectCollection collection = evalResult as IObjectCollection;
+                    IObjectCollection collection = result as IObjectCollection;
 
                     if (results[3] == "true")
                     {

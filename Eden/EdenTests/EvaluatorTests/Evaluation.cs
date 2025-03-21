@@ -1,9 +1,7 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenTests.Utility;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -16,14 +14,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string AST = block.ToString();
-            string toSTR = block.ToAbstractSyntaxTree();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(parser.Program, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             Assert.True(result is IntObject);
             IntObject value = result as IntObject;
@@ -38,14 +31,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string AST = block.ToString();
-            string toSTR = block.ToAbstractSyntaxTree();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(parser.Program, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             Assert.True(result is BoolObject);
             BoolObject value = result as BoolObject;
@@ -60,14 +48,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string AST = block.ToString();
-            string toSTR = block.ToAbstractSyntaxTree();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(parser.Program, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             Assert.True(result is NullObject);
             NullObject value = result as NullObject;
@@ -82,14 +65,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string AST = block.ToString();
-            string toSTR = block.ToAbstractSyntaxTree();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(parser.Program, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             Assert.True(result is FloatObject);
             FloatObject value = result as FloatObject;
@@ -104,14 +82,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string STR = block.ToString();
-            string AST = block.ToAbstractSyntaxTree();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(parser.Program, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             Assert.True(result is IntObject);
             IntObject value = result as IntObject;
@@ -126,14 +99,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
+            Evaluator evaluator = new Evaluator(parser);
 
-            string STR = block.ToString();
-            string AST = block.ToAbstractSyntaxTree();
-
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
-            IObject result = evaluator.Evaluate(parser.Program, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             Assert.True(result is IntObject);
             IntObject value = result as IntObject;

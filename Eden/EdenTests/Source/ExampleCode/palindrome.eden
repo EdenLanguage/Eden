@@ -1,0 +1,36 @@
+Function Bool IsPalindrome(Var String input){
+
+	Function String Reverse(Var String input){
+		Var Int length = Length(input);
+		Var String reversed = "";
+
+		Loop(Var Int i = length - 1i; i >= 0i; i = i - 1i){
+			reversed = reversed + input[i];
+		};
+
+		Return reversed;
+	};
+
+	Var String reversed = Reverse(input);
+	Var Int length = Length(input);
+
+	Loop(Var Int i = 0i; i < length; i = i + 1i){
+		If(input[i] != reversed[i]){
+			Return False;
+		};
+	};
+	
+	Return True;
+};
+
+If(IsPalindrome("ala") == False){
+	Return "Failed: IsPalindrome(ala)";
+};
+
+If(IsPalindrome("abraca") == True){
+	Return "Failed: IsPalindrome(abraca)";
+};
+
+If(IsPalindrome("lala") == True){
+	Return "Failed: IsPalindrome(lala)";
+};

@@ -1,0 +1,38 @@
+Function Int FactorialRec(Var Int n){
+	If(n == 0i || n == 1i){
+		Return 1i;
+	};
+	Return n * Factorial(n - 1i);
+};
+
+Function Int FactorialIt(Var Int n){
+	Var Int result = 1i;
+	Loop(Var Int i = 1i; i <= n; i = i + 1i){
+		result = result * i;
+	};
+	Return result;
+};
+
+If(FactorialRec(5i) != 120i){
+	Return "FactorialRec(5i) != 120";
+};
+
+If(FactorialRec(10i) != 3628800i){
+	Return "FactorialRec(10i) != 3628800";
+};
+
+If(FactorialRec(7i) != 5040i){
+	Return "FactorialRec(7i) != 5040";
+};
+
+If(FactorialIt(5i) != 120i){
+	Return "FactorialIt(5i) != 120";
+};
+
+If(FactorialIt(10i) != 3628800i){
+	Return "FactorialIt(10i) != 3628800";
+};
+
+If(FactorialIt(7i) != 5040i){
+	Return "FactorialIt(7i) != 5040";
+};

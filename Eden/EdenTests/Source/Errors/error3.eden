@@ -1,0 +1,5 @@
+Sisyphus{
+	Print("Hello world!");
+	Skip
+	Quit;
+};

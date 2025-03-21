@@ -12,7 +12,10 @@ namespace EdenClasslibrary.Types
         Identifier,        // Variable name, function name
         Keyword,            // Language specific name like: 'for', 'foreach', 'Function', 'Var' ...
         Function,
+        List,
         Var,
+        And,
+        Or,
         Loop,
         Sisyphus,
         Skip,

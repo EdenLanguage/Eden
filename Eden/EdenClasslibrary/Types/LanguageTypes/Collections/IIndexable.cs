@@ -2,7 +2,7 @@
 {
     public interface IIndexable
     {
-        IntObject Length { get; }
+        int Length { get; }
         IObject this[int index] { get; set; }
     }
 }

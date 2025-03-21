@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Parser;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenTests.Utility;
 
@@ -22,16 +23,13 @@ namespace EdenTests.ParserTests
                 "List Int temp = [1i];",
             };
 
-            Parser parser = new Parser();
-
-            string statement = string.Empty;
 
             for (int i = 0; i < code.Length; i++)
             {
-                statement = code[i];
+                Parser parser = new Parser();
+                string statement = code[i];
 
-                parser = new Parser();
-                FileStatement ast = parser.Parse(statement) as FileStatement;
+                AbstractSyntaxTreeNode ast = parser.Parse(statement);
 
                 string AST = ast.ToAbstractSyntaxTree();
                 string STR = ast.ToString();
@@ -41,6 +39,38 @@ namespace EdenTests.ParserTests
 
                 ListDeclarationStatement expressionStmnt = parser.Program.Block.Statements[0] as ListDeclarationStatement;
                 Assert.NotNull(expressionStmnt);
+            }
+        }
+
+        [Fact]
+        public void Invalid()
+        {
+            string[][] code =
+            [
+                ["List Int primes = [;","Token 'Semicolon' was unexpected."],
+                ["List Float primes = ];", "Parser expected 'LeftSquareBracket' or 'LeftParenthesis' token but acutal token was 'RightSquareBracket'."],
+                ["List Float pies =;", "Parser expected 'LeftSquareBracket' or 'LeftParenthesis' token but acutal token was 'Semicolon'."],
+                ["List String names;", "Parser expected 'Assign' token but actual token was 'Semicolon'."],
+                ["List Int temp = (;", "Parser expected 'Int' token but actual token was 'Semicolon'."],
+                ["List Int temp = );", "Parser expected 'LeftSquareBracket' or 'LeftParenthesis' token but acutal token was 'RightParenthesis'."],
+                ["List Float temp = ();", "Parser expected 'Int' token but actual token was 'RightParenthesis'."],
+            ];
+
+            for (int i = 0; i < code.Length; i++)
+            {
+                string input = code[i][0];
+                string error = code[i][1];
+
+                Parser parser = new Parser();
+                AbstractSyntaxTreeNode ast = parser.Parse(input);
+
+                string AST = ast.ToAbstractSyntaxTree();
+                string STR = ast.ToString();
+
+                if (!STR.Contains(error))
+                {
+                    Assert.Fail($"Statement: '{input}' should fail with message: '{error}' but it didn't");
+                }
             }
         }
     }

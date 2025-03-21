@@ -11,14 +11,17 @@
         }
         public bool Value { get; set; }
 
-        private BoolObject(bool value)
+        public Token Token { get; }
+
+        private BoolObject(Token token,bool value)
         {
+            Token = token;
             Value = value;
         }
 
-        public static IObject Create(bool value)
+        public static IObject Create(Token token, bool value)
         {
-            return new BoolObject(value);
+            return new BoolObject(token, value);
         }
 
         public string AsString()

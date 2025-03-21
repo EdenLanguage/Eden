@@ -1,9 +1,6 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenTests.Utility;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -16,14 +13,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string STR = block.ToString();
-            string AST = block.ToAbstractSyntaxTree();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
         }
 
         [Fact]
@@ -33,14 +25,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string STR = block.ToString();
-            string AST = block.ToAbstractSyntaxTree();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
         }
 
         [Fact]
@@ -76,14 +63,9 @@ namespace EdenTests.EvaluatorTests
                 expected = expectedResults[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                FileStatement block = parser.Parse(input) as FileStatement;
-                string STR = block.ToString();
-                string AST = block.ToAbstractSyntaxTree();
-
-                IObject result = evaluator.Evaluate(block, env);
+                IObject result = evaluator.Evaluate(input);
 
                 Assert.True(result is IntObject);
                 Assert.Equal(expected, (result as IntObject).Value.ToString());
@@ -140,14 +122,9 @@ namespace EdenTests.EvaluatorTests
                 expected = expectedResults[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                FileStatement block = parser.Parse(input) as FileStatement;
-                string STR = block.ToString();
-                string AST = block.ToAbstractSyntaxTree();
-
-                IObject result = evaluator.Evaluate(block, env);
+                IObject result = evaluator.Evaluate(input);
 
                 Assert.True(result is FloatObject);
                 Assert.Equal(expected, (result as FloatObject).Value);
@@ -203,14 +180,8 @@ namespace EdenTests.EvaluatorTests
                 expected = expectedResults[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
-
-                FileStatement block = parser.Parse(input) as FileStatement;
-                string STR = block.ToString();
-                string AST = block.ToAbstractSyntaxTree();
-
-                IObject result = evaluator.Evaluate(block, env);
+                Evaluator evaluator = new Evaluator(parser);
+                IObject result = evaluator.Evaluate(input);
 
                 Assert.True(result is FloatObject);
                 Assert.Equal(expected, (result as FloatObject).Value);
@@ -261,14 +232,9 @@ namespace EdenTests.EvaluatorTests
                 expectedType = expectedTypes[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                FileStatement block = parser.Parse(input) as FileStatement;
-                string STR = block.ToString();
-                string AST = block.ToAbstractSyntaxTree();
-
-                IObject result = evaluator.Evaluate(block, env);
+                IObject result = evaluator.Evaluate(input);
 
                 Assert.Equal(result.Type.Name, expectedType);
 
@@ -323,14 +289,8 @@ namespace EdenTests.EvaluatorTests
                 expectedType = expectedTypes[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
-
-                FileStatement block = parser.Parse(input) as FileStatement;
-                string STR = block.ToString();
-                string AST = block.ToAbstractSyntaxTree();
-
-                IObject result = evaluator.Evaluate(block, env);
+                Evaluator evaluator = new Evaluator(parser);
+                IObject result = evaluator.Evaluate(input);
 
                 Assert.Equal(result.Type.Name, expectedType);
 
@@ -346,44 +306,26 @@ namespace EdenTests.EvaluatorTests
         {
             string[] code =
             [
+                "Print(5i);",
+                "Print(3.14f);",
+                "Print(\"Hello\");",
+                "Print(\"Hello world!\");",
                 "PrintLine(5i);",
                 "PrintLine(3.14f);",
                 "PrintLine(\"Hello\");",
                 "PrintLine(\"Hello world!\");",
             ];
 
-            string[] expectedResults =
-            [
-                "5",
-                "3.14",
-                "Hello",
-                "Hello world!",
-            ];
-
-            Assert.Equal(code.Length, expectedResults.Length);
-
-
-            string input = string.Empty;
-            string expected = string.Empty;
-
             for (int i = 0; i < code.Length; i++)
             {
-                input = code[i];
-                expected = expectedResults[i];
+                string input = code[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                FileStatement block = parser.Parse(input) as FileStatement;
-                string STR = block.ToString();
-                string AST = block.ToAbstractSyntaxTree();
+                IObject result = evaluator.Evaluate(input);
 
-                IObject result = evaluator.Evaluate(block, env);
-
-                
-                Assert.True(result is StringObject);
-                Assert.Equal(expected, (result as StringObject).Value);
+                Assert.True(result is NoneObject);
             }
         }
 
@@ -418,14 +360,9 @@ namespace EdenTests.EvaluatorTests
                 expected = expectedResults[i];
 
                 Parser parser = new Parser();
-                Evaluator evaluator = new Evaluator();
-                Environment env = new Environment();
+                Evaluator evaluator = new Evaluator(parser);
 
-                FileStatement block = parser.Parse(input) as FileStatement;
-                string STR = block.ToString();
-                string AST = block.ToAbstractSyntaxTree();
-
-                IObject result = evaluator.Evaluate(block, env);
+                IObject result = evaluator.Evaluate(input);
 
                 Assert.Equal(expected, result.AsString());
             }

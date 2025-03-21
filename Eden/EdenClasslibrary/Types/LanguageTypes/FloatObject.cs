@@ -14,14 +14,17 @@ namespace EdenClasslibrary.Types.LanguageTypes
             }
         }
 
-        private FloatObject(float value)
+        public Token Token { get; }
+
+        private FloatObject(Token token, float value)
         {
+            Token = token;
             Value = value;
         }
 
-        public static IObject Create(float value)
+        public static IObject Create(Token token, float value)
         {
-            return new FloatObject(value);
+            return new FloatObject(token, value);
         }
 
         public string AsString()

@@ -1,0 +1,50 @@
+//	Testing two functions, iterative and recursive.
+
+Function Int FibonacciIt(Var Int index){
+	Var Int A = 0i;
+	Var Int B = 1i;
+	Var Int tmp = A + B;
+	
+	Loop(Var Int i = 1i; i < index; i = i + 1i){
+		tmp = A + B;
+		A = B;
+		B = tmp;
+	};
+	
+	Return B;
+};
+
+Function Int FibonacciRec(Var Int index){
+	If(index <= 0i){
+		Return 0i;
+	};
+	If(index == 1i){
+		Return 1i;
+	};
+	Return Fibonacci(index - 2i) + Fibonacci(index - 1i); 
+};
+
+
+If(FibonacciRec(5i) != 5i){
+	Return "FibonacciRec(5i) != 5";
+};
+
+If(FibonacciRec(20i) != 6765i){
+	Return "FibonacciRec(20i) != 6765";
+};
+
+If(FibonacciRec(30i) != 832040i){
+	Return "FibonacciRec(30i) != 832040";
+};
+
+If(FibonacciIt(5i) != 5i){
+	Return "FibonacciIt(5i) != 5";
+};
+
+If(FibonacciIt(20i) != 6765i){
+	Return "FibonacciIt(20i) != 6765";
+};
+
+If(FibonacciIt(30i) != 832040i){
+	Return "FibonacciIt(30i) != 832040";
+};

@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AbstractSyntaxTreeTests\**" />
+    <EmbeddedResource Remove="AbstractSyntaxTreeTests\**" />
+    <None Remove="AbstractSyntaxTreeTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
@@ -34,10 +40,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="AbstractSyntaxTreeTests\" />
     <Folder Include="Source\Loops\Invalid\" />
     <Folder Include="Source\Lexer\" />
     <Folder Include="Source\Evaluator\" />
+    <Folder Include="Source\Errors\" />
   </ItemGroup>
 
 </Project>

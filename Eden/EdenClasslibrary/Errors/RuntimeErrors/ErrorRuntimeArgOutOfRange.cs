@@ -1,4 +1,5 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
 
 namespace EdenClasslibrary.Errors.RuntimeErrors
@@ -6,27 +7,24 @@ namespace EdenClasslibrary.Errors.RuntimeErrors
     public class ErrorRuntimeArgOutOfRange : RuntimeError
     {
         private IIndexable _indexable;
-        private IntObject _position;
+        private int _position;
+        private Token _token;
 
-        private ErrorRuntimeArgOutOfRange(IIndexable indexable, IntObject index)
+        public ErrorRuntimeArgOutOfRange(IIndexable indexable, int position, Token token, string line) : base(token, line)
         {
             _indexable = indexable;
-            _position = index;
+            _position = position;
+            _token = token;
         }
 
-        public static AError Create(IIndexable indexable, IntObject index)
+        public static AError Create(IIndexable indexable, int position, Token token, string line)
         {
-            return new ErrorRuntimeArgOutOfRange(indexable, index);
+            return new ErrorRuntimeArgOutOfRange(indexable, position, token, line);
         }
 
-        public static IObject CreateErrorObject(IIndexable indexable, IntObject index)
+        public static IObject CreateErrorObject(IIndexable indexable, int position, Token token, string line)
         {
-            return new ErrorObject(Create(indexable, index));
-        }
-
-        public override string GetDetails()
-        {
-            return $"Objects length is '{_indexable.Length}' and called index was '{_position}'!";
+            return new ErrorObject(token, Create(indexable, position, token, line));
         }
 
         public override string GetMessage()

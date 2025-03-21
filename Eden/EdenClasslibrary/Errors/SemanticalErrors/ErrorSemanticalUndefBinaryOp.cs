@@ -9,30 +9,25 @@ namespace EdenClasslibrary.Errors.SemanticalErrors
         private TokenType _operatorToken;
         private IObject _right;
 
-        private ErrorSemanticalUndefBinaryOp(IObject left, TokenType operatorToken, IObject right)
+        public ErrorSemanticalUndefBinaryOp(IObject left, TokenType operatorToken, IObject right, string line) : base(left.Token, line)
         {
             _left = left;
             _operatorToken = operatorToken;
             _right = right;
         }
-        
-        public static AError Create(IObject left, TokenType operatorToken, IObject right)
-        {
-            return new ErrorSemanticalUndefBinaryOp(left, operatorToken, right);
-        }
-        public static IObject CreateErrorObject(IObject left, TokenType operatorToken, IObject right)
-        {
-            return new ErrorObject(Create(left, operatorToken, right));
-        }
 
-        public override string GetDetails()
+        public static AError Create(IObject left, TokenType operatorToken, IObject right, string line)
         {
-            return $"Binary expression '{_left.AsString()} {_operatorToken} {_right.AsString()}' is not defined!";
+            return new ErrorSemanticalUndefBinaryOp(left, operatorToken, right, line);
+        }
+        public static IObject CreateErrorObject(IObject left, TokenType operatorToken, IObject right, string line)
+        {
+            return new ErrorObject(left.Token, Create(left, operatorToken, right, line));
         }
 
         public override string GetMessage()
         {
-            return $"Undefined binary operation!";
+            return $"Operation '{_left.AsString()} {_operatorToken} {_right.AsString()}' is not defined!";
         }
     }
 }

@@ -1,9 +1,6 @@
-﻿using EdenClasslibrary.Parser;
-using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
+﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenTests.Utility;
-using Environment = EdenClasslibrary.Types.Environment;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -16,14 +13,9 @@ namespace EdenTests.EvaluatorTests
             string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.ParseFile(executionLocation) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.EvaluateFile(executionLocation);
 
             Assert.True(parser.Errors.Length == 0);
         }
@@ -32,17 +24,12 @@ namespace EdenTests.EvaluatorTests
         public void InvalidIndex()
         {
             string code = "List Int numbers = [1i, 2i, 3i, 4i];" +
-                          "Var Int v = numbers[5i];";        
+                          "Var Int v = numbers[5i];";
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.Parse(code) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.Evaluate(code);
 
             Assert.True(result is ErrorObject);
         }
@@ -51,17 +38,12 @@ namespace EdenTests.EvaluatorTests
         public void NegativeIndex()
         {
             string code = "List Int numbers = [1i, 2i, 3i, 4i];" +
-                          "Var Int v = numbers[-5i];";      
+                          "Var Int v = numbers[-5i];";
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.Parse(code) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.Evaluate(code);
 
             Assert.True(result is ErrorObject);
         }
@@ -70,17 +52,12 @@ namespace EdenTests.EvaluatorTests
         public void InvalidTypeIndex()
         {
             string code = "List Int numbers = [1i, 2i, 3i, 4i];" +
-                          "Var Int v = numbers[3.14f];";       
+                          "Var Int v = numbers[3.14f];";
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.Parse(code) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.Evaluate(code);
 
             Assert.True(result is ErrorObject);
         }
@@ -90,14 +67,9 @@ namespace EdenTests.EvaluatorTests
             string code = "Var Int v = 5i[0i];";
 
             Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator();
-            Environment env = new Environment();
+            Evaluator evaluator = new Evaluator(parser);
 
-            FileStatement block = parser.Parse(code) as FileStatement;
-            string AST = block.ToAbstractSyntaxTree();
-            string STR = block.ToString();
-
-            IObject result = evaluator.Evaluate(block, env);
+            IObject result = evaluator.Evaluate(code);
 
             Assert.True(result is ErrorObject);
         }
