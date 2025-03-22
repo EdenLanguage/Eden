@@ -327,8 +327,31 @@ namespace EdenClasslibrary.Types
             IObject indexer = EvaluateStatement(loop.IndexerStatement, loopEnv);
             string indexerName = (loop.IndexerStatement as VariableDeclarationStatement).Identifier.Name;
 
-            while ((EvaluateExpression(loop.Condition, loopEnv) as BoolObject).Value)
+            while (true)
             {
+                //  Handling 'Loop' condition evaluation!
+                IObject condition = EvaluateExpression(loop.Condition, loopEnv);
+
+                if(condition is ErrorObject isConditionError)
+                {
+                    return isConditionError;
+                }
+
+                if(condition is not BoolObject)
+                {
+                    //  TODO:
+                    return null;
+                }
+                else
+                {
+                    if((condition as BoolObject).Value == false)
+                    {
+                        break;
+                    }
+                }
+
+                //  If evaluation is truthfull then we can execute code!
+
                 IObject blockResult = EvaluateBlockStatement(loop.Body, loopEnv);
 
                 if (blockResult is ErrorObject AsErrorObj)
@@ -535,7 +558,16 @@ namespace EdenClasslibrary.Types
             BinaryExpression binExp = root as BinaryExpression;
 
             IObject leftEval = EvaluateExpression(binExp.Left, env);
+            if(leftEval is ErrorObject leftError)
+            {
+                return leftError;
+            }
+
             IObject rightEval = EvaluateExpression(binExp.Right, env);
+            if (rightEval is ErrorObject rightError)
+            {
+                return rightError;
+            }
 
             //  If expression are 'Return' expression type. We need to unwrap them.
             if (leftEval is ReturnObject lar)
@@ -552,10 +584,14 @@ namespace EdenClasslibrary.Types
 
             if (binaryFunc == null)
             {
-                return ErrorSemanticalUndefBinaryOp.CreateErrorObject(leftEval, binExp.NodeToken.Keyword, rightEval, _parser.Lexer.GetLine(leftEval.Token));
+                return ErrorSemanticalUndefBinaryOp.CreateErrorObject(leftEval, binExp.NodeToken, rightEval, _parser.Lexer.GetLine(leftEval.Token));
             }
 
             IObject result = binaryFunc(leftEval, rightEval);
+            if (result is ErrorObject resultError)
+            {
+                return resultError;
+            }
 
             if (binExp.NodeToken.Keyword == TokenType.Assign)
             {
@@ -752,6 +788,10 @@ namespace EdenClasslibrary.Types
             IfExpression ifExp = root as IfExpression;
 
             IObject condition = EvaluateExpression(ifExp.ConditionExpression, env);
+            if(condition is ErrorObject conditionAsError)
+            {
+                return conditionAsError;
+            }
 
             bool conditionMeet = ObjectHelpers.IsTruthy(condition);
             if (conditionMeet == true)

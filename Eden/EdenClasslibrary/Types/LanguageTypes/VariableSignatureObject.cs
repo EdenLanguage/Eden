@@ -13,7 +13,13 @@
             Name = name;
             Type = type;
         }
-
+        public string LanguageType
+        {
+            get
+            {
+                return "Variable";
+            }
+        }
         public static IObject Create(Token token, string name, Type type)
         {
             return new VariableSignatureObject(token, name, type);

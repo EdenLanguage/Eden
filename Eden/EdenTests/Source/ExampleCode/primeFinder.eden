@@ -1,0 +1,27 @@
+//  stackoverflow.com/questions/62150130/algorithm-of-checking-if-the-number-is-prime
+
+Function Bool IsPrime(Var Int n){
+    If(n <= 1i){
+        Return False;
+    };
+
+    If(n <= 3i){
+        Return True;
+    };
+
+    If(n % 2i == 0i || n % 3i == 0i){
+        Return False;
+    };
+
+    Loop(Var Int i = 5i; i * i <= n; i = i + 6i){
+        If(n % i == 0i || n % (i + 2i) == 0i){
+            Return False;
+        };
+    };
+
+    Return True;
+};
+
+If(IsPrime(5i) == False){
+    Return "Failed for 5";
+};

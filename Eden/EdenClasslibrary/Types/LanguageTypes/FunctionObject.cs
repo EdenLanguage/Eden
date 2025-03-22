@@ -12,6 +12,14 @@ namespace EdenClasslibrary.Types.LanguageTypes
                 return typeof(FunctionObject);
             }
         }
+        public string LanguageType
+        {
+            get
+            {
+                return "Function";
+            }
+        }
+
         public Expression[] Arguments { get; set; }
         public BlockStatement Body { get; set; }
 

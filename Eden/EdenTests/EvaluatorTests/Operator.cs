@@ -11,6 +11,26 @@ namespace EdenTests.EvaluatorTests
         {
             string[][] testset =
             [
+                //  Modulo
+                ["(7.13f % 7i == 0.13000011f);", "True"],
+                ["(7.13f % 5i == 2.13000011f);", "True"],
+
+                ["(7.13f % 7c == 0.13000011f);", "True"],
+                ["(7.13f % 5c == 2.13000011f);", "True"],
+                
+                ["(10i % 7c == 3i);", "True"],
+
+                ["(10i % 1i == 0i);", "True"],
+                ["(10i % 2i == 0i);", "True"],
+                ["(10i % 3i == 1i);", "True"],
+                ["(10i % 4i == 2i);", "True"],
+                ["(10i % 5i == 0i);", "True"],
+                ["(10i % 6i == 4i);", "True"],
+                ["(10i % 7i == 3i);", "True"],
+                ["(10i % 8i == 2i);", "True"],
+                ["(10i % 9i == 1i);", "True"],
+                ["(10i % 10i == 0i);", "True"],
+
                 ["True && True;", "True"],
                 ["True && False;", "False"],
                 ["False && True;", "False"],
@@ -48,8 +68,14 @@ namespace EdenTests.EvaluatorTests
                 Evaluator evaluator = new Evaluator(parser);
 
                 IObject result = evaluator.Evaluate(input);
+                string STR = result.ToString();
 
-                if (expected != result.AsString())
+                if(result is ErrorObject asErrorObj)
+                {
+                    Assert.Fail(STR);
+                }
+
+                if (expected != STR)
                 {
                     StringBuilder sb = new StringBuilder();
 
@@ -67,16 +93,20 @@ namespace EdenTests.EvaluatorTests
         {
             string[][] testset =
             [
-                ["5i && 5i;", "Operation '5 Illegal 5' is not defined!"],
-                ["5i || 5i;", "Operation '5 Illegal 5' is not defined!"],
-                ["True && 5i;", "Operation 'True Illegal 5' is not defined!"],
-                ["False || 3.14f;", "Operation 'False Illegal 3.14' is not defined!"],
-                ["\"text\" && \"more text\";", "Operation 'text Illegal more text' is not defined!"],
-                ["\"hello\" || 10c;", "Operation 'hello Illegal 10' is not defined!"],
-                ["Null && 1c;", "Operation 'Null Illegal 1' is not defined!"],
-                ["Null || False;", "Operation 'Null Illegal False' is not defined!"],
-                ["5i && True;", "Operation '5 Illegal True' is not defined!"],
-                ["5.0f || 5i;", "Operation '5 Illegal 5' is not defined!"],
+                //  Modulo
+                ["5.0f % 5.0f;", "[Semantical error]\r\nOperation 'Float(5) % Float(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5.0f % 5.0f;\r\n^----------\r\n"],
+
+                //  Logical
+                ["5i && 5i;", "[Semantical error]\r\nOperation 'Int(5) && Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i && 5i;\r\n^-------\r\n"],
+                ["5i || 5i;", "[Semantical error]\r\nOperation 'Int(5) || Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i || 5i;\r\n^-------\r\n"],
+                ["True && 5i;", "[Semantical error]\r\nOperation 'Bool(True) && Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nTrue && 5i;\r\n^---------\r\n"],
+                ["False || 3.14f;", "[Semantical error]\r\nOperation 'Bool(False) || Float(3.14)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nFalse || 3.14f;\r\n^-------------\r\n"],
+                ["\"text\" && \"more text\";", "[Semantical error]\r\nOperation 'String(text) && String(more text)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n\"text\" && \"more text\";\r\n^--------------------\r\n"],
+                ["\"hello\" || 10c;", "[Semantical error]\r\nOperation 'String(hello) || Char(10)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n\"hello\" || 10c;\r\n^-------------\r\n"],
+                ["Null && 1c;", "[Semantical error]\r\nOperation 'Null(Null) && Char(1)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nNull && 1c;\r\n^---------\r\n"],
+                ["Null || False;", "[Semantical error]\r\nOperation 'Null(Null) || Bool(False)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nNull || False;\r\n^------------\r\n"],
+                ["5i && True;", "[Semantical error]\r\nOperation 'Int(5) && Bool(True)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i && True;\r\n^---------\r\n"],
+                ["5.0f || 5i;", "[Semantical error]\r\nOperation 'Float(5) || Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5.0f || 5i;\r\n^---------\r\n"],
             ];
 
 
@@ -92,14 +122,13 @@ namespace EdenTests.EvaluatorTests
                 Evaluator evaluator = new Evaluator(parser);
 
                 IObject result = evaluator.Evaluate(input);
+                string STR = result.ToString();
 
                 if (result is ErrorObject asError)
                 {
-                    string error = asError.AsString();
-
-                    if (!error.Contains(expected))
+                    if (STR != expected)
                     {
-                        Assert.Fail($"Invalid output message. Should be: '{expected}' but is '{error}'");
+                        Assert.Fail($"Invalid output message.");
                     }
 
                 }

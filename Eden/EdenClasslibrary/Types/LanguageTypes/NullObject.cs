@@ -12,6 +12,13 @@
                 return typeof(NullObject);
             }
         }
+        public string LanguageType
+        {
+            get
+            {
+                return "Null";
+            }
+        }
         public object Value { get; set; }
 
         public Token Token { get; }

@@ -1,5 +1,6 @@
 ﻿using EdenClasslibrary.Errors;
 using EdenClasslibrary.Errors.LexicalErrors;
+using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Errors.SyntacticalErrors;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
@@ -82,6 +83,7 @@ namespace EdenClasslibrary.Types
             _precedenceMapping[TokenType.Plus] = Precedence.Sum;
             _precedenceMapping[TokenType.Minus] = Precedence.Sum;
 
+            _precedenceMapping[TokenType.Modulo] = Precedence.Product;
             _precedenceMapping[TokenType.Star] = Precedence.Product;
             _precedenceMapping[TokenType.Slash] = Precedence.Product;
 
@@ -103,6 +105,7 @@ namespace EdenClasslibrary.Types
             RegisterUnaryMapping(TokenType.ExclemationMark, ParseUnaryExpression);
             RegisterUnaryMapping(TokenType.Function, ParseFunctionExpression);
 
+            RegisterBinaryMapping(TokenType.Modulo, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.And, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Or, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.Assign, ParseBinaryExpression);
@@ -241,7 +244,17 @@ namespace EdenClasslibrary.Types
 
             while (NextToken.Keyword != TokenType.Semicolon && precedence < NextTokenEvaluationOrder())
             {
-                Func<Expression, Expression> binaryFunc = GetBinaryFunc(NextToken.Keyword);
+                Func<Expression, Expression> binaryFunc = null;
+
+                try
+                {
+                    binaryFunc = GetBinaryFunc(NextToken.Keyword);
+                }
+                catch (Exception)
+                {
+                    return InvalidExpression.Create(NextToken, ErrorSemanticalUndefBinaryOpExp.Create(NextToken, _lexer.GetLine(NextToken)));
+                }
+
 
                 LoadNextToken();
 

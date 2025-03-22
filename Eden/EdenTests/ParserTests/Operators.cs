@@ -22,7 +22,7 @@ namespace EdenTests.ParserTests
 
             if(block is InvalidStatement)
             {
-                Assert.Fail($"File: '{executionLocation}' failed but it shouldn't");
+                Assert.Fail(STR);
             }
         }
     }

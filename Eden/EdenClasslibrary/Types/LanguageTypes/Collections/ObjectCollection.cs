@@ -11,6 +11,13 @@ namespace EdenClasslibrary.Types.LanguageTypes.Collections
         /// </summary>
         public Type Type { get; set; }
 
+        public string LanguageType
+        {
+            get
+            {
+                return "Collection";
+            }
+        }
         public int Length
         {
             get

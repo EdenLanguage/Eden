@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Implementation/TODO.md",
+                "file": "Execution file structure.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "TODO"
+              "title": "Execution file structure"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Implementation/TODO.md",
+                "file": "Execution file structure.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for TODO"
+              "title": "Backlinks for Execution file structure"
             }
           },
           {
@@ -170,8 +170,9 @@
   },
   "active": "ae0559620886a586",
   "lastOpenFiles": [
-    "Implementation/Errors/Error printing.md",
     "Implementation/TODO.md",
+    "Execution file structure.md",
+    "Implementation/Errors/Error printing.md",
     "Implementation/Errors",
     "Language specifics/Loops/Sisyphus.md",
     "Language specifics/Loops/Loops.md",
@@ -198,7 +199,6 @@
     "Language specifics/Whitepaper/Language specification.md",
     "Untitled.md",
     "Evaluator.md",
-    "Tests.md",
     "Language specifics/Whitepaper",
     "Language specifics/Functions",
     "Language specifics/Types",

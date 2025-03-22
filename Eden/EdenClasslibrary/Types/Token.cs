@@ -41,6 +41,7 @@ namespace EdenClasslibrary.Types
         Power,              // ^
         Comma,              // ,
         Dot,                // .
+        Modulo,             // %
         QuenstionMark,      // ?
         Tilde,              // ~
         Comment,            // //

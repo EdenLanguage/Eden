@@ -13,6 +13,14 @@
 
         public Token Token { get; }
 
+        public string LanguageType
+        {
+            get
+            {
+                return "Bool";
+            }
+        }
+
         private BoolObject(Token token,bool value)
         {
             Token = token;
@@ -36,7 +44,7 @@
 
         public override string ToString()
         {
-            return $"Bool: {Value}";
+            return $"{Value}";
         }
     }
 }

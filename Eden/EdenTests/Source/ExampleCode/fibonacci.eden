@@ -21,7 +21,7 @@ Function Int FibonacciRec(Var Int index){
 	If(index == 1i){
 		Return 1i;
 	};
-	Return Fibonacci(index - 2i) + Fibonacci(index - 1i); 
+	Return FibonacciRec(index - 2i) + FibonacciRec(index - 1i); 
 };
 
 

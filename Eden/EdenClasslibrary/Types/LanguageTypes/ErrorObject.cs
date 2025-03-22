@@ -13,7 +13,13 @@ namespace EdenClasslibrary.Types.LanguageTypes
                 return typeof(ErrorObject);
             }
         }
-
+        public string LanguageType
+        {
+            get
+            {
+                return "Error";
+            }
+        }
         public Token Token { get; }
 
         public ErrorObject(Token token, AError error)
@@ -39,7 +45,7 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public override string ToString()
         {
-            return $"Error: {_error.GetMessage()}";
+            return AsString();
         }
     }
 }
