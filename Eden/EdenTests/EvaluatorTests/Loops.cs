@@ -128,26 +128,23 @@ namespace EdenTests.EvaluatorTests
                 string expected = test[1];
                 string actual = string.Empty;
 
-                Stopwatch sw = Stopwatch.StartNew();
-
                 Parser parser = new Parser();
                 Evaluator evaluator = new Evaluator(parser);
 
                 IObject result = evaluator.EvaluateFile(input);
 
-                sw.Stop();
+                string STR = result.ToString();
 
-                float seconds = ((float)sw.ElapsedMilliseconds / 1000);
-
-                actual = result.AsString();
-
-                if (result is ErrorObject IsError)
+                if (STR != expected)
                 {
-                    Assert.Fail($"Program in file '{input}' could not be evaluated! Errors: {parser.PrintErrors()}");
-                }
-                else
-                {
-                    Assert.Equal(expected, actual);
+                    if (result is ErrorObject asError)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        Assert.Fail($"'{input}' returned '{STR}' and should '{expected}'");
+                    }
                 }
             }
         }

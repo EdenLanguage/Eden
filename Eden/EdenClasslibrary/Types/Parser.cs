@@ -1,5 +1,6 @@
 ﻿using EdenClasslibrary.Errors;
 using EdenClasslibrary.Errors.LexicalErrors;
+using EdenClasslibrary.Errors.RuntimeErrors;
 using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Errors.SyntacticalErrors;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
@@ -88,6 +89,7 @@ namespace EdenClasslibrary.Types
             _precedenceMapping[TokenType.Slash] = Precedence.Product;
 
             _precedenceMapping[TokenType.LeftParenthesis] = Precedence.Call;
+            _precedenceMapping[TokenType.Dot] = Precedence.Call;
 
             RegisterUnaryMapping(TokenType.If, ParseConditionalExpression);
             RegisterUnaryMapping(TokenType.Identifier, ParseIdentifierExpression);
@@ -120,6 +122,7 @@ namespace EdenClasslibrary.Types
             RegisterBinaryMapping(TokenType.GreaterOrEqual, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.LesserOrEqual, ParseBinaryExpression);
             RegisterBinaryMapping(TokenType.LeftParenthesis, ParseFunctionCallExpression);
+            RegisterBinaryMapping(TokenType.Dot, ParseMethodCallExpression);
             RegisterBinaryMapping(TokenType.LeftSquareBracket, ParseIndexExpression);
             #endregion
         }
@@ -407,7 +410,7 @@ namespace EdenClasslibrary.Types
         {
             Expression ish;
 
-            CallExpression callExp = new CallExpression(CurrentToken);
+            FunctionCallExpression callExp = new FunctionCallExpression(CurrentToken);
             callExp.Function = function;
             
             ish = ValidateTokenForExpression(TokenType.LeftParenthesis);
@@ -437,6 +440,57 @@ namespace EdenClasslibrary.Types
             if (ish is InvalidExpression) return ish;
 
             return callExp;
+        }
+
+        private Expression ParseMethodCallExpression(Expression classObj)
+        {
+            //  <object> <.> <method-name> <(> <argument> <)>
+            //  <method-name> <.> <(> <object>, <argument> <)>
+            Expression ish;
+
+            MethodCallExpression methodCallExp = new MethodCallExpression(classObj.NodeToken);
+
+            ish = ValidateTokenForExpression(TokenType.Dot);
+            if (ish is InvalidExpression) return ish;
+            LoadNextToken();
+
+            Expression methodName = ParseIdentifierExpression();
+            if(methodName is InvalidExpression asInvalidMethodName)
+            {
+                return asInvalidMethodName;
+            }
+            LoadNextToken();
+
+            ish = ValidateTokenForExpression(TokenType.LeftParenthesis);
+            if (ish is InvalidExpression) return ish;
+            LoadNextToken();
+
+            while (!CurrentToken.IsType(TokenType.RightParenthesis) && !CurrentToken.IsType(TokenType.Eof))
+            {
+                Expression argument = ParseExpression(Precedence.Lowest);
+                if (argument is InvalidExpression invalidArgument)
+                {
+                    return invalidArgument;
+                }
+                methodCallExp.AddArgumentExpression(argument);
+                LoadNextToken(); //  Eat parsed token
+
+                //  Eat ',' token that is separating arguments
+                if (!CurrentToken.IsType(TokenType.RightParenthesis))
+                {
+                    ish = ValidateTokenForExpression(TokenType.Comma);
+                    if (ish is InvalidExpression) return ish;
+                    LoadNextToken();
+                }
+            }
+
+            ish = ValidateTokenForExpression(TokenType.RightParenthesis);
+            if (ish is InvalidExpression) return ish;
+
+            methodCallExp.ClassObject = classObj;
+            methodCallExp.Method = methodName;
+
+            return methodCallExp;
         }
 
         private Expression ParseIndexExpression(Expression left)

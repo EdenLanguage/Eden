@@ -39,7 +39,7 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public override string ToString()
         {
-            return Body.ToString();
+            return AsString();
         }
 
         public IObject Evaluate(params IObject[] arguments)

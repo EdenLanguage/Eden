@@ -3,7 +3,7 @@ using System.Text;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree.Expressions
 {
-    public class CallExpression : Expression
+    public class FunctionCallExpression : Expression
     {
         /*  Add(5, 10)
          *  Expression ( Expression[] )
@@ -17,7 +17,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Expressions
                 return _arguments.ToArray();
             }
         }
-        public CallExpression(Token token) : base(token)
+        public FunctionCallExpression(Token token) : base(token)
         {
             _arguments = new List<Expression>();
         }
@@ -54,7 +54,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Expressions
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(CallExpression)} {{");
+            sb.AppendLine($"{Common.IndentCreator(indent)}{nameof(FunctionCallExpression)} {{");
             sb.AppendLine($"{Function.ToAbstractSyntaxTree(indent + 1)},");
 
             sb.AppendLine($"{Common.IndentCreator(indent + 1)}Arguments {{");

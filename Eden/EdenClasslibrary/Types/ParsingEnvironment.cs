@@ -1,6 +1,8 @@
 ﻿using EdenClasslibrary.Errors.RuntimeErrors;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
+using EdenClasslibrary.Types.LanguageTypes.Collections;
+using System.Linq.Expressions;
 
 namespace EdenClasslibrary.Types
 {
@@ -53,6 +55,35 @@ namespace EdenClasslibrary.Types
             }
         }
 
+        public IObject UpdateVariableScope(string name, int index, IObject value)
+        {
+            if (VariableExists(name))
+            {
+                VariablePayload var = _variables[name];
+
+                if(var.Variable is ObjectCollection asCollection)
+                {
+                    try
+                    {
+                        asCollection[index] = value;
+                    }
+                    catch (Exception)
+                    {
+                        return ErrorRuntimeArgOutOfRange.CreateErrorObject(asCollection, index, asCollection.Token, _parser.Lexer.GetLine(asCollection.Token));
+                    }
+                }
+                else
+                {
+                    return ErrorRuntimeVarUndef.CreateErrorObject(name, value.Token, _parser.Lexer.GetLine(value.Token));
+                }
+                return value;
+            }
+            else
+            {
+                return ErrorRuntimeVarUndef.CreateErrorObject(name, value.Token, _parser.Lexer.GetLine(value.Token));
+            }
+        }
+
         public IObject UpdateVariable(string name, IObject value)
         {
             IObject updated = UpdateVariableScope(name, value);
@@ -60,6 +91,18 @@ namespace EdenClasslibrary.Types
             if(updated is ErrorObject && OutterEnvironment != null)
             {
                 return OutterEnvironment.UpdateVariable(name, value);
+            }
+
+            return updated;
+        }
+
+        public IObject UpdateVariable(string name, int index, IObject value)
+        {
+            IObject updated = UpdateVariableScope(name, index, value);
+
+            if (updated is ErrorObject && OutterEnvironment != null)
+            {
+                return OutterEnvironment.UpdateVariable(name, index, value);
             }
 
             return updated;
@@ -82,14 +125,19 @@ namespace EdenClasslibrary.Types
             return _buildIn.CallBuildInFunc(name, arguments);
         }
 
-        public bool IsBuildInFunction(string name)
+        public IObject CallBuildInMethod(IObject classObject, string name, params IObject[] arguments)
         {
-            return _buildIn.FunctionExists(name);
+            return _buildIn.CallBuildInMethod(classObject, name, arguments);
         }
 
-        public FunctionPayload GetBuildInFunctionSignature(string name)
+        public bool IsBuildInFunction(string name, IObject[] args)
         {
-            return _buildIn.GetFunctionSignature(name);
+            return _buildIn.FunctionExists(name, args);
+        }
+
+        public FunctionPayload GetBuildInFunctionSignature(string name, IObject[] args)
+        {
+            return _buildIn.GetFunctionSignature(name, args);
         }
 
         public ParsingEnvironment ExtendEnvironment()

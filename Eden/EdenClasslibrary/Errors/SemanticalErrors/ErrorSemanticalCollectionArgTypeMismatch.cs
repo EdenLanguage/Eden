@@ -26,7 +26,7 @@ namespace EdenClasslibrary.Errors.SemanticalErrors
 
         public override string GetMessage()
         {
-            return $"Collection is of type '{_expected}' but provided value is of type '{_actual}'!";
+            return $"Collection is of type '{Variables.NameFromType(_expected)}' but provided value is of type '{Variables.NameFromType(_actual)}'!";
         }
     }
 }

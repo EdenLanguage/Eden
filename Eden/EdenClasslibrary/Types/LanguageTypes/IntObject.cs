@@ -44,7 +44,7 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public override string ToString()
         {
-            return $"Int: {Value}";
+            return AsString();
         }
 
         public bool Greater(IObjectComparable other)

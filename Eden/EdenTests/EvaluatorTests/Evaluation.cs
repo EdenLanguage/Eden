@@ -85,11 +85,9 @@ namespace EdenTests.EvaluatorTests
             Evaluator evaluator = new Evaluator(parser);
 
             IObject result = evaluator.EvaluateFile(executionLocation);
+            string str = result.ToString();
 
-            Assert.True(result is IntObject);
-            IntObject value = result as IntObject;
-
-            Assert.Equal(value.Value, 15);
+            Assert.Equal("15", str);
         }
 
         [Fact]

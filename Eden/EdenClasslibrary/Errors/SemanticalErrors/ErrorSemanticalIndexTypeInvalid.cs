@@ -3,7 +3,7 @@ using EdenClasslibrary.Types.LanguageTypes;
 
 namespace EdenClasslibrary.Errors.SemanticalErrors
 {
-    public class ErrorSemanticalIndexTypeInvalid : AError
+    public class ErrorSemanticalIndexTypeInvalid : SemanticalError
     {
         private IObject _index;
 
@@ -24,7 +24,7 @@ namespace EdenClasslibrary.Errors.SemanticalErrors
 
         public override string GetMessage()
         {
-            return $"Indexer '{_index.AsString()}' is not valid!";
+            return $"Invalid indexer type. Allowed type is 'Int', actual '{_index.LanguageType}'";
         }
     }
 }

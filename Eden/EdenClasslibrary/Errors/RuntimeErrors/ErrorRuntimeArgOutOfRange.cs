@@ -29,7 +29,7 @@ namespace EdenClasslibrary.Errors.RuntimeErrors
 
         public override string GetMessage()
         {
-            return $"Index out of range error!";
+            return $"Argument out of range! Index '{_position}'";
         }
     }
 }

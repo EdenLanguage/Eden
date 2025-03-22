@@ -3,6 +3,7 @@ using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace EdenClasslibrary.Types
@@ -28,6 +29,39 @@ namespace EdenClasslibrary.Types
             RegisterFunc("SinusD", FunctionPayload.Create(typeof(IntObject), [ObjectSignature.Create("degrees", typeof(IObject))], null));
             RegisterFunc("CosinusR", FunctionPayload.Create(typeof(IntObject), [ObjectSignature.Create("radians", typeof(IObject))], null));
             RegisterFunc("CosinusD", FunctionPayload.Create(typeof(IntObject), [ObjectSignature.Create("degrees", typeof(IObject))], null));
+
+            //  Methods
+            RegisterFunc("Add", FunctionPayload.Create(typeof(ObjectCollection),
+                [
+                    ObjectSignature.Create("ObjectClass", typeof(ObjectCollection)), 
+                    ObjectSignature.Create("item", typeof(IObject))
+                ], null));
+            RegisterFunc("Clear", FunctionPayload.Create(typeof(ObjectCollection),
+                [
+                    ObjectSignature.Create("ObjectClass", typeof(ObjectCollection)),
+                ], null));
+            RegisterFunc("RemoveAt", FunctionPayload.Create(typeof(ObjectCollection),
+                [
+                    ObjectSignature.Create("ObjectClass", typeof(ObjectCollection)),
+                    ObjectSignature.Create("item", typeof(IntObject))
+                ], null));
+        }
+
+        public IObject CallBuildInMethod(IObject classObject, string name, params IObject[] arguments)
+        {
+            switch (name)
+            {
+                case "Length":
+                    return Length(classObject);
+                case "Add":
+                    return Add(classObject, arguments[0]);
+                case "Clear":
+                    return Clear(classObject);
+                case "RemoveAt":
+                    return RemoveAt(classObject, arguments[0]);
+                default:
+                    return ErrorRuntimeFuncNotDefined.CreateErrorObject(arguments[0].Token, name);
+            }
         }
 
         public IObject CallBuildInFunc(string name, params IObject[] arguments)
@@ -59,6 +93,90 @@ namespace EdenClasslibrary.Types
             }
         }
 
+        #region Methods
+        public IObject Length(IObject classObject)
+        {
+            IObject result = null;
+            if (classObject is ObjectCollection asIndexable)
+            {
+                result = IntObject.Create(asIndexable.Token, asIndexable.Length);
+            }
+            else
+            {
+                result = ErrorSemanticalTypeNotIndexable.CreateErrorObject(classObject, classObject.Token, _parser.Lexer.GetLine(classObject.Token));
+            }
+            return result;
+        }
+
+        public IObject Clear(IObject classObject)
+        {
+            if (classObject is ObjectCollection asIndexable)
+            {
+                asIndexable.Collection.Clear();
+            }
+            else
+            {
+                return ErrorSemanticalTypeNotIndexable.CreateErrorObject(classObject, classObject.Token, _parser.Lexer.GetLine(classObject.Token));
+            }
+            return NoneObject.Create(classObject.Token);
+        }
+
+        public IObject RemoveAt(IObject classObject, IObject argument)
+        {
+            if (classObject.Type != argument.Type)
+            {
+                //  TODO
+                return null;
+            }
+
+            if(argument is not IntObject)
+            {
+                //  TODO
+                return null;
+            }
+
+            if (classObject is ObjectCollection classObjAsCol)
+            {
+                int index = (argument as IntObject).Value;
+                try
+                {
+                    classObjAsCol.Collection.RemoveAt(index);
+                }
+                catch (Exception)
+                {
+                    return ErrorRuntimeArgOutOfRange.CreateErrorObject(classObjAsCol, index, argument.Token, _parser.Lexer.GetLine(argument.Token));
+                }
+            }
+            else
+            {
+                //  TODO
+                return null;
+            }
+
+            return NoneObject.Create(argument.Token);
+        }
+
+        public IObject Add(IObject classObject, IObject argument)
+        {
+            if(classObject.Type != argument.Type)
+            {
+                return ErrorSemanticalCollectionArgTypeMismatch.CreateErrorObject(classObject.Type, argument.Type, argument.Token, _parser.Lexer.GetLine(argument.Token));
+            }
+
+            if(classObject is ObjectCollection classObjAsCol)
+            {
+                classObjAsCol.Add(argument);
+            }
+            else
+            {
+                ErrorSemanticalTypeNotIndexable.CreateErrorObject(classObject, classObject.Token, _parser.Lexer.GetLine(classObject.Token));
+            }
+
+            return NoneObject.Create(argument.Token);
+        }
+        #endregion
+
+        #region Functions
         public IObject SinusR(IObject[] arguments)
         {
             IObject result = null;
@@ -312,14 +430,23 @@ namespace EdenClasslibrary.Types
             }
             return result;
         }
-        public bool FunctionExists(string name)
+        #endregion
+        public bool FunctionExists(string name, IObject[] args)
         {
-            return _functions.ContainsKey(name);
+            bool doesExist = false;
+            if (_functions.ContainsKey(name))
+            {
+                FunctionPayload fp = _functions[name];
+
+                doesExist = fp.ArgumentsSignatureMatch(args);
+            }
+
+            return doesExist;
         }
 
-        public FunctionPayload GetFunctionSignature(string name)
+        public FunctionPayload GetFunctionSignature(string name, IObject[] args)
         {
-            if (!FunctionExists(name))
+            if (!FunctionExists(name, args))
             {
                 return null;
             }

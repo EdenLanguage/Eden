@@ -31,5 +31,10 @@ namespace EdenClasslibrary.Types.LanguageTypes
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString()
+        {
+            return AsString();
+        }
     }
 }
