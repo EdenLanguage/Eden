@@ -10,7 +10,13 @@
         {
             Token = token;
         }
-
+        public string LanguageType
+        {
+            get
+            {
+                return "Quit";
+            }
+        }
         public static IObject Create(Token token)
         {
             return new QuitObject(token);

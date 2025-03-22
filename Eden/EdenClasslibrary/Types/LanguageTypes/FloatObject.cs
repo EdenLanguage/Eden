@@ -14,6 +14,13 @@ namespace EdenClasslibrary.Types.LanguageTypes
             }
         }
 
+        public string LanguageType
+        {
+            get
+            {
+                return "Float";
+            }
+        }
         public Token Token { get; }
 
         private FloatObject(Token token, float value)

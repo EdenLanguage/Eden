@@ -11,9 +11,9 @@ Function String Reverse(Var String input){
 };
 
 Var String test = "abracadabra";
-Var String reversed = "arbadacarba";
+Var String testr = "arbadacarba";
 
-If(Reverse(test) != reversed){
+If(Reverse(test) != testr){
 	Return "Reverse(abracadabra) != arbadacarba";
 };
 

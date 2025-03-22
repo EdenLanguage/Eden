@@ -7,6 +7,13 @@ namespace EdenClasslibrary.Types.LanguageTypes
         {
             Token = token;
         }
+        public string LanguageType
+        {
+            get
+            {
+                return "Skip";
+            }
+        }
         public static IObject Create(Token token)
         {
             return new SkipObject(token);

@@ -1,6 +1,7 @@
 - [ ] Prepare for release:
 	- [ ] [[Release 1.0.0.0]]
 - [ ] Language:
+	- [ ] [[Execution file structure]]
 	- [ ] Features:
 		- [ ] Modulo %
 		- [ ] Array operations

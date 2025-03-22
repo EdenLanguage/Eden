@@ -14,6 +14,14 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public char Value { get; set; }
 
+        public string LanguageType
+        {
+            get
+            {
+                return "Char";
+            }
+        }
+
         public Token Token { get; }
 
         private CharObject(Token token, char value)

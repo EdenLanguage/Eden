@@ -93,6 +93,12 @@ namespace EdenClasslibrary.Types
 
             #region Register binary functions
 
+            //  Modulo
+            RegisterMethod(typeof(IntObject), TokenType.Modulo, typeof(IntObject), Modulo);
+            RegisterMethod(typeof(IntObject), TokenType.Modulo, typeof(CharObject), Modulo);
+            RegisterMethod(typeof(FloatObject), TokenType.Modulo, typeof(IntObject), Modulo);
+            RegisterMethod(typeof(FloatObject), TokenType.Modulo, typeof(CharObject), Modulo);
+
             //  Assign
             RegisterMethod(typeof(IntObject), TokenType.Assign, typeof(IntObject), Int_Assign_All_Func);
             RegisterMethod(typeof(IntObject), TokenType.Assign, typeof(CharObject), Int_Assign_All_Func);
@@ -221,6 +227,9 @@ namespace EdenClasslibrary.Types
 
             //  String
             RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(CharObject), String_Plus_Any_Func);
+            RegisterMethod(typeof(StringObject), TokenType.Inequal, typeof(StringObject), String_Inequal_String_Func);
+            RegisterMethod(typeof(StringObject), TokenType.Equal, typeof(StringObject), String_Equal_String_Func);
+
             RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(StringObject), String_Plus_Any_Func);
             RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(IntObject), String_Plus_Any_Func);
             RegisterMethod(typeof(StringObject), TokenType.Plus, typeof(FloatObject), String_Plus_Any_Func);
@@ -296,7 +305,7 @@ namespace EdenClasslibrary.Types
 
             if(exists == false)
             {
-                return InvalidBinaryFuncCall;
+                return null;
             }
 
             return _binaryMappings[BinaryFuncArgsWrapper.Create(leftObj.Type, opToken.Keyword, rightObj.Type)];
@@ -355,12 +364,6 @@ namespace EdenClasslibrary.Types
 
         #region Binary evaluation functions
 
-        #region Invalid function call
-        #endregion
-        private IObject InvalidBinaryFuncCall(IObject left, IObject right)
-        {
-            return ErrorSemanticalUndefBinaryOp.CreateErrorObject(left, TokenType.Illegal, right, _parser.Lexer.GetLine(left.Token));
-        }
         #region Char
         private IObject Char_Add_Char_Func(IObject left, IObject right)
         {
@@ -427,6 +430,51 @@ namespace EdenClasslibrary.Types
             }
         }
         #endregion
+        private IObject Modulo(IObject left, IObject right)
+        {
+            try
+            {
+                if(left is IntObject leftAsInt)
+                {
+                    if(right is IntObject rightAsInt)
+                    {
+                        return IntObject.Create(left.Token, leftAsInt.Value % rightAsInt.Value);
+                    }
+                    else if (right is CharObject rightAsChar)
+                    {
+                        return IntObject.Create(left.Token, leftAsInt.Value % rightAsChar.Value);
+                    }
+                    else
+                    {
+                        return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
+                    }
+                }
+                else if(left is FloatObject leftAsFloat)
+                {
+                    if (right is IntObject rightAsInt)
+                    {
+                        return FloatObject.Create(left.Token, leftAsFloat.Value % rightAsInt.Value);
+                    }
+                    else if (right is CharObject rightAsChar)
+                    {
+                        return FloatObject.Create(left.Token, leftAsFloat.Value % rightAsChar.Value);
+                    }
+                    else
+                    {
+                        return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
+                    }
+                }
+                else
+                {
+                    return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
+                }
+            }
+            catch (Exception exception)
+            {
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Assign, right, _parser.Lexer.GetLine(left.Token));
+            }
+        }
+
         private IObject Int_Assign_All_Func(IObject left, IObject right)
         {
             try
@@ -634,6 +682,30 @@ namespace EdenClasslibrary.Types
             catch (Exception exception)
             {
                 return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Plus, right, _parser.Lexer.GetLine(left.Token));
+            }
+        }
+
+        private IObject String_Inequal_String_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create(left.Token, (left as StringObject).Value != (right as StringObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Inequal, right, _parser.Lexer.GetLine(left.Token));
+            }
+        }
+
+        private IObject String_Equal_String_Func(IObject left, IObject right)
+        {
+            try
+            {
+                return BoolObject.Create(left.Token, (left as StringObject).Value == (right as StringObject).Value);
+            }
+            catch (Exception exception)
+            {
+                return ErrorRuntimeBinaryOpFailed.CreateErrorObject(left, TokenType.Equal, right, _parser.Lexer.GetLine(left.Token));
             }
         }
         #endregion

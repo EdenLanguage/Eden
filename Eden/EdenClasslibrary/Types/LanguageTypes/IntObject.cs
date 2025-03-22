@@ -11,6 +11,13 @@ namespace EdenClasslibrary.Types.LanguageTypes
                 return typeof(IntObject);
             }
         }
+        public string LanguageType
+        {
+            get
+            {
+                return "Int";
+            }
+        }
         public int Value { get; set; }
 
         public Token Token { get; }

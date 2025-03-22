@@ -109,5 +109,31 @@ namespace EdenTests.ExampleCodeTests
                 }
             }
         }
+
+        [Fact]
+        public void Prime()
+        {
+            string[][] data =
+            [
+                [GetExampleCodeSourcePath("primeFinder.eden"),"None"],
+            ];
+
+            foreach (string[] test in data)
+            {
+                string input = test[0];
+                string expected = test[1];
+
+                Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
+
+                IObject result = evaluator.EvaluateFile(input);
+                string actual = result.AsString();
+
+                if (actual != expected)
+                {
+                    Assert.Fail(actual);
+                }
+            }
+        }
     }
 }

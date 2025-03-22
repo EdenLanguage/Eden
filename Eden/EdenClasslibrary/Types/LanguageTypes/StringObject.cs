@@ -12,7 +12,13 @@ namespace EdenClasslibrary.Types.LanguageTypes
                 return typeof(StringObject);
             }
         }
-
+        public string LanguageType
+        {
+            get
+            {
+                return "String";
+            }
+        }
         public string Value { get; set; }
 
         public int Length

@@ -46,7 +46,8 @@ namespace EdenTests.LexerTests
 
                 new Token(keyword: TokenType.And, value: "&&", line: 7, startPos: 1, filename: filename),
                 new Token(keyword: TokenType.Or, value: "||", line: 8, startPos: 1, filename: filename),
-                new Token(keyword: TokenType.Eof, value: "\0", line: 9, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Modulo, value: "%", line: 9, startPos: 1, filename: filename),
+                new Token(keyword: TokenType.Eof, value: "\0", line: 10, startPos: 1, filename: filename),
             ];
 
             for (int i = 0; i < expected.Length; i++)

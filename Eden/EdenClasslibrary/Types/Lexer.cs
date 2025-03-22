@@ -167,6 +167,7 @@ namespace EdenClasslibrary.Types
                     break;
                 case ',': nextToken = CreateNewToken(TokenType.Comma); break;
                 case '.': nextToken = CreateNewToken(TokenType.Dot); break;
+                case '%': nextToken = CreateNewToken(TokenType.Modulo); break;
                 case ';': nextToken = CreateNewToken(TokenType.Semicolon); break;
                 case '~': nextToken = CreateNewToken(TokenType.Tilde); break;
                 case '?': nextToken = CreateNewToken(TokenType.QuenstionMark); break;

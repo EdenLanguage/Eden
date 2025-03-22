@@ -12,6 +12,14 @@
             }
         }
 
+        public string LanguageType
+        {
+            get
+            {
+                return "None";
+            }
+        }
+
         private NoneObject(Token token)
         {
             Token = token;

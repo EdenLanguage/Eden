@@ -2,7 +2,7 @@ Function Int FactorialRec(Var Int n){
 	If(n == 0i || n == 1i){
 		Return 1i;
 	};
-	Return n * Factorial(n - 1i);
+	Return n * FactorialRec(n - 1i);
 };
 
 Function Int FactorialIt(Var Int n){

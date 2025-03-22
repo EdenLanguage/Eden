@@ -2,6 +2,7 @@
 {
     public interface IObject
     {
+        string LanguageType { get; }
         Token Token { get; }
         Type Type { get; }
         bool IsSameType(IObject other);
