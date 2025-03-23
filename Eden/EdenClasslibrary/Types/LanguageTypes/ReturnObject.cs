@@ -38,7 +38,7 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public override string ToString()
         {
-            return $"Return : {WrappedObject.ToString()}";
+            return AsString();
         }
     }
 }

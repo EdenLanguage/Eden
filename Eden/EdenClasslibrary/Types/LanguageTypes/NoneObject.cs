@@ -30,6 +30,11 @@
             return new NoneObject(token);
         }
 
+        public override string ToString()
+        {
+            return AsString();
+        }
+
         public string AsString()
         {
             return "None";

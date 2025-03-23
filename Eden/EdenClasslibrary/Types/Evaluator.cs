@@ -8,6 +8,8 @@ using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
+using System.Net.Http.Headers;
+using System.Reflection;
 
 namespace EdenClasslibrary.Types
 {
@@ -117,9 +119,13 @@ namespace EdenClasslibrary.Types
             {
                 return EvaluateListDeclarationExpression(root as ListArgumentsExpression, env);
             }
-            else if (root is CallExpression)
+            else if (root is FunctionCallExpression)
             {
-                return EvaluateCallExpression(root as CallExpression, env);
+                return EvaluateFunctionCallExpression(root as FunctionCallExpression, env);
+            }
+            else if (root is MethodCallExpression)
+            {
+                return EvaluateMethodCallExpression(root as MethodCallExpression, env);
             }
             else if (root is IndexExpression)
             {
@@ -320,6 +326,22 @@ namespace EdenClasslibrary.Types
 
         private IObject EvaluateLoopStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)
         {
+            /*  Handling Loops:
+             *  The basic approach is to loop indefinitely until the condition is no longer met.
+             *  
+             *  Detailed Explanation:
+             *  1) Each iteration of the loop has its own environment.
+             *  2) After each iteration, the current environment is discarded.
+             *  3) Before discarding the environment, we extract the loop index
+             *     and transfer it to the new environment. This ensures that the loop index 
+             *     is preserved across iterations.
+             *  4) Loop evaluation consists of four steps:
+             *      a) Evaluate the loop condition.
+             *      b) Execute the loop body (code block).
+             *      c) Update the loop index.
+             *      d) Transfer the updated index to the new environment.
+             */
+
             LoopStatement loop = root as LoopStatement;
 
             //  Prepare loop env and define indexer.
@@ -329,7 +351,7 @@ namespace EdenClasslibrary.Types
 
             while (true)
             {
-                //  Handling 'Loop' condition evaluation!
+                //  a)  Handling 'Loop' condition evaluation!
                 IObject condition = EvaluateExpression(loop.Condition, loopEnv);
 
                 if(condition is ErrorObject isConditionError)
@@ -337,6 +359,7 @@ namespace EdenClasslibrary.Types
                     return isConditionError;
                 }
 
+                //  If evaluation is truthfull then we can execute code!
                 if(condition is not BoolObject)
                 {
                     //  TODO:
@@ -350,10 +373,8 @@ namespace EdenClasslibrary.Types
                     }
                 }
 
-                //  If evaluation is truthfull then we can execute code!
-
+                //  b) Evaluate loop code
                 IObject blockResult = EvaluateBlockStatement(loop.Body, loopEnv);
-
                 if (blockResult is ErrorObject AsErrorObj)
                 {
                     return AsErrorObj;
@@ -372,17 +393,31 @@ namespace EdenClasslibrary.Types
                 {
                     /*  If 'Quit' statement is met, just finish evaluating loop.
                      */
-                    return NullObject.Create(AsQuitObj.Token);
+                    break;
                 }
 
-                //  Evaluate indexer
+                //  c)  Evaluate indexer
                 IObject indexerOpResult = EvaluateExpression(loop.IndexerOperation, loopEnv);
-                //  Clear previous block data
+                if (indexerOpResult is ErrorObject indexerOpAsError)
+                {
+                    return indexerOpAsError;
+                }
+                else if (indexerOpResult is NoneObject indexerNone)
+                {
+                    //  Good
+                }
+                else
+                {
+                    return ErrorRuntimeFailedToEvaluate.CreateErrorObject(indexerOpResult.Token, _parser.Lexer.GetLine(indexerOpResult.Token));
+                }
+
+                //  d)  Clear previous block data and copy indexer
+                indexer = loopEnv.GetVariable(loop.IndexerOperation.NodeToken, indexerName);
                 loopEnv.Clear();
-                loopEnv.DefineVariable(indexerName, VariablePayload.Create(indexerOpResult.Type, indexerOpResult));
+                loopEnv.DefineVariable(indexerName, VariablePayload.Create(indexerOpResult.Type, indexer));
             }
 
-            return NullObject.Create(root.NodeToken);
+            return NoneObject.Create(root.NodeToken);
         }
 
         private IObject EvaluateSisyphusStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)
@@ -448,9 +483,13 @@ namespace EdenClasslibrary.Types
             {
                 return EvaluateFunctionExpression(exp as FunctionExpression, env);
             }
-            else if (exp is CallExpression)
+            else if (exp is FunctionCallExpression)
             {
-                return EvaluateCallExpression(exp as CallExpression, env);
+                return EvaluateFunctionCallExpression(exp as FunctionCallExpression, env);
+            }
+            else if (exp is MethodCallExpression)
+            {
+                return EvaluateMethodCallExpression(exp as MethodCallExpression, env);
             }
             else
             {
@@ -584,8 +623,14 @@ namespace EdenClasslibrary.Types
 
             if (binaryFunc == null)
             {
-                return ErrorSemanticalUndefBinaryOp.CreateErrorObject(leftEval, binExp.NodeToken, rightEval, _parser.Lexer.GetLine(leftEval.Token));
+                if(binExp.NodeToken.Keyword == TokenType.Assign)
+                {
+                    return ErrorSemanticalIndexAssignError.CreateErrorObject(leftEval, rightEval, _parser.Lexer.GetLine(leftEval.Token));
+                }
+                else return ErrorSemanticalUndefBinaryOp.CreateErrorObject(leftEval, binExp.NodeToken, rightEval, _parser.Lexer.GetLine(leftEval.Token));
             }
+
+
 
             IObject result = binaryFunc(leftEval, rightEval);
             if (result is ErrorObject resultError)
@@ -595,14 +640,29 @@ namespace EdenClasslibrary.Types
 
             if (binExp.NodeToken.Keyword == TokenType.Assign)
             {
-                if (binExp.Left is IdentifierExpression AsId && AsId != null)
+                if (binExp.Left is IdentifierExpression AsId)
                 {
-                    result = env.UpdateVariable((binExp.Left as IdentifierExpression).Name, result);
+                    env.UpdateVariable((binExp.Left as IdentifierExpression).Name, result);
+                }
+                else if (binExp.Left is IndexExpression AsIndex)
+                {
+                    if (leftEval.Type != rightEval.Type)
+                    {
+                        return ErrorSemanticalCollectionArgTypeMismatch.CreateErrorObject(leftEval.Type, rightEval.Type, rightEval.Token, _parser.Lexer.GetLine(rightEval.Token));
+                    }
+
+                    IndexExpression ind = binExp.Left as IndexExpression;
+
+                    string varName = (ind.Object as IdentifierExpression).Name;
+                    int index = (ind.Index as IntExpression).Value;
+
+                    env.UpdateVariable(varName, index, result);
                 }
                 else
                 {
-                    return ErrorSemanticalIllegalAssing.CreateErrorObject(binExp.NodeToken, _parser.Lexer.GetLine(leftEval.Token));
+                    return ErrorSemanticalIndexAssignError.CreateErrorObject(leftEval, rightEval, _parser.Lexer.GetLine(leftEval.Token));
                 }
+                return NoneObject.Create(binExp.Right.NodeToken);
             }
 
             return result;
@@ -661,39 +721,149 @@ namespace EdenClasslibrary.Types
         {
             IndexExpression indexExp = root as IndexExpression;
             IObject obj = EvaluateExpression(indexExp.Object, env);
-            IObject idx = EvaluateExpression(indexExp.Index, env);
-            IObject result = null;
+            if(obj is ErrorObject objAsError)
+            {
+                return objAsError;
+            }
 
+            IObject idx = EvaluateExpression(indexExp.Index, env);
+            if(idx is ErrorObject idxAsError)
+            {
+                return idxAsError;
+            }
+            
             if (obj is not IIndexable notIndexableError)
             {
                 return ErrorSemanticalTypeNotIndexable.CreateErrorObject(obj, indexExp.NodeToken, _parser.Lexer.GetLine(indexExp.NodeToken));
             }
 
-            if (idx is not IntObject notIntIndexer || (idx is IntObject asIntObj && asIntObj.Value < 0))
+            if (idx is not IntObject notIntIndexer)
             {
                 return ErrorSemanticalIndexTypeInvalid.CreateErrorObject(idx, indexExp.NodeToken, _parser.Lexer.GetLine(indexExp.NodeToken));
             }
 
             try
             {
-                result = (obj as IIndexable)[(idx as IntObject).Value];
+                IIndexable collection = obj as IIndexable;
+                int index = (idx as IntObject).Value;
+                IObject item = collection[index];
+
+                IObject result = null;
+                switch (item.LanguageType)
+                {
+                    case "Int":
+                        result = IntObject.Create(indexExp.Object.NodeToken, (item as IntObject).Value);
+                        break;
+                    case "Char":
+                        result = CharObject.Create(indexExp.Object.NodeToken, (item as CharObject).Value);
+                        break;
+                    case "Bool":
+                        result = BoolObject.Create(indexExp.Object.NodeToken, (item as BoolObject).Value);
+                        break;
+                    case "Float":
+                        result = FloatObject.Create(indexExp.Object.NodeToken, (item as FloatObject).Value);
+                        break;
+                    case "String":
+                        result = StringObject.Create(indexExp.Object.NodeToken, (item as StringObject).Value);
+                        break;
+                    case "None":
+                        result = NoneObject.Create(indexExp.Object.NodeToken);
+                        break;
+                    case "Null":
+                        result = NullObject.Create(indexExp.Object.NodeToken);
+                        break;
+                    default:
+                        result = ErrorObject.Create(indexExp.Object.NodeToken, ErrorSyntacticalInvalidTypeParse.Create(indexExp.Object.NodeToken, item.LanguageType, _parser.Lexer.GetLine(indexExp.Object.NodeToken)));
+                        break;
+                }
+
+                return result;
             }
             catch (ArgumentOutOfRangeException exception)
             {
                 return ErrorRuntimeArgOutOfRange.CreateErrorObject(obj as IIndexable, (idx as IntObject).Value, indexExp.NodeToken, _parser.Lexer.GetLine(indexExp.NodeToken));
             }
+        }
+
+        private IObject EvaluateMethodCallExpression(AbstractSyntaxTreeNode root, ParsingEnvironment env)
+        {
+            MethodCallExpression callExp = root as MethodCallExpression;
+
+            string methodName = (callExp.Method as IdentifierExpression).Name;
+
+            IObject objectClassObj = EvaluateExpression(callExp.ClassObject, env);
+            if(objectClassObj is ErrorObject objClassAsError)
+            {
+                return objClassAsError;
+            }
+
+            IObject[] arguments = EvaluateExpressions(root, env, callExp.Arguments);
+            foreach (IObject arg in arguments)
+            {
+                if (arg is ErrorObject AsError)
+                {
+                    return AsError;
+                }
+            }
+
+            IObject[] parameters = new IObject[callExp.Arguments.Length + 1];
+            parameters[0] = objectClassObj;
+            for(int i = 0; i < arguments.Length; i++)
+            {
+                parameters[i + 1] = arguments[i];
+            }
+
+            FunctionPayload funcSigPayload = env.GetBuildInFunctionSignature(methodName, parameters);
+            if(funcSigPayload == null)
+            {
+                return ErrorSemanticalFunInvalidArgs.CreateErrorObject(methodName, arguments, callExp.Method.NodeToken, _parser.Lexer.GetLine(callExp.Method.NodeToken));
+            }
+
+            //  Check whether signature are ok.
+            bool signatureOK = funcSigPayload.ArgumentsSignatureMatch(parameters);
+            if (signatureOK == false)
+            {
+                return ErrorSemanticalFunInvalidArgs.CreateErrorObject(methodName, parameters, callExp.NodeToken, _parser.Lexer.GetLine(callExp.NodeToken));
+            }
+
+            //  Call evaluate function body with given arguments.
+            ParsingEnvironment extendedEnv = env.ExtendEnvironment();
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                ObjectSignature varDef = funcSigPayload.Arguments[i];
+                extendedEnv.DefineVariable(varDef.Name, VariablePayload.Create(varDef.Type, parameters[i]));
+            }
+
+            IObject result = EvaluateBuildInMethod(extendedEnv, parameters[0], methodName, parameters.Skip(1).ToArray());
+
+            if (result is ReturnObject isReturnExp)
+            {
+                return isReturnExp.WrappedObject;
+            }
 
             return result;
         }
 
-        private IObject EvaluateCallExpression(AbstractSyntaxTreeNode root, ParsingEnvironment env)
+        private IObject EvaluateFunctionCallExpression(AbstractSyntaxTreeNode root, ParsingEnvironment env)
         {
-            CallExpression callExp = root as CallExpression;
+            FunctionCallExpression callExp = root as FunctionCallExpression;
 
             string funcName = (callExp.Function as IdentifierExpression).Name;
 
+            //  Evaluate arguments so for example input is '5+1' -> '6'.
+            IObject[] arguments = EvaluateExpressions(root, env, callExp.Arguments);
+
+            foreach (IObject arg in arguments)
+            {
+                if (arg is ErrorObject AsError)
+                {
+                    return AsError;
+                }
+            }
+
             //  Is this build-in function
-            bool isBuildInFunc = env.IsBuildInFunction(funcName);
+            bool isBuildInFunc = env.IsBuildInFunction(funcName, arguments);
 
             //  Maybe its ordinary func
             if (isBuildInFunc == false)
@@ -710,23 +880,16 @@ namespace EdenClasslibrary.Types
             FunctionPayload funcSigPayload = null;
             if (isBuildInFunc == true)
             {
-                funcSigPayload = env.GetBuildInFunctionSignature(funcName);
+                funcSigPayload = env.GetBuildInFunctionSignature(funcName, arguments);
             }
             else
             {
                 funcSigPayload = env.GetFunctionRoot(funcName);
             }
 
-
-            //  Evaluate arguments so for example input is '5+1' -> '6'.
-            IObject[] arguments = EvaluateExpressions(root, env, callExp.Arguments);
-
-            foreach (IObject arg in arguments)
+            if (funcSigPayload == null)
             {
-                if (arg is ErrorObject AsError)
-                {
-                    return AsError;
-                }
+                return ErrorSemanticalFunInvalidArgs.CreateErrorObject(funcName, arguments, callExp.Function.NodeToken, _parser.Lexer.GetLine(callExp.Function.NodeToken));
             }
 
             //  Check whether signature are ok.
@@ -768,6 +931,11 @@ namespace EdenClasslibrary.Types
         private IObject EvaluateBuildInFunction(ParsingEnvironment env, string name, params IObject[] arguments)
         {
             return env.CallBuildInFunc(name, arguments);
+        }
+
+        private IObject EvaluateBuildInMethod(ParsingEnvironment env, IObject classObject, string name, params IObject[] arguments)
+        {
+            return env.CallBuildInMethod(classObject, name, arguments);
         }
 
         private IObject EvaluateFunctionExpression(AbstractSyntaxTreeNode root, ParsingEnvironment env)

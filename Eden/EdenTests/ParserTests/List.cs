@@ -73,5 +73,19 @@ namespace EdenTests.ParserTests
                 }
             }
         }
+
+        [Fact]
+        public void Methods()
+        {
+            string executionLocation = GetParserSourceFile("list.eden");
+
+            Parser parser = new Parser();
+            AbstractSyntaxTreeNode ast = parser.ParseFile(executionLocation);
+
+            string AST = ast.ToAbstractSyntaxTree();
+            string STR = ast.ToString();
+
+            Console.WriteLine(STR);
+        }
     }
 }

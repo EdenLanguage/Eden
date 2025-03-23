@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Execution file structure.md",
+                "file": "Language specification/Variables/List.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Execution file structure"
+              "title": "List"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Execution file structure.md",
+                "file": "Language specification/Variables/List.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Execution file structure"
+              "title": "Backlinks for List"
             }
           },
           {
@@ -170,41 +170,41 @@
   },
   "active": "ae0559620886a586",
   "lastOpenFiles": [
-    "Implementation/TODO.md",
+    "Language specification/Types/Type indicator.md",
+    "Language specification/Variables/List.md",
     "Execution file structure.md",
+    "Implementation/TODO.md",
     "Implementation/Errors/Error printing.md",
     "Implementation/Errors",
-    "Language specifics/Loops/Sisyphus.md",
-    "Language specifics/Loops/Loops.md",
-    "Language specifics/Declarations/Block.md",
-    "Language specifics/Declarations/BlocksImage.excalidraw.md",
+    "Language specification/Loops/Sisyphus.md",
+    "Language specification/Loops/Loops.md",
+    "Language specification/Declarations/Block.md",
+    "Language specification/Declarations/BlocksImage.excalidraw.md",
     "Implementation/Abstract Syntax Tree/Statements.md",
     "Implementation/Parser/TODO.md",
-    "Language specifics/Declarations/Scope.md",
-    "Language specifics/Declarations",
+    "Language specification/Declarations/Scope.md",
+    "Language specification/Declarations",
     "Excalidraw",
-    "Language specifics/Loops/Loop.md",
-    "Language specifics/Loops/Quit.md",
-    "Language specifics/Variables/Float.md",
-    "Language specifics/Variables/Variables.md",
-    "Language specifics/Variables/Int.md",
-    "Language specifics/Variables/Char.md",
-    "Language specifics/Loops/Skip.md",
-    "Language specifics/Functions/Build-in functions.md",
+    "Language specification/Loops/Loop.md",
+    "Language specification/Loops/Quit.md",
+    "Language specification/Variables/Float.md",
+    "Language specification/Variables/Variables.md",
+    "Language specification/Variables/Int.md",
+    "Language specification/Variables/Char.md",
+    "Language specification/Loops/Skip.md",
+    "Language specification/Functions/Build-in functions.md",
     "Implementation/Lexer/TODO.md",
     "Implementation/Lexer/Lexer.md",
     "Implementation/Abstract Syntax Tree/AST - Abstract Syntax Tree.md",
     "Implementation/Description.md",
-    "Language specifics/Whitepaper/Whitepaper.md",
-    "Language specifics/Whitepaper/Language specification.md",
-    "Untitled.md",
-    "Evaluator.md",
-    "Language specifics/Whitepaper",
-    "Language specifics/Functions",
-    "Language specifics/Types",
-    "Language specifics/Variables",
-    "Language specifics/Loops",
-    "Language specifics",
+    "Language specification/Whitepaper/Whitepaper.md",
+    "Language specification/Whitepaper/Language specification.md",
+    "Language specification/Whitepaper",
+    "Language specification/Functions",
+    "Language specification/Types",
+    "Language specification/Variables",
+    "Language specification/Loops",
+    "Language specification",
     "Releases"
   ]
 }

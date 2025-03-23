@@ -1,0 +1,7 @@
+List Int primes = [2i,3i,5i,7i,9i];
+primes.Length();
+primes.Add(1i);
+primes.Clear();
+primes.RemoveAt(0i);
+primes[0i] = 1i;
+Var Int number = primes[0i];

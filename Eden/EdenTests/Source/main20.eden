@@ -1,4 +1,4 @@
 Function Int Add(Var Int a, Var Int b){
 	Return a+b;
 };
-Add(5i,10i);
+Return Add(5i,10i);

@@ -47,8 +47,9 @@ namespace EdenClasslibrary.Types.LanguageTypes
 
         public override string ToString()
         {
-            return $"Float: {Value}";
+            return AsString();
         }
+
         public bool Greater(IObjectComparable other)
         {
             if (IsSameType(other))

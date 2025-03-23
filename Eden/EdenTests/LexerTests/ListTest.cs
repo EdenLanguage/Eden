@@ -18,5 +18,18 @@ namespace EdenTests.LexerTests
             string AST = block.ToAbstractSyntaxTree();
             string STR = block.ToString();
         }
+
+        [Fact]
+        public void ListMethods()
+        {
+            string executionLocation = GetLexerSourceFile("list.eden");
+
+            Lexer lexer = new Lexer();
+
+            lexer.LoadFile(executionLocation);
+            List<Token> tokens = lexer.Tokenize().ToList();
+
+            Console.WriteLine(tokens.Count);
+        }
     }
 }

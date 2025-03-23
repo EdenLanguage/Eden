@@ -22,6 +22,11 @@
             return new QuitObject(token);
         }
 
+        public override string ToString()
+        {
+            return AsString();
+        }
+
         public string AsString()
         {
             throw new NotImplementedException();

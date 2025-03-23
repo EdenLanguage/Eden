@@ -1,6 +1,7 @@
 ﻿using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.LanguageTypes;
+using System.Text;
 
 namespace EdenClasslibrary.Errors.RuntimeErrors
 {
@@ -27,7 +28,30 @@ namespace EdenClasslibrary.Errors.RuntimeErrors
 
         public override string GetMessage()
         {
-            return $"There is no definition for '{_funcName}()' function with {_args.Length} arguments!";
+            StringBuilder sb = new StringBuilder();
+
+            if(_args.Length > 0)
+            {
+                sb.Append(" with '");
+                for(int i = 0; i < _args.Length; i++)
+                {
+                    IObject arg = _args[i];
+                    sb.Append($"{arg.LanguageType}({arg.AsString()})");
+                    if(i < _args.Length - 1)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                sb.Append("' argument");
+                if(_args.Length != 1)
+                {
+                    sb.Append("s");
+                }
+            }
+
+            string result = sb.ToString();
+
+            return $"There is no definition for '{_funcName}()' function{result}!";
         }
     }
 }

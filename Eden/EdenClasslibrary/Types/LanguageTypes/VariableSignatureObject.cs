@@ -27,9 +27,8 @@
 
         public override string ToString()
         {
-            return $"Var {Type} {Name}";
+            return AsString();
         }
-
         public string AsString()
         {
             throw new NotImplementedException();
