@@ -1,9 +1,0 @@
-- [ ] Refactor [[Lexer]] so it contains more features and also looks cleaner:
-	 - [ ] Additional information such as: line, token name, literal, starting token position, ending token position.
-	 - [ ] Implement all of the possible tokens.
-	 - [ ] Implement data types tokens:
-		 - [ ] String
-		 - [x] Int
-		 - [x] [[Float]] - raw implementation. 
-		 - [ ] Structure
-		 - [ ] Array
