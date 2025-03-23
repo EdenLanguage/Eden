@@ -1,5 +1,5 @@
 Var Bool flaga = False;
-//	Comment
+//Comment
 Var Int counter = 1024i;
 
 Var Float pi = 3.14f;

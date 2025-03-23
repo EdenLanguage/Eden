@@ -1,11 +1,9 @@
-﻿using EdenClasslibrary.Types.Excpetions;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace EdenClasslibrary.Types
 {
     public class Lexer
     {
-        #region Fields
         private string _filePath;
         private string _filename;
         private string _input;
@@ -16,7 +14,6 @@ namespace EdenClasslibrary.Types
 
         private int _currentLine;               // Current line index.
         private int _currentLinePosition;       // Position of currently parsed character.
-        #endregion
 
         #region Constructor
         public Lexer()
@@ -38,44 +35,28 @@ namespace EdenClasslibrary.Types
 
         public string GetLine(Token token)
         {
-            string line = string.Empty;
-            if (!string.IsNullOrEmpty(_input))
+            if (string.IsNullOrEmpty(_input) || token.Line < 0)
             {
-                try
-                {
-                    int startPos = 0;
-                    int endPos = 0;
-                    string tmp = _input;
-                    //  Line - 1 becuase 'Line' is giving lines from 1, and we need it from 0.
-                    for(int i = 0; i < token.Line; i++)
-                    {
-                        startPos = tmp.IndexOf("\r\n") + 2;
-                        if(tmp.IndexOf("\r\n") == -1)
-                        {
-                            break;
-                        }
-                        else if(i == token.Line - 1)
-                        {
-                            tmp = tmp.Substring(0, startPos - 2);
-                        }
-                        else
-                        {
-                            tmp = tmp.Substring(startPos);
-                        }
-                    }
-
-                    //  Skip tabs
-                    //tmp = tmp.Replace("\t", "");
-
-                    line = tmp;
-                }
-                catch (Exception)
-                {
-
-                }
+                return string.Empty;
             }
-            return line;
+
+            try
+            {
+                string[] lines = _input.Replace("\r\n", "\n").Split('\n');
+
+                if (token.Line - 1 >= lines.Length)
+                {
+                    return string.Empty;
+                }
+
+                return lines[token.Line - 1];
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
         }
+
 
         public void LoadFile(string filePath)
         {
@@ -267,8 +248,7 @@ namespace EdenClasslibrary.Types
                             switch (type)
                             {
                                 case 'c':
-                                     nextToken = CreateNewToken(TokenType.Char, $"{inputLiteral}{type}");
-                                    //NextCharacter();
+                                    nextToken = CreateNewToken(TokenType.Char, $"{inputLiteral}{type}");
                                     break;
                                 case 'i':
                                     //  Int
@@ -302,10 +282,8 @@ namespace EdenClasslibrary.Types
                                     {
                                         nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
                                     }
-                                    //NextCharacter();
                                     break;
                                 default:
-                                    //  Error
                                     nextToken = CreateNewToken(TokenType.Illegal, inputLiteral + type);
                                     break;
                             }
@@ -324,10 +302,6 @@ namespace EdenClasslibrary.Types
                     }
                     break;
             }
-
-            //NextCharacter();
-
-            //if (nextToken.Keyword == TokenType.Illegal) throw new CurrentTokenIsIllegal();
 
             if (nextToken.Keyword == TokenType.Comment)
             {
@@ -403,17 +377,16 @@ namespace EdenClasslibrary.Types
                 NextCharacter();
                 NextCharacter();
             }
-            if (ReadCurrentCharacter() == '\r' && PeekNextCharacter() == '\n')
+            if (IsNewLine())
             {
-                SkipEnter();
+                SkipNewLine();
             }
         }
 
-        private void SkipEnter()
+        private void SkipNewLine()
         {
-            if (ReadCurrentCharacter() == '\r' && PeekNextCharacter() == '\n')
+            if (IsNewLine())
             {
-                NextCharacter();
                 NextCharacter();
             }
             IncrementLinePointer();
@@ -440,11 +413,11 @@ namespace EdenClasslibrary.Types
             {
                 char nextchar = PeekNextCharacter();
 
-                if(_currentChar == '\r' && nextchar == '\n')
+                if (IsNewLine())
                 {
-                    SkipEnter();
+                    SkipNewLine();
                 }
-                else if(_currentChar == '\t')
+                else if (_currentChar == '\t')
                 {
                     SkipTab();
                 }
@@ -469,15 +442,7 @@ namespace EdenClasslibrary.Types
                 _currentChar = _input[_nextReadPosition];
             }
 
-            //if(_currentChar == '\n')
-            //{
-            //    IncrementLinePointer();
-            //    ClearCurrentLinePosition();
-            //}
-            //else
-            //{
-                IncrementLineReadPositionPointer();
-            //}
+            IncrementLineReadPositionPointer();
 
             _readPosition = _nextReadPosition;
             _nextReadPosition++;
@@ -508,32 +473,22 @@ namespace EdenClasslibrary.Types
             }
         }
 
-        private bool IsNextCharacterEatable()
-        {
-            char nextChar = PeekNextCharacter();
-            if (nextChar == '\n' || nextChar == '\t' || nextChar == '\r' || nextChar == ' ')
-            {
-                return true;
-            }
-            else return false;
-        }
-
         private bool IsNewLine()
         {
+            bool isNewLine = false;
             char currentChar = ReadCurrentCharacter();
-            char nextChar = PeekNextCharacter();
-            if (nextChar == '\n' && currentChar == '\r')
+            if (currentChar == '\n')
             {
-                return true;
+                isNewLine = true;
             }
-            else return false;
+            return isNewLine;
         }
 
         private bool IsCurrentCharacterEatable()
         {
             char currentChar = ReadCurrentCharacter();
             char nextChar = PeekNextCharacter();
-            if ((currentChar == '\r' || nextChar == '\n' ) || currentChar == '\t' || currentChar == ' ')
+            if (IsNewLine() || currentChar == '\r' || currentChar == '\t' || currentChar == ' ')
             {
                 return true;
             }
@@ -552,15 +507,6 @@ namespace EdenClasslibrary.Types
             return false;
         }
 
-        /// <summary>
-        /// Check whether next character is '"'
-        /// </summary>
-        /// <returns></returns>
-        private bool IsNextCharStringToken()
-        {
-            return PeekNextCharacter() == '"';
-        }
-
         private bool IsCurrentCharStringToken()
         {
             return ReadCurrentCharacter() == '"';
@@ -575,28 +521,6 @@ namespace EdenClasslibrary.Types
         {
             if (char.IsNumber(_currentChar)) return true;
             return false;
-        }
-
-        /// <summary>
-        /// Reads input literal till it finds non matching token. Then it stops. This operation 'eats' next character in input.
-        /// </summary>
-        /// <returns></returns>
-        private string ReadInputNumber()
-        {
-            string inputNumber = string.Empty;
-
-            bool canTakeNextChar = true;
-            while (canTakeNextChar)
-            {
-                inputNumber += _currentChar;
-
-                canTakeNextChar = IsNextCharNumber();
-                if (canTakeNextChar == true)
-                {
-                    NextCharacter();
-                }
-            }
-            return inputNumber;
         }
 
         /// <summary>
@@ -626,7 +550,6 @@ namespace EdenClasslibrary.Types
 
                 isNextCharNumber = IsNextCharNumber();
                 isNextCharComa = PeekNextCharacter() == '.';
-                // 10000000,
 
                 keepParsing = IsNextCharNumber() || (inputNumber.EndsWith('.') && IsNextCharNumber()) || (commaEncountered == false && PeekNextCharacter() == '.');
 
@@ -688,7 +611,7 @@ namespace EdenClasslibrary.Types
                         metStrSymbol++;
                     }
                 }
-                if(PeekNextCharacter() == '\0')
+                if (PeekNextCharacter() == '\0')
                 {
                     return stringLiteral;
                 }
@@ -719,15 +642,7 @@ namespace EdenClasslibrary.Types
 
             char symbol = '\0';
 
-            //bool canParseToChar = char.TryParse(input, out symbol);
-            //if (canParseToChar == true)
-            //{
-                return input;
-            //}
-            //else
-            //{
-             //   return null;
-            //}
+            return input;
         }
 
         private bool IsValidStringLiteral(string literal)
@@ -776,19 +691,6 @@ namespace EdenClasslibrary.Types
             int tokenInLineBegPtr = _currentLinePosition - (value.Length - 1);
 
             toker.SetAttributes(keyword: type, value: value, line: _currentLine, startPos: tokenInLineBegPtr, filename: _filename);
-            return toker;
-        }
-
-        private Token CreateNewToken(TokenType type, char value)
-        {
-            Token toker = new Token();
-
-            int tokenInLineBegPtr = _currentLinePosition - 1;
-
-            toker.SetAttributes(keyword: type, value: value, line: _currentLine, startPos: _currentLinePosition, filename: _filename);
-            
-            NextCharacter();
-
             return toker;
         }
         #endregion

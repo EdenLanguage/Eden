@@ -1,5 +1,4 @@
 ﻿using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenTests.Utility;
 
@@ -8,19 +7,36 @@ namespace EdenTests.EvaluatorTests
     public class Comment : FileTester
     {
         [Fact]
-        public void FromFile_1()
+        public void ExemplaryFiles()
         {
-            string filename = "main27.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
+            string[][] testset =
+            [
+                [GetTestFilesFile("main27.eden"),"0"],
+            ];
 
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
-
-            IObject result = evaluator.EvaluateFile(executionLocation);
-
-            if(result is ErrorObject AsError)
+            foreach (string[] set in testset)
             {
-                Assert.Fail($"'main27.eden' could not be parsed! Result: '{AsError.ToString()}'");
+                string input = set[0];
+                string expected = set[1];
+
+                Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
+
+                IObject result = evaluator.EvaluateFile(input);
+                string STR = result.ToString();
+
+                if (expected != STR)
+                {
+                    if (result is ErrorObject)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        string fileName = Path.GetFileName(input) + " -> ";
+                        Assert.Equal(fileName + expected, fileName + STR);
+                    }
+                }
             }
         }
     }

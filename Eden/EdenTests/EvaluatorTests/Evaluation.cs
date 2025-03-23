@@ -8,103 +8,42 @@ namespace EdenTests.EvaluatorTests
     public class Evaluation : FileTester
     {
         [Fact]
-        public void IntTest()
+        public void ExemplaryFiles()
         {
-            string filename = "main10.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
+            string[][] testset =
+            [
+                [GetTestFilesFile("main10.eden"),"5"],
+                [GetTestFilesFile("main11.eden"),"True"],
+                [GetTestFilesFile("main12.eden"),"Null"],
+                [GetTestFilesFile("main18.eden"),"3.14"],
+                [GetTestFilesFile("main20.eden"),"15"],
+                [GetTestFilesFile("main21.eden"),"34"],
+            ];
 
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
+            foreach (string[] set in testset)
+            {
+                string input = set[0];
+                string expected = set[1];
 
-            IObject result = evaluator.EvaluateFile(executionLocation);
+                Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
 
-            Assert.True(result is IntObject);
-            IntObject value = result as IntObject;
+                IObject result = evaluator.EvaluateFile(input);
+                string STR = result.ToString();
 
-            Assert.Equal(value.Value, 5);
-        }
-
-        [Fact]
-        public void BoolTest()
-        {
-            string filename = "main11.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
-
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
-
-            IObject result = evaluator.EvaluateFile(executionLocation);
-
-            Assert.True(result is BoolObject);
-            BoolObject value = result as BoolObject;
-
-            Assert.Equal(value.Value, true);
-        }
-
-        [Fact]
-        public void NullTest()
-        {
-            string filename = "main12.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
-
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
-
-            IObject result = evaluator.EvaluateFile(executionLocation);
-
-            Assert.True(result is NullObject);
-            NullObject value = result as NullObject;
-
-            Assert.Equal(value.Value, null);
-        }
-
-        [Fact]
-        public void ComplexStatementsTest_1()
-        {
-            string filename = "main18.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
-
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
-
-            IObject result = evaluator.EvaluateFile(executionLocation);
-
-            Assert.True(result is FloatObject);
-            FloatObject value = result as FloatObject;
-
-            Assert.Equal(value.Value, 3.14f);
-        }
-
-        [Fact]
-        public void FunctionCallsTest()
-        {
-            string filename = "main20.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
-
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
-
-            IObject result = evaluator.EvaluateFile(executionLocation);
-            string str = result.ToString();
-
-            Assert.Equal("15", str);
-        }
-
-        [Fact]
-        public void FibonacciTest()
-        {
-            string filename = "main21.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
-
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
-
-            IObject result = evaluator.EvaluateFile(executionLocation);
-
-            Assert.True(result is IntObject);
-            IntObject value = result as IntObject;
-
-            Assert.Equal(value.Value, 34);
+                if (expected != STR)
+                {
+                    if (result is ErrorObject)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        string fileName = Path.GetFileName(input) + " -> ";
+                        Assert.Equal(fileName + expected, fileName + STR);
+                    }
+                }
+            }
         }
     }
 }

@@ -6,9 +6,9 @@ If(counter > length){
 }
 Else{
 	If(pi < 3i){
-		Return "31.4";
+		Return length * counter;
 	}
 	Else{
-		Return "3.14";
+		Return length;
 	};
 };

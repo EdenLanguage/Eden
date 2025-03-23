@@ -1,11 +1,49 @@
 ﻿using EdenClasslibrary.Types;
-using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.LanguageTypes;
+using EdenTests.Utility;
 
 namespace EdenTests.EvaluatorTests
 {
-    public class Return
+    public class Return : FileTester
     {
+        [Fact]
+        public void ExamplaryFiles()
+        {
+            string[][] testset =
+            [
+                [GetEvaluatorSourceFile("return1.eden"),"10"],
+                [GetEvaluatorSourceFile("return2.eden"),"200"],
+                [GetEvaluatorSourceFile("return3.eden"),"20"],
+                [GetEvaluatorSourceFile("return4.eden"),"1"],
+                [GetEvaluatorSourceFile("return5.eden"),"100"],
+            ];
+
+            foreach(string[] set in testset)
+            {
+                string input = set[0];
+                string expected = set[1];
+
+                Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
+
+                IObject result = evaluator.EvaluateFile(input);
+                string STR = result.ToString();
+
+                if (expected != STR)
+                {
+                    if(result is ErrorObject)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        string fileName = Path.GetFileName(input) + " -> ";
+                        Assert.Equal(fileName + expected, fileName + STR);
+                    }
+                }
+            }
+        }
+
         [Fact]
         public void Test_1()
         {
