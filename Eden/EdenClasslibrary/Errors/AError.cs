@@ -24,32 +24,32 @@ namespace EdenClasslibrary.Errors
         {
             StringBuilder sb = new StringBuilder();
 
-            if(string.IsNullOrEmpty(Line))
+            if (string.IsNullOrEmpty(Line))
             {
                 return "";
             }
 
-            string line = Line.Replace("\t","");
-
             int tabAmount = 0;
-            foreach(char letter in Line)
+            foreach (char letter in Line)
             {
-                if(letter == '\t')
+                if (letter == '\t')
                 {
                     tabAmount++;
                 }
             }
 
+            string line = Line.Replace("\t", "").Replace("\r", "");
+
             string lineMark = string.Empty;
             int point = Token.Start - (tabAmount + 1);
 
-            for(int i = 0; i < point; i++)
+            for (int i = 0; i < point; i++)
             {
                 lineMark += " ";
             }
             lineMark += "^";
 
-            while(lineMark.Length < Line.Length - 1)
+            while (lineMark.Length < line.Length)
             {
                 lineMark += "-";
             }

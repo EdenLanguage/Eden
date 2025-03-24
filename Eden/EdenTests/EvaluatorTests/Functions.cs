@@ -7,27 +7,38 @@ namespace EdenTests.EvaluatorTests
     public class Functions : FileTester
     {
         [Fact]
-        public void FunctionDeclaration()
+        public void ExemplaryFiles()
         {
-            string filename = "main19.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
+            string[][] testset =
+            [
+                [GetTestFilesFile("main19.eden"),"None"],
+                [GetTestFilesFile("main25.eden"),"4"],
+            ];
 
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
+            foreach (string[] set in testset)
+            {
+                string input = set[0];
+                string expected = set[1];
 
-            IObject result = evaluator.EvaluateFile(executionLocation);
-        }
+                Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
 
-        [Fact]
-        public void LengthFile()
-        {
-            string filename = "main25.eden";
-            string executionLocation = Path.Combine(GetTestFilesDirectory(), filename);
+                IObject result = evaluator.EvaluateFile(input);
+                string STR = result.ToString();
 
-            Parser parser = new Parser();
-            Evaluator evaluator = new Evaluator(parser);
-
-            IObject result = evaluator.EvaluateFile(executionLocation);
+                if (expected != STR)
+                {
+                    if (result is ErrorObject)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        string fileName = Path.GetFileName(input) + " -> ";
+                        Assert.Equal(fileName + expected, fileName + STR);
+                    }
+                }
+            }
         }
 
         [Fact]
@@ -75,59 +86,45 @@ namespace EdenTests.EvaluatorTests
         [Fact]
         public void Sinus()
         {
-            string[] code =
+            string[][] testset =
             [
-                //  Arguments as radians
-                "SinusR(0f);",
-                "SinusR(30f);",
-                "SinusR(45f);",
-                "SinusR(60f);",
-                "SinusR(90f);",
+                ["SinusR(0f);", "0"],
+                ["SinusR(30f);", "-0.9880316"],
+                ["SinusR(45f);", "0.8509035"],
+                ["SinusR(60f);", "-0.3048106"],
+                ["SinusR(90f);", "0.89399666"],
 
-                //  Arguments as degrees
-                "SinusD(0f);",
-                "SinusD(30f);",
-                "SinusD(45f);",
-                "SinusD(60f);",
-                "SinusD(90f);",
+                ["SinusD(0f);", "0"],
+                ["SinusD(30f);", "0.5"],
+                ["SinusD(45f);", "0.70710677"],
+                ["SinusD(60f);", "0.86602545"],
+                ["SinusD(90f);", "1"],
             ];
 
-            float[] expectedResults =
-            [
-                //  Result from radians
-                0f,
-                -0.9880316f,
-                0.8509035f,
-                -0.3048106f,
-                0.89399666f,
-
-                //  Result from degrees
-                0f,
-                0.5f,
-                0.70710677f,
-                0.86602545f,
-                1f,
-
-            ];
-
-            Assert.Equal(code.Length, expectedResults.Length);
-
-
-            string input = string.Empty;
-            float expected = 0f;
-
-            for (int i = 0; i < code.Length; i++)
+            foreach (string[] set in testset)
             {
-                input = code[i];
-                expected = expectedResults[i];
+                string input = set[0];
+                string expected = set[1];
 
                 Parser parser = new Parser();
                 Evaluator evaluator = new Evaluator(parser);
 
                 IObject result = evaluator.Evaluate(input);
+                string STR = result.ToString();
 
-                Assert.True(result is FloatObject);
-                Assert.Equal(expected, (result as FloatObject).Value);
+                if (expected != STR)
+                {
+                    if (result is ErrorObject)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        string fileName = Path.GetFileName(input) + " -> ";
+                        Assert.Equal(fileName + expected, fileName + STR);
+                    }
+
+                }
             }
         }
 

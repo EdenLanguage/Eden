@@ -1,7 +1,5 @@
-﻿using EdenClasslibrary.Types.AbstractSyntaxTree;
-using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types;
-using System.Text;
 
 namespace EdenTests.EvaluatorTests
 {
@@ -19,28 +17,28 @@ namespace EdenTests.EvaluatorTests
                 ["5.5f + 1.5f;", "7"]
             ];
 
-            string input = string.Empty;
-            string expected = string.Empty;
-
-            for (int i = 0; i < testset.Length; i++)
+            foreach (string[] set in testset)
             {
-                input = testset[i][0];
-                expected = testset[i][1];
+                string input = set[0];
+                string expected = set[1];
 
                 Parser parser = new Parser();
                 Evaluator evaluator = new Evaluator(parser);
 
                 IObject result = evaluator.Evaluate(input);
+                string STR = result.ToString();
 
-                if (expected != result.AsString())
+                if (expected != STR)
                 {
-                    StringBuilder sb = new StringBuilder();
-
-                    sb.AppendLine($"Expression: '{input}' failed!");
-                    sb.AppendLine($"Expected: '{expected}'");
-                    sb.AppendLine($"Actual: '{result}'");
-
-                    Assert.Fail(sb.ToString());
+                    if (result is ErrorObject)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        string fileName = Path.GetFileName(input) + " -> ";
+                        Assert.Equal(fileName + expected, fileName + STR);
+                    }
                 }
             }
         }

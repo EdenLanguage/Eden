@@ -5,10 +5,5 @@ If(counter > length){
 	Return counter + length;
 }
 Else{
-	If(pi < 3i){
-		Return "31.4";
-	}
-	Else{
-		Return "3.14";
-	};
+	Return length * counter;
 };

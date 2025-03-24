@@ -14,6 +14,11 @@ namespace EdenTests.Utility
             return sourceDir;
         }
 
+        public static string GetTestFilesFile(string name)
+        {
+            return Path.Combine(GetTestFilesDirectory(), name);
+        }
+
         public static string PrintTokenDiff(Token one, Token two)
         {
             StringBuilder sb = new StringBuilder();

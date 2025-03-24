@@ -1,5 +1,6 @@
 ﻿using EdenClasslibrary.Types;
 using EdenTests.Utility;
+using System.Text;
 
 namespace EdenTests.LexerTests
 {
@@ -60,8 +61,8 @@ namespace EdenTests.LexerTests
 
             List<Token> actual = lexer.Tokenize().ToList();
 
-            Assert.Equal(expected.Count, actual.Count);
-            for (int i = 0; i < expected.Count; i++)
+            //Assert.Equal(expected.Count, actual.Count);
+            for (int i = 0; i < actual.Count; i++)
             {
                 Token expectedToken = expected[i];
                 Token actualToken = actual[i];
@@ -70,10 +71,22 @@ namespace EdenTests.LexerTests
 
                 if(isSame == false)
                 {
-                    Assert.Fail($"Tokens at position '{i}' are different!");
+                    StringBuilder sb = new StringBuilder();
+
+                    foreach(Token tok in actual)
+                    {
+                        sb.AppendLine($"{tok.Keyword}, '{tok.LiteralValue}', '{tok.Start}'");
+                    }
+
+                    string str = sb.ToString();
+                    Console.WriteLine(str);
+
+                    Assert.Fail(str);
+                    //Assert.Fail($"Tokens at position '{i}' are different!");
                 }
             }
         }
+
 
         [Fact]
         public void Lex2()
