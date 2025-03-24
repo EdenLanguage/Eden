@@ -3,7 +3,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [master ]
-  workflow_dispatch:  # Ręczne uruchomienie pipline'u
+  workflow_dispatch:
 
 jobs:
   build:
@@ -28,4 +28,3 @@ jobs:
       - name: Tests
         run: dotnet test
         working-directory: Eden
-       
