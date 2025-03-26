@@ -1,4 +1,7 @@
 ﻿using EdenClasslibrary.Types;
+using EdenClasslibrary.Utility;
+using Pastel;
+using System.Drawing;
 using System.Text;
 
 namespace EdenClasslibrary.Errors
@@ -56,11 +59,16 @@ namespace EdenClasslibrary.Errors
 
             sb.AppendLine();
             sb.AppendLine(line);
-#if DEBUG
-            sb.Append($"{lineMark}");
-#else
-            sb.Append($"{lineMark}".Pastel(Color.Red));
-#endif
+
+            if(Common.ColorfulPrinting == true)
+            {
+                sb.Append($"{lineMark}".Pastel(Color.Red));
+            }
+            else
+            {
+                sb.Append($"{lineMark}");
+            }
+     
             string result = sb.ToString();
 
             return result;
@@ -73,15 +81,18 @@ namespace EdenClasslibrary.Errors
             string details = GetDetails();
             string lineDetails = GetLineDetails();
 
-#if DEBUG
-            sb.AppendLine($"[{ErrorType}]");
-#else
-            sb.AppendLine($"[{ErrorType.Pastel(Color.Red)}]");
-#endif
+            if (Common.ColorfulPrinting == true)
+            {
+                sb.AppendLine($"[{ErrorType.Pastel(Color.Red)}]");
+            }
+            else
+            {
+                sb.AppendLine($"[{ErrorType}]");
+            }
 
             sb.AppendLine($"{message}");
             sb.AppendLine($"{details}");
-            sb.AppendLine($"{lineDetails}");
+            sb.Append($"{lineDetails}");
 
             string result = sb.ToString();
             return result;

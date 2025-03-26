@@ -11,7 +11,7 @@ namespace EdenTests.EvaluatorTests
         {
             string[][] testset =
             [
-                [GetTestFilesFile("main27.eden"),"0"],
+                [GetTestFilesFile("main27.eden"),"None"],
             ];
 
             foreach (string[] set in testset)

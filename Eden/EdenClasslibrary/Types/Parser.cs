@@ -8,6 +8,7 @@ using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.Enums;
 using EdenClasslibrary.Types.Excpetions;
+using System.Data;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -136,6 +137,7 @@ namespace EdenClasslibrary.Types
         /// <returns>Abstract syntax tree of input data</returns>
         public Statement Parse(string code)
         {
+            ClearParser();
             _lexer.SetInput(code);
             _program = ParseFileStatement();
             return _program;
@@ -143,7 +145,7 @@ namespace EdenClasslibrary.Types
 
         public Statement ParseFile(string path)
         {
-            //string sourceCode = GetSource(path);
+            ClearParser();
             _lexer.LoadFile(path);
             _program = ParseFileStatement();
             return _program;
@@ -151,6 +153,11 @@ namespace EdenClasslibrary.Types
         #endregion
 
         #region Helper methods
+        private void ClearParser()
+        {
+            CurrentToken = null;
+        }
+
         private Precedence CurrentTokenEvaluationOrder()
         {
             if (_precedenceMapping.ContainsKey(CurrentToken.Keyword))
