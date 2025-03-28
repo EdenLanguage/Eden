@@ -290,8 +290,13 @@ namespace EdenClasslibrary.Types
             }
             else
             {
-                return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+                IObject definedVariable = env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+                if(definedVariable is ErrorObject varAsError)
+                {
+                    return varAsError;
+                }
             }
+            return NoneObject.Create(varStatement.NodeToken);
         }
 
         private IObject EvaluateListDeclarationStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)

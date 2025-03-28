@@ -100,19 +100,19 @@ namespace EdenTests.EvaluatorTests
             string[][] testset =
             [
                 //  Modulo
-                ["5.0f % 5.0f;", "[Semantical error]\r\nOperation 'Float(5) % Float(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5.0f % 5.0f;\r\n^-----------\r\n"],
+                ["5.0f % 5.0f;", "[Semantical error]\r\nOperation 'Float(5) % Float(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5.0f % 5.0f;\r\n^-----------"],
 
                 //  Logical
-                ["5i && 5i;", "[Semantical error]\r\nOperation 'Int(5) && Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i && 5i;\r\n^--------\r\n"],
-                ["5i || 5i;", "[Semantical error]\r\nOperation 'Int(5) || Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i || 5i;\r\n^--------\r\n"],
-                ["True && 5i;", "[Semantical error]\r\nOperation 'Bool(True) && Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nTrue && 5i;\r\n^----------\r\n"],
-                ["False || 3.14f;", "[Semantical error]\r\nOperation 'Bool(False) || Float(3.14)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nFalse || 3.14f;\r\n^--------------\r\n"],
-                ["\"text\" && \"more text\";", "[Semantical error]\r\nOperation 'String(text) && String(more text)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n\"text\" && \"more text\";\r\n^---------------------\r\n"],
-                ["\"hello\" || 10c;", "[Semantical error]\r\nOperation 'String(hello) || Char(10)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n\"hello\" || 10c;\r\n^--------------\r\n"],
-                ["Null && 1c;", "[Semantical error]\r\nOperation 'Null(Null) && Char(1)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nNull && 1c;\r\n^----------\r\n"],
-                ["Null || False;", "[Semantical error]\r\nOperation 'Null(Null) || Bool(False)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nNull || False;\r\n^-------------\r\n"],
-                ["5i && True;", "[Semantical error]\r\nOperation 'Int(5) && Bool(True)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i && True;\r\n^----------\r\n"],
-                ["5.0f || 5i;", "[Semantical error]\r\nOperation 'Float(5) || Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5.0f || 5i;\r\n^----------\r\n"],
+                ["5i && 5i;", "[Semantical error]\r\nOperation 'Int(5) && Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i && 5i;\r\n^--------"],
+                ["5i || 5i;", "[Semantical error]\r\nOperation 'Int(5) || Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i || 5i;\r\n^--------"],
+                ["True && 5i;", "[Semantical error]\r\nOperation 'Bool(True) && Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nTrue && 5i;\r\n^----------"],
+                ["False || 3.14f;", "[Semantical error]\r\nOperation 'Bool(False) || Float(3.14)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nFalse || 3.14f;\r\n^--------------"],
+                ["\"text\" && \"more text\";", "[Semantical error]\r\nOperation 'String(text) && String(more text)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n\"text\" && \"more text\";\r\n^---------------------"],
+                ["\"hello\" || 10c;", "[Semantical error]\r\nOperation 'String(hello) || Char(10)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n\"hello\" || 10c;\r\n^--------------"],
+                ["Null && 1c;", "[Semantical error]\r\nOperation 'Null(Null) && Char(1)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nNull && 1c;\r\n^----------"],
+                ["Null || False;", "[Semantical error]\r\nOperation 'Null(Null) || Bool(False)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nNull || False;\r\n^-------------"],
+                ["5i && True;", "[Semantical error]\r\nOperation 'Int(5) && Bool(True)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5i && True;\r\n^----------"],
+                ["5.0f || 5i;", "[Semantical error]\r\nOperation 'Float(5) || Int(5)' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\n5.0f || 5i;\r\n^----------"],
             ];
 
 

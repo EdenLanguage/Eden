@@ -46,14 +46,14 @@ namespace EdenTests.EvaluatorTests
                 [declaration6 + "primes.Length();", "1"],
                 [declaration7 + "primes.Length();", "0"],
 
-                [declaration6 + "primes.Length()", "[Syntactical error]\r\nParser expected 'Semicolon' token but actual token was 'RightParenthesis'.\r\nFile: 'REPL', Line: '1', Column: '38'\r\n\r\nList Int primes = (1i);primes.Length()\r\n                                     ^\r\n"],
-                [declaration6 + "primes.Length)", "[Syntactical error]\r\nParser expected 'LeftParenthesis' token but actual token was 'RightParenthesis'.\r\nFile: 'REPL', Line: '1', Column: '37'\r\n\r\nList Int primes = (1i);primes.Length)\r\n                                    ^\r\n"],
-                [declaration6 + "primes.Lenght();", "[Semantical error]\r\nThere is no definition for 'Lenght()' function!\r\nFile: 'REPL', Line: '1', Column: '31'\r\n\r\nList Int primes = (1i);primes.Lenght();\r\n                              ^--------\r\n"],
-                [declaration6 + "primes,Lenght();", "[Syntactical error]\r\nParser expected 'Semicolon' token but actual token was 'Identifier'.\r\nFile: 'REPL', Line: '1', Column: '24'\r\n\r\nList Int primes = (1i);primes,Lenght();\r\n                       ^---------------\r\n"],
-                [declaration6 + "primesLenght();", "[Runtime error]\r\nFunction 'primesLenght()' is not defined!\r\nFile: 'REPL', Line: '1', Column: '24'\r\n\r\nList Int primes = (1i);primesLenght();\r\n                       ^--------------\r\n"],
-                [declaration6 + "prime.Lenght();", "[Runtime error]\r\nVariable 'prime' is not defined!\r\nFile: 'REPL', Line: '1', Column: '24'\r\n\r\nList Int primes = (1i);prime.Lenght();\r\n                       ^--------------\r\n"],
-                [declaration6 + "primes.Lenght(1i);", "[Semantical error]\r\nThere is no definition for 'Lenght()' function with 'Int(1)' argument!\r\nFile: 'REPL', Line: '1', Column: '31'\r\n\r\nList Int primes = (1i);primes.Lenght(1i);\r\n                              ^----------\r\n"],
-                [declaration6 + "primes.Lenght(Null);", "[Semantical error]\r\nThere is no definition for 'Lenght()' function with 'Null(Null)' argument!\r\nFile: 'REPL', Line: '1', Column: '31'\r\n\r\nList Int primes = (1i);primes.Lenght(Null);\r\n                              ^------------\r\n"],
+                [declaration6 + "primes.Length()", "[Syntactical error]\r\nParser expected 'Semicolon' token but actual token was 'RightParenthesis'.\r\nFile: 'REPL', Line: '1', Column: '38'\r\n\r\nList Int primes = (1i);primes.Length()\r\n                                     ^"],
+                [declaration6 + "primes.Length)", "[Syntactical error]\r\nParser expected 'LeftParenthesis' token but actual token was 'RightParenthesis'.\r\nFile: 'REPL', Line: '1', Column: '37'\r\n\r\nList Int primes = (1i);primes.Length)\r\n                                    ^"],
+                [declaration6 + "primes.Lenght();", "[Semantical error]\r\nThere is no definition for 'Lenght()' function!\r\nFile: 'REPL', Line: '1', Column: '31'\r\n\r\nList Int primes = (1i);primes.Lenght();\r\n                              ^--------"],
+                [declaration6 + "primes,Lenght();", "[Syntactical error]\r\nParser expected 'Semicolon' token but actual token was 'Identifier'.\r\nFile: 'REPL', Line: '1', Column: '24'\r\n\r\nList Int primes = (1i);primes,Lenght();\r\n                       ^---------------"],
+                [declaration6 + "primesLenght();", "[Runtime error]\r\nFunction 'primesLenght()' is not defined!\r\nFile: 'REPL', Line: '1', Column: '24'\r\n\r\nList Int primes = (1i);primesLenght();\r\n                       ^--------------"],
+                [declaration6 + "prime.Lenght();", "[Runtime error]\r\nVariable 'prime' is not defined!\r\nFile: 'REPL', Line: '1', Column: '24'\r\n\r\nList Int primes = (1i);prime.Lenght();\r\n                       ^--------------"],
+                [declaration6 + "primes.Lenght(1i);", "[Semantical error]\r\nThere is no definition for 'Lenght()' function with 'Int(1)' argument!\r\nFile: 'REPL', Line: '1', Column: '31'\r\n\r\nList Int primes = (1i);primes.Lenght(1i);\r\n                              ^----------"],
+                [declaration6 + "primes.Lenght(Null);", "[Semantical error]\r\nThere is no definition for 'Lenght()' function with 'Null(Null)' argument!\r\nFile: 'REPL', Line: '1', Column: '31'\r\n\r\nList Int primes = (1i);primes.Lenght(Null);\r\n                              ^------------"],
             ];
 
             foreach (string[] set in dataset)
@@ -117,12 +117,12 @@ namespace EdenTests.EvaluatorTests
                 #endregion
                 
                 #region Invalid 
-                [declaration1 + "primes[];", "[Syntactical error]\r\nToken 'RightSquareBracket' was unexpected.\r\nFile: 'REPL', Line: '1', Column: '59'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[];\r\n                                                          ^-\r\n"],
-                [declaration1 + "primes[-1i];", "[Runtime error]\r\nArgument out of range! Index '-1'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[-1i];\r\n                                                         ^-----\r\n"],
-                [declaration1 + "primes[10i];", "[Runtime error]\r\nArgument out of range! Index '10'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[10i];\r\n                                                         ^-----\r\n"],
-                [declaration1 + "primes[Null];", "[Semantical error]\r\nInvalid indexer type. Allowed type is 'Int', actual 'Null'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[Null];\r\n                                                         ^------\r\n"],
-                [declaration1 + "primes[0c];", "[Semantical error]\r\nInvalid indexer type. Allowed type is 'Int', actual 'Char'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[0c];\r\n                                                         ^----\r\n"],
-                [declaration1 + "primes[\"1str\"];", "[Semantical error]\r\nInvalid indexer type. Allowed type is 'Int', actual 'String'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[\"1str\"];\r\n                                                         ^--------\r\n"],
+                [declaration1 + "primes[];", "[Syntactical error]\r\nToken 'RightSquareBracket' was unexpected.\r\nFile: 'REPL', Line: '1', Column: '59'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[];\r\n                                                          ^-"],
+                [declaration1 + "primes[-1i];", "[Runtime error]\r\nArgument out of range! Index '-1'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[-1i];\r\n                                                         ^-----"],
+                [declaration1 + "primes[10i];", "[Runtime error]\r\nArgument out of range! Index '10'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[10i];\r\n                                                         ^-----"],
+                [declaration1 + "primes[Null];", "[Semantical error]\r\nInvalid indexer type. Allowed type is 'Int', actual 'Null'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[Null];\r\n                                                         ^------"],
+                [declaration1 + "primes[0c];", "[Semantical error]\r\nInvalid indexer type. Allowed type is 'Int', actual 'Char'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[0c];\r\n                                                         ^----"],
+                [declaration1 + "primes[\"1str\"];", "[Semantical error]\r\nInvalid indexer type. Allowed type is 'Int', actual 'String'\r\nFile: 'REPL', Line: '1', Column: '58'\r\n\r\nList Int primes = [1i,2i,3i,4i,5i,6i,7i,8i,9i,10i];primes[\"1str\"];\r\n                                                         ^--------"],
                 #endregion
             ];
 
@@ -177,15 +177,16 @@ namespace EdenTests.EvaluatorTests
                 #endregion
 
                 #region Invalid 
-                [declaration1 + "primes[0i] = 4;", "[Lexical error]\r\nToken '4;' is illegal!\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = 4;\r\n                                          ^-\r\n"],
-                [declaration1 + "primes[0i] = ;", "[Syntactical error]\r\nToken 'Semicolon' was unexpected.\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = ;\r\n                                          ^\r\n"],
-                [declaration1 + "primes[0i] =", "[Syntactical error]\r\nToken 'Eof' was unexpected.\r\nFile: 'REPL', Line: '1', Column: '42'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] =\r\n                                         ^\r\n"],
-                [declaration1 + "primes[-1i] = 10i;", "[Runtime error]\r\nArgument out of range! Index '-1'\r\nFile: 'REPL', Line: '1', Column: '36'\r\n\r\nList Int primes = [1i,2i,3i];primes[-1i] = 10i;\r\n                                   ^-----------\r\n"],
-                [declaration1 + "primes[5i] = 10i;", "[Runtime error]\r\nArgument out of range! Index '5'\r\nFile: 'REPL', Line: '1', Column: '36'\r\n\r\nList Int primes = [1i,2i,3i];primes[5i] = 10i;\r\n                                   ^----------\r\n"],
-                [declaration1 + "primes[0i] = Null;", "[Semantical error]\r\nCannot assign 'Int(primes) = Null(Null)'\r\nFile: 'REPL', Line: '1', Column: '30'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = Null;\r\n                             ^-----------------\r\n"],
-                [declaration1 + "primes[0i] = True;", "[Semantical error]\r\nCannot assign 'Int(primes) = Bool(True)'\r\nFile: 'REPL', Line: '1', Column: '30'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = True;\r\n                             ^-----------------\r\n"],
-                [declaration1 + "primes[0i] = \"Test\";", "[Semantical error]\r\nCannot assign 'Int(primes) = String(\"Test\")'\r\nFile: 'REPL', Line: '1', Column: '30'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = \"Test\";\r\n                             ^-------------------\r\n"],
-                [declaration1 + "primes[0i] = 3.14f;", "[Semantical error]\r\nCollection is of type 'Int' but provided value is of type 'Float'!\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = 3.14f;\r\n                                          ^-----\r\n"],
+
+                [declaration1 + "primes[0i] = 4;", "[Lexical error]\r\nToken '4;' is illegal!\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = 4;\r\n                                          ^-"],
+                [declaration1 + "primes[0i] = ;", "[Syntactical error]\r\nToken 'Semicolon' was unexpected.\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = ;\r\n                                          ^"],
+                [declaration1 + "primes[0i] =", "[Syntactical error]\r\nToken 'Eof' was unexpected.\r\nFile: 'REPL', Line: '1', Column: '42'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] =\r\n                                         ^"],
+                [declaration1 + "primes[-1i] = 10i;", "[Runtime error]\r\nArgument out of range! Index '-1'\r\nFile: 'REPL', Line: '1', Column: '36'\r\n\r\nList Int primes = [1i,2i,3i];primes[-1i] = 10i;\r\n                                   ^-----------"],
+                [declaration1 + "primes[5i] = 10i;", "[Runtime error]\r\nArgument out of range! Index '5'\r\nFile: 'REPL', Line: '1', Column: '36'\r\n\r\nList Int primes = [1i,2i,3i];primes[5i] = 10i;\r\n                                   ^----------"],
+                [declaration1 + "primes[0i] = Null;", "[Semantical error]\r\nCannot assign 'Int(primes) = Null(Null)'\r\nFile: 'REPL', Line: '1', Column: '30'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = Null;\r\n                             ^-----------------"],
+                [declaration1 + "primes[0i] = True;", "[Semantical error]\r\nCannot assign 'Int(primes) = Bool(True)'\r\nFile: 'REPL', Line: '1', Column: '30'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = True;\r\n                             ^-----------------"],
+                [declaration1 + "primes[0i] = \"Test\";", "[Semantical error]\r\nCannot assign 'Int(primes) = String(\"Test\")'\r\nFile: 'REPL', Line: '1', Column: '30'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = \"Test\";\r\n                             ^-------------------"],
+                [declaration1 + "primes[0i] = 3.14f;", "[Semantical error]\r\nCollection is of type 'Int' but provided value is of type 'Float'!\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i];primes[0i] = 3.14f;\r\n                                          ^-----"],
                 #endregion
             ];
 
@@ -242,12 +243,12 @@ namespace EdenTests.EvaluatorTests
                 #endregion
                 
                 #region Invalid
-                [declaration1 + "primes.RemoveAt();","[Semantical error]\r\nThere is no definition for 'RemoveAt()' function!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt();\r\n                                       ^----------\r\n"],
-                [declaration1 + "primes.RemoveAt(-1i);","[Runtime error]\r\nArgument out of range! Index '-1'\r\nFile: 'REPL', Line: '1', Column: '50'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(-1i);\r\n                                                 ^---\r\n"],
-                [declaration1 + "primes.RemoveAt(4i);","[Runtime error]\r\nArgument out of range! Index '4'\r\nFile: 'REPL', Line: '1', Column: '49'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(4i);\r\n                                                ^---\r\n"],
-                [declaration1 + "primes.RemoveAt(5i);","[Runtime error]\r\nArgument out of range! Index '5'\r\nFile: 'REPL', Line: '1', Column: '49'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(5i);\r\n                                                ^---\r\n"],
-                [declaration1 + "primes.RemoveAt(Null);","[Semantical error]\r\nThere is no definition for 'RemoveAt()' function with 'Null(Null)' argument!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(Null);\r\n                                       ^--------------\r\n"],
-                [declaration1 + "primes.RemoveAt(\"1i\");","[Semantical error]\r\nThere is no definition for 'RemoveAt()' function with 'String(1i)' argument!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(\"1i\");\r\n                                       ^--------------\r\n"],
+                [declaration1 + "primes.RemoveAt();","[Semantical error]\r\nThere is no definition for 'RemoveAt()' function!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt();\r\n                                       ^----------"],
+                [declaration1 + "primes.RemoveAt(-1i);","[Runtime error]\r\nArgument out of range! Index '-1'\r\nFile: 'REPL', Line: '1', Column: '50'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(-1i);\r\n                                                 ^---"],
+                [declaration1 + "primes.RemoveAt(4i);","[Runtime error]\r\nArgument out of range! Index '4'\r\nFile: 'REPL', Line: '1', Column: '49'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(4i);\r\n                                                ^---"],
+                [declaration1 + "primes.RemoveAt(5i);","[Runtime error]\r\nArgument out of range! Index '5'\r\nFile: 'REPL', Line: '1', Column: '49'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(5i);\r\n                                                ^---"],
+                [declaration1 + "primes.RemoveAt(Null);","[Semantical error]\r\nThere is no definition for 'RemoveAt()' function with 'Null(Null)' argument!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(Null);\r\n                                       ^--------------"],
+                [declaration1 + "primes.RemoveAt(\"1i\");","[Semantical error]\r\nThere is no definition for 'RemoveAt()' function with 'String(1i)' argument!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.RemoveAt(\"1i\");\r\n                                       ^--------------"],
                 #endregion
             ];
 
@@ -298,10 +299,10 @@ namespace EdenTests.EvaluatorTests
                 #endregion
                 
                 #region Invalid
-                ["primes.Clear();","[Runtime error]\r\nVariable 'primes' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nprimes.Clear();\r\n^--------------\r\n"],
-                [declaration1 + "primes.Clear(1i, 1i);","[Semantical error]\r\nThere is no definition for 'Clear()' function with 'Int(1), Int(1)' arguments!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Clear(1i, 1i);\r\n                                       ^-------------\r\n"],
-                [declaration1 + "primes.Claer();","[Semantical error]\r\nThere is no definition for 'Claer()' function!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Claer();\r\n                                       ^-------\r\n"],
-                [declaration1 + "primess.Clear();","[Runtime error]\r\nVariable 'primess' is not defined!\r\nFile: 'REPL', Line: '1', Column: '33'\r\n\r\nList Int primes = [1i,2i,3i,4i];primess.Clear();\r\n                                ^---------------\r\n"],
+                ["primes.Clear();","[Runtime error]\r\nVariable 'primes' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nprimes.Clear();\r\n^--------------"],
+                [declaration1 + "primes.Clear(1i, 1i);","[Semantical error]\r\nThere is no definition for 'Clear()' function with 'Int(1), Int(1)' arguments!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Clear(1i, 1i);\r\n                                       ^-------------"],
+                [declaration1 + "primes.Claer();","[Semantical error]\r\nThere is no definition for 'Claer()' function!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Claer();\r\n                                       ^-------"],
+                [declaration1 + "primess.Clear();","[Runtime error]\r\nVariable 'primess' is not defined!\r\nFile: 'REPL', Line: '1', Column: '33'\r\n\r\nList Int primes = [1i,2i,3i,4i];primess.Clear();\r\n                                ^---------------"],
                 #endregion
             ];
 
@@ -348,11 +349,11 @@ namespace EdenTests.EvaluatorTests
             string[][] dataset =
             [
                 #region General calls
-                [declaration1 + "primes.Add;","[Syntactical error]\r\nParser expected 'LeftParenthesis' token but actual token was 'Semicolon'.\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add;\r\n                                          ^\r\n"],
-                [declaration1 + "primes.Add(1i,2i);","[Semantical error]\r\nThere is no definition for 'Add()' function with 'Int(1), Int(2)' arguments!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add(1i,2i);\r\n                                       ^----------\r\n"],
-                [declaration1 + "primes.Add(a,b);","[Runtime error]\r\nVariable 'a' is not defined!\r\nFile: 'REPL', Line: '1', Column: '44'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add(a,b);\r\n                                           ^----\r\n"],
-                [declaration1 + "primes.Add();","[Semantical error]\r\nThere is no definition for 'Add()' function!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add();\r\n                                       ^-----\r\n"],
-                ["primes.Add();","[Runtime error]\r\nVariable 'primes' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nprimes.Add();\r\n^------------\r\n"],
+                [declaration1 + "primes.Add;","[Syntactical error]\r\nParser expected 'LeftParenthesis' token but actual token was 'Semicolon'.\r\nFile: 'REPL', Line: '1', Column: '43'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add;\r\n                                          ^"],
+                [declaration1 + "primes.Add(1i,2i);","[Semantical error]\r\nThere is no definition for 'Add()' function with 'Int(1), Int(2)' arguments!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add(1i,2i);\r\n                                       ^----------"],
+                [declaration1 + "primes.Add(a,b);","[Runtime error]\r\nVariable 'a' is not defined!\r\nFile: 'REPL', Line: '1', Column: '44'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add(a,b);\r\n                                           ^----"],
+                [declaration1 + "primes.Add();","[Semantical error]\r\nThere is no definition for 'Add()' function!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Int primes = [1i,2i,3i,4i];primes.Add();\r\n                                       ^-----"],
+                ["primes.Add();","[Runtime error]\r\nVariable 'primes' is not defined!\r\nFile: 'REPL', Line: '1', Column: '1'\r\n\r\nprimes.Add();\r\n^------------"],
                 #endregion
 
                 #region Declaration 1/2 - Collection of 'Int'
@@ -373,7 +374,7 @@ namespace EdenTests.EvaluatorTests
 
                 #region Declaration 3 - Collection of 'Float'
                 [declaration3 + "primes.Length();", "1"],
-                [declaration3 + "primes.Add(5i);", "[Semantical error]\r\nCollection is of type 'Float' but provided value is of type 'Int'!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Float primes = [10.0f];primes.Add(5i);\r\n                                       ^---\r\n"],
+                [declaration3 + "primes.Add(5i);", "[Semantical error]\r\nCollection is of type 'Float' but provided value is of type 'Int'!\r\nFile: 'REPL', Line: '1', Column: '40'\r\n\r\nList Float primes = [10.0f];primes.Add(5i);\r\n                                       ^---"],
                 #endregion
 
                 #region Declaration 4 - Collection of 'String'

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EdenRuntime": {
+      "commandName": "Project",
+      "commandLineArgs": "main.eden"
+    }
+  }
+}
