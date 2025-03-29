@@ -49,7 +49,7 @@
                 bool fileExists = File.Exists(path);
                 if(fileExists == true)
                 {
-                Console.WriteLine(path);
+                //Console.WriteLine(path);
                     fileError = false;
 
                     if (Parameters.Contains("--generate-ast"))
