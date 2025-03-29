@@ -1,1 +1,2 @@
-Allows to break outside of the [[Loops]]. After `Quit` keyword is used, interpreter will exit **Current evaluated [[Loops]]**. There is also keyword like [[Skip]] that provides skipping functionality.
+Allows exiting from [[Loops]]. When the `Quit` keyword is used, the interpreter exits the **currently evaluated [[Loops]]**.
+Additionally, the [[Skip]] keyword provides skipping functionality.

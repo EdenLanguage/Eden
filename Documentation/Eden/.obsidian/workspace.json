@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "ccec4302c2ae9e0b",
+        "id": "a077c5d549d704b4",
         "type": "tabs",
         "children": [
           {
-            "id": "cdbaef709ffa8fe1",
+            "id": "bbeb5c69953a45b3",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Implementation/Abstract Syntax Tree/Statements.md",
+                "file": "Language specification/Whitepaper/Whitepaper.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Statements"
+              "title": "Whitepaper"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Implementation/Abstract Syntax Tree/Statements.md",
+                "file": "Language specification/Whitepaper/Whitepaper.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Statements"
+              "title": "Backlinks for Whitepaper"
             }
           },
           {
@@ -168,43 +168,43 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "cdbaef709ffa8fe1",
+  "active": "bbeb5c69953a45b3",
   "lastOpenFiles": [
-    "Implementation/Abstract Syntax Tree/AST - Abstract Syntax Tree.md",
-    "Language specification/Declarations/Block.md",
-    "Language specification/Functions/Build-in functions.md",
-    "Language specification/Declarations/Scope.md",
-    "Language specification/Variables/List.md",
     "Language specification/Execution file structure.md",
     "Language specification/Whitepaper/Whitepaper.md",
+    "Language specification/Operators/Operators.md",
     "Language specification/Whitepaper/Language specification.md",
-    "Language specification/Variables/Variables.md",
-    "Language specification/Variables/Variable.md",
-    "Language specification/Variables/Int.md",
-    "Language specification/Variables/Char.md",
-    "Language specification/Types/Type indicator.md",
-    "Language specification/Loops/Skip.md",
-    "Language specification/Loops/Quit.md",
-    "Language specification/Loops/Loops.md",
-    "Implementation/Parser/Errors.md",
+    "Language specification/Return/Return statements.md",
+    "Language specification/Return/Expression.md",
+    "Language specification/Types/List.md",
+    "Language specification/Types/None.md",
+    "Language specification/Types/Types.md",
     "Implementation/Parser/Pratt Parser.md",
     "Implementation/Parser/Parser.md",
+    "Implementation/Parser/Errors.md",
+    "Language specification/Functions/Function Definition.md",
     "Implementation/Lexer/Lexer.md",
     "Implementation/Errors/Error printing.md",
+    "Implementation/Abstract Syntax Tree/AST - Abstract Syntax Tree.md",
     "Implementation/Abstract Syntax Tree/Statements.md",
     "Implementation/Description.md",
-    "Implementation/Parser/TODO.md",
-    "Implementation/Lexer/TODO.md",
-    "Implementation/TODO.md",
+    "Language specification/Functions/Build-in functions.md",
+    "Language specification/Declarations/Scope.md",
+    "Language specification/Declarations/Block.md",
+    "Language specification/Conditionals/If.md",
+    "Language specification/Comments/Comments.md",
+    "Language specification/Loops/Skip.md",
+    "Language specification/Loops/Sisyphus.md",
+    "Language specification/Loops/Quit.md",
+    "Language specification/Operators",
+    "Language specification/Comments",
+    "Language specification/Return",
+    "Language specification/Conditionals",
     "Implementation/Errors",
     "Language specification/Declarations",
     "Excalidraw",
     "Language specification/Whitepaper",
     "Language specification/Functions",
-    "Language specification/Types",
-    "Language specification/Variables",
-    "Language specification/Loops",
-    "Language specification",
-    "Releases"
+    "Language specification/Types"
   ]
 }

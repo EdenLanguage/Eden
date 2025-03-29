@@ -1,11 +1,11 @@
-Eden provides set of build-in functions:
-- [[Length()]]
-- [[Inc()]]
-- [[Print()]]
-- [[PrintLine()]]
-- [[Min()]]
-- [[Max()]]
-- [[SinusR()]]
-- [[SinusD()]]
-- [[CosinusR()]]
-- [[CosinusD()]]
+Eden provides a set of built-in functions:
+- `Length()` – Returns the length of a collection (e.g., `String`, `List`).
+- `Inc()` – Returns a value incremented by one.
+- `Print()` – Prints a value to the console.
+- `PrintLine()` – Prints a value to the console followed by a newline.
+- `Min()` – Returns the minimum value in a collection.
+- `Max()` – Returns the maximum value in a collection.
+- `SinusR()` – Returns the sine of a given angle, with the argument provided in radians.
+- `SinusD()` – Returns the sine of a given angle, with the argument provided in degrees.
+- `CosinusR()` – Returns the cosine of a given angle, with the argument provided in radians.
+- `CosinusD()` – Returns the cosine of a given angle, with the argument provided in degrees.

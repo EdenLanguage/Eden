@@ -1,0 +1,13 @@
+Eden provides several operators:
+- `==` (equal) – Returns a [[Bool]] value based on argument comparison.
+- `!=` (not equal)
+- `<=` (less than or equal to)
+- `>=` (greater than or equal to)
+- `<` (less than)
+- `>` (greater than)
+- `%` (modulo) – Returns the remainder of a division operation.
+- `&&` (logical AND)
+- `||` (logical OR)
+- `?` - Question -  Returns True if expression is default value. Example: `?5 == False` because default value for Int is `0`.
+- `!` - Negation - Negates expression. Example: `!5 == -5`.
+- `~` - Reverse - Flips bits of expression: Example: `!True == False`. For now only [[Int]] type is implemented, and in that case result would be `~10 == -11` because of two's complement. But in future other types like [[UInt]] will be added and in that case `~10 == 4294967285`. It is important to point out that [[Int]] is 32-bit.

@@ -1,2 +1,0 @@
-One of the [[Variables]]. When parsing literals from code [[Lexer]] is looking for [[Type indicator]]. For `Float` it is `f` on the end of the literal value. `Float` declaration should look like this:
-```Var Float variable = 3.14f; ```
