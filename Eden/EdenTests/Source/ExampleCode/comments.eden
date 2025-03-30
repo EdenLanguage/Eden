@@ -1,0 +1,18 @@
+// This is ordinary comment
+Var Int counter = 0i;
+Var Int /* asdasdasd asd
+dfgdfgdfg
+fghfghfghfghfghfghfghfghfghfghfgh*/ counter = 0i
+Var Int pajacyk = /* asdasdasd */ 0i;
+/* This is comment block */
+
+/*  And
+    This
+    Is
+    */
+    Return;
+    /*
+    Comment
+    Block
+    */
+    Return;

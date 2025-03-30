@@ -157,10 +157,15 @@ namespace EdenClasslibrary.Types
                 case '/':
                     switch (nextCharacter)
                     {
+                        case '*':
+                            //  Block comment detected.
+                            nextToken = CreateNewToken(TokenType.Comment, "/*");
+                            EatBlockComment();
+                            break;
                         case '/':
-                            //  Comment detected.
+                            //  Line comment detected.
                             nextToken = CreateNewToken(TokenType.Comment, "//");
-                            EatComment();
+                            EatLineComment();
                             break;
                         default:
                             nextToken = CreateNewToken(TokenType.Slash);
@@ -363,16 +368,27 @@ namespace EdenClasslibrary.Types
             return tokens.ToArray();
         }
 
-        private void EatComment()
+        private void EatLineComment()
         {
             NextCharacter();
             NextCharacter();
-            while (!IsNewLine() && !(ReadCurrentCharacter() == '/' && PeekNextCharacter() == '/') /*&& !(PeekNextCharacter() == '\0')*/)
+            while (!IsNewLine())
             {
                 NextCharacter();
                 if (ReadCurrentCharacter() == '\0') break;
             }
-            if (ReadCurrentCharacter() == '/' && PeekNextCharacter() == '/')
+        }
+
+        private void EatBlockComment()
+        {
+            NextCharacter();
+            NextCharacter();
+            while (!IsNewLine() && !(ReadCurrentCharacter() == '*' && PeekNextCharacter() == '/') /*&& !(PeekNextCharacter() == '\0')*/)
+            {
+                NextCharacter();
+                if (ReadCurrentCharacter() == '\0') break;
+            }
+            if (ReadCurrentCharacter() == '*' && PeekNextCharacter() == '/')
             {
                 NextCharacter();
                 NextCharacter();

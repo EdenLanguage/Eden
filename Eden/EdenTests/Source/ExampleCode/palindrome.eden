@@ -25,12 +25,21 @@ Function Bool IsPalindrome(Var String input){
 
 If(IsPalindrome("ala") == False){
 	Return "Failed: IsPalindrome(ala)";
+}
+Else{
+	PrintLine("ala is palindrome");
 };
 
 If(IsPalindrome("abraca") == True){
 	Return "Failed: IsPalindrome(abraca)";
+}
+Else{
+	PrintLine("abraca is not palindrome");
 };
 
 If(IsPalindrome("lala") == True){
 	Return "Failed: IsPalindrome(lala)";
+}
+Else{
+	PrintLine("lala is not palindrome");
 };
