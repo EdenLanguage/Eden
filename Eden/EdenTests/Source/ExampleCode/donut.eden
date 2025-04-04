@@ -1,0 +1,47 @@
+Var Int Scale = 1i;
+Var Int Width = 8i;
+Var Int Height = 4i;
+Var Int Size = 32i;
+
+Var Float A = 0f;
+Var Float B = 0f;
+
+List Char buffer = (32i);
+List Float zbuffer = (32i);
+
+Var Int Ro = 3i;
+Var Int Roo = 1i;
+Var Int Ko = 4i;
+Var Int Koo = Width * Ko * 3i / (8i * (Ro + Roo));
+
+Function Int FillBuffer(Var Char symbol){
+    Loop(Var Int i = 0i; i < Size; i = i + 1i){
+        buffer[i] = symbol;
+    };
+};
+
+Function Int ClearBuffer(){
+    FillBuffer(' ');
+};
+
+Function Int PrintBuffer(){
+    Print("\x1b[H");
+    Var Int counter = 0i;
+    Var String tmp = "";
+    Loop(Var Int i = 0i; i < Size; i = i + 1i){
+        If(counter != 0i && counter % Width == 0i){
+            PrintLine(tmp);
+        }
+        Else{
+            tmp = tmp + buffer[i];
+            counter = counter + 1i;
+        };
+    };
+};
+
+Sisyphus{
+    PrintBuffer();
+    FillBuffer('a');
+    PrintBuffer();
+    ClearBuffer();
+};

@@ -659,7 +659,21 @@ namespace EdenClasslibrary.Types
                     IndexExpression ind = binExp.Left as IndexExpression;
 
                     string varName = (ind.Object as IdentifierExpression).Name;
-                    int index = (ind.Index as IntExpression).Value;
+
+                    int index = 0;
+                    if(ind.Index is IntExpression asInt)
+                    {
+                        index = asInt.Value;
+                    }
+                    else
+                    {
+                        IObject iterator = env.GetVariable(ind.Index.NodeToken, ind.Index.NodeToken.LiteralValue);
+
+                        if(iterator is not IntObject)
+                        {
+                            throw new Exception($"Indexing for '{ind.Index}' is not implemented!");
+                        }
+                    }
 
                     env.UpdateVariable(varName, index, result);
                 }
