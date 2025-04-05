@@ -62,10 +62,21 @@ namespace EdenTests.Utility
         }
 
         #region Parser
+        public static string GetLiteralsSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "Literals"]);
+        }
+        
+        public static string GetLiteralsSourceFile(string name)
+        {
+            return Path.Combine(GetLiteralsSourceDir(), name);
+        }
+
         public static string GetParserSourceDir()
         {
             return Path.Combine([GetTestFilesDirectory(), "Parser"]);
         }
+
         public static string GetParserSourceFile(string name)
         {
             return Path.Combine(GetParserSourceDir(), name);

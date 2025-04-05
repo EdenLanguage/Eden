@@ -146,6 +146,19 @@ namespace EdenClasslibrary.Types
                             break;
                     }
                     break;
+                case '#':
+                    switch (char.IsLetter(nextCharacter))
+                    {
+                        case true:
+                            string literal = ReadInputLiteral();
+                            nextToken = CreateNewToken(TokenType.LiteralIdentifier, literal);
+                            NextCharacter();
+                            break;
+                        default:
+                            nextToken = CreateNewToken(TokenType.Illegal);
+                            break;
+                    }
+                    break;
                 case ',': nextToken = CreateNewToken(TokenType.Comma); break;
                 case '.': nextToken = CreateNewToken(TokenType.Dot); break;
                 case '%': nextToken = CreateNewToken(TokenType.Modulo); break;

@@ -1,5 +1,5 @@
-﻿using EdenClasslibrary.Utility;
-using System.Text;
+﻿using System.Text;
+using EdenClasslibrary.Utility;
 
 namespace EdenClasslibrary.Types.AbstractSyntaxTree.Expressions
 {
@@ -7,6 +7,11 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Expressions
     {
         public VariableTypeExpression Type { get; set; }
         public List<Expression> Arguments { get; set; }
+
+        /// <summary>
+        /// Accepts either a Literal value or a Literal statement during the parsing stage and evaluates it afterward.
+        /// </summary>
+        public Expression SizeExpression { get; set; }
         public int Capacity
         {
             get
@@ -22,11 +27,6 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree.Expressions
         public void AddArgument(Expression expression)
         {
             Arguments.Add(expression);
-        }
-
-        public void SetCapacity(int size)
-        {
-            Arguments = new List<Expression>(size);
         }
 
         public override string ToString()

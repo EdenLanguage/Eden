@@ -1,0 +1,8 @@
+Literal 3.14f As #ConstFloat;
+Literal 10i As #ConstInt;
+Literal 10c As #CountChar;
+Literal "name" As #ConstString;
+Literal True As #ConstBool;
+
+//  This is illegal because 'clown' is not defined Literal
+Literal 10i + 20i * clown As #NewConst;

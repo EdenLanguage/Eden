@@ -1,0 +1,3 @@
+Literal 10i As #Count;
+Literal 3.14f As #Pi;
+Literal #Count * #Pi As #PiTimes;
