@@ -42,7 +42,6 @@
   <ItemGroup>
     <Folder Include="Source\Loops\Invalid\" />
     <Folder Include="Source\Lexer\" />
-    <Folder Include="Source\Evaluator\" />
     <Folder Include="Source\Errors\" />
   </ItemGroup>
 

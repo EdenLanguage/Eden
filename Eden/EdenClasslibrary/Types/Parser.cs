@@ -337,10 +337,19 @@ namespace EdenClasslibrary.Types
             arguments.Type = variableTypeExp;
             LoadNextToken();
 
-            ish = ValidateTokenForExpression(TokenType.Int);
+            ish = ValidateTokenForExpression([TokenType.Int, TokenType.Identifier]);
             if (ish is InvalidExpression) return ish;
             Expression expression = ParseExpression(Precedence.Lowest);
-            if(expression is not IntExpression)
+            int size = 0;
+            if(expression is IntExpression asIntExp)
+            {
+                size = asIntExp.Value;
+            }
+            else if (expression is IdentifierExpression asIndExp)
+            {
+                
+            }
+            else
             {
                 return InvalidExpression.Create(CurrentToken, ErrorSyntacticalUnexpectedToken.Create(TokenType.Int, CurrentToken, _lexer.GetLine(CurrentToken)));
             }
@@ -834,6 +843,15 @@ namespace EdenClasslibrary.Types
             if (CurrentToken.Keyword != expected)
             {
                 return InvalidExpression.Create(CurrentToken, ErrorSyntacticalUnexpectedToken.Create(expected, CurrentToken, _lexer.GetLine(CurrentToken)));
+            }
+            return ValidTokenExpression.Create(CurrentToken);
+        }
+
+        private Expression ValidateTokenForExpression(params TokenType[] expected)
+        {
+            if (!expected.Contains(CurrentToken.Keyword))
+            {
+                return InvalidExpression.Create(CurrentToken, ErrorSyntacticalUnexpectedTokens.Create(expected, CurrentToken, _lexer.GetLine(CurrentToken)));
             }
             return ValidTokenExpression.Create(CurrentToken);
         }

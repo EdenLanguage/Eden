@@ -39,9 +39,9 @@ Function Int PrintBuffer(){
     };
 };
 
-Sisyphus{
-    PrintBuffer();
-    FillBuffer('a');
-    PrintBuffer();
-    ClearBuffer();
-};
+//Sisyphus{
+    //PrintBuffer();
+    //FillBuffer('a');
+    //PrintBuffer();
+    //ClearBuffer();
+//};

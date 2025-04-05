@@ -214,10 +214,11 @@ namespace EdenClasslibrary.Types
         private IObject EvaluateBlockStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)
         {
             BlockStatement block = root as BlockStatement;
-
-            IObject result = null;
-
-            foreach (Statement statement in block.Statements)
+            IObject result = NoneObject.Create(block.NodeToken);
+            
+            Statement[] blockStatements = block.Statements;
+            
+            foreach (Statement statement in blockStatements)
             {
                 result = EvaluateStatement(statement, env);
 
@@ -316,7 +317,13 @@ namespace EdenClasslibrary.Types
                 return asError;
             }
 
-            return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+            IObject definedVariable = env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+            if(definedVariable is ErrorObject varDefError)
+            {
+                return varDefError;
+            }
+
+            return NoneObject.Create(list.NodeToken);
         }
 
         private IObject EvaluateQuitStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)
@@ -723,11 +730,6 @@ namespace EdenClasslibrary.Types
                 for (int i = 0; i < listArgs.Capacity; i++)
                 {
                     IObject value = ObjectFactory.Create(listArgs.NodeToken, listArgs.Type.Type);
-
-                    if (value.Type != listArgs.Type.Type)
-                    {
-                        return ErrorSemanticalCollectionArgTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type, listArgs.NodeToken, _parser.Lexer.GetLine(listArgs.NodeToken));
-                    }
 
                     argsValues.Add(value);
                 }
