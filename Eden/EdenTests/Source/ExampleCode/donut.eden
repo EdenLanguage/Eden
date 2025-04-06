@@ -1,21 +1,21 @@
-Var Int Scale = 1i;
-Var Int Width = 8i;
-Var Int Height = 4i;
-Var Int Size = 32i;
+Literal 1i As #SCALE;
+Literal 8i As #WIDTH;
+Literal 4i As #HEIGHT;
+Literal #WIDTH * #HEIGHT As #SIZE;
 
 Var Float A = 0f;
 Var Float B = 0f;
 
-List Char buffer = (32i);
-List Float zbuffer = (32i);
+List Char buffer = (#SIZE);
+List Float zbuffer = (#SIZE);
 
 Var Int Ro = 3i;
 Var Int Roo = 1i;
 Var Int Ko = 4i;
-Var Int Koo = Width * Ko * 3i / (8i * (Ro + Roo));
+Var Int Koo = #WIDTH * Ko * 3i / (8i * (Ro + Roo));
 
 Function Int FillBuffer(Var Char symbol){
-    Loop(Var Int i = 0i; i < Size; i = i + 1i){
+    Loop(Var Int i = 0i; i < #SIZE; i = i + 1i){
         buffer[i] = symbol;
     };
 };
@@ -25,23 +25,27 @@ Function Int ClearBuffer(){
 };
 
 Function Int PrintBuffer(){
-    Print("\x1b[H");
-    Var Int counter = 0i;
+    PrintLine("\x1b[H"); // Move cursor to top-left
+    
     Var String tmp = "";
-    Loop(Var Int i = 0i; i < Size; i = i + 1i){
-        If(counter != 0i && counter % Width == 0i){
+    
+    Loop (Var Int i = 0i; i < #SIZE; i = i + 1i) {
+        If (i != 0i && i % #WIDTH == 0i) {
             PrintLine(tmp);
-        }
-        Else{
-            tmp = tmp + buffer[i];
-            counter = counter + 1i;
+            tmp = "";
         };
+        
+        tmp = tmp + buffer[i];
+    };
+    
+    If (tmp != "") {
+        PrintLine(tmp);
     };
 };
 
-//Sisyphus{
-    //PrintBuffer();
-    //FillBuffer('a');
-    //PrintBuffer();
-    //ClearBuffer();
-//};
+// Sisyphus{
+//     FillBuffer('a');
+//     PrintBuffer();
+//     ClearBuffer();
+//     PrintBuffer();
+// };

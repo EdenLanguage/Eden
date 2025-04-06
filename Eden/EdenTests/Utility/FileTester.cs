@@ -72,6 +72,16 @@ namespace EdenTests.Utility
             return Path.Combine(GetLiteralsSourceDir(), name);
         }
 
+        public static string GetConsoleSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "Console"]);
+        }
+
+        public static string GetConsoleSourceFile(string name)
+        {
+            return Path.Combine(GetConsoleSourceDir(), name);
+        }
+
         public static string GetParserSourceDir()
         {
             return Path.Combine([GetTestFilesDirectory(), "Parser"]);

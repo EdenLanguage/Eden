@@ -1,0 +1,8 @@
+Literal 20i As #SIZE;
+
+Loop (Var Int i = 0i; i < #SIZE; i = i + 1i) {
+    //  Calling either of these functions in Debug mode of VisualStudio will result in exception.
+    //ConsoleClear();
+    //ConsoleGoHome();
+    Print("Hello Eden!");
+};
