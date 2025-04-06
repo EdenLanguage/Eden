@@ -31,7 +31,7 @@ namespace EdenClasslibrary.Types
                 _variables.Add(name, variable);
                 return variable.Variable;
             }
-            return ErrorRuntimeVarUndef.CreateErrorObject(name, variable.Variable.Token, _parser.Lexer.GetLine(variable.Variable.Token));
+            return ErrorRuntimeVarAlreadyDefined.CreateErrorObject(name, variable.Variable.Token, _parser.Lexer.GetLine(variable.Variable.Token));
         }
 
         /// <summary>

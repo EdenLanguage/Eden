@@ -1,4 +1,5 @@
-﻿namespace EdenTests.Source.ExampleCode
+/*
+namespace EdenTests.Source.ExampleCode
 {
     class Donut
     {
@@ -69,3 +70,4 @@
         }
     }
 }
+*/

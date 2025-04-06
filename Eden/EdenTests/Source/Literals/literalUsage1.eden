@@ -1,0 +1,5 @@
+Literal 10i As #SizeOne;
+Literal 20i As #SizeTwo;
+Literal #SizeOne + #SizeTwo As #SizeThree;
+
+List Int primes = (#SizeThree);

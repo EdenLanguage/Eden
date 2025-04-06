@@ -1,0 +1,5 @@
+Literal 10i As #Ten;
+Literal 3.14f As #Pi;
+Literal #Ten + #Pi As #TenPi;
+
+Var Float tp = #TenPi;

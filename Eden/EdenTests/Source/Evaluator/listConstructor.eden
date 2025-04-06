@@ -1,0 +1,14 @@
+﻿Literal 200i As #SIZE;
+
+List Int primesa = (#SIZE);
+List Float primesb = (#SIZE);
+List String primesc = (#SIZE);
+List Char primesd = (#SIZE);
+
+List Int primese = (200i);
+List Int primesf = (200i);
+List Int primesg = (200i);
+List Int primesh = (200i);
+List Char primesi = (200i);
+List String primesj = (200i);
+List Float primesk = (200i);

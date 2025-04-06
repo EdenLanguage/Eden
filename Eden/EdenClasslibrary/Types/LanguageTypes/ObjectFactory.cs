@@ -19,6 +19,9 @@
                 case "StringObject":
                     result = StringObject.Create(token, "");
                     break;
+                case "CharObject":
+                    result = CharObject.Create(token, (char)0);
+                    break;
                 default:
                     result = NullObject.Create(token);
                     break;

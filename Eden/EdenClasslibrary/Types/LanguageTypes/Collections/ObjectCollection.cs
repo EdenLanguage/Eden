@@ -26,13 +26,7 @@ namespace EdenClasslibrary.Types.LanguageTypes.Collections
             }
         }
 
-        public Token Token
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public Token Token { get; set; }
 
         public IObject this[int index] 
         {
@@ -46,15 +40,16 @@ namespace EdenClasslibrary.Types.LanguageTypes.Collections
             }
         }
 
-        private ObjectCollection(Type type, params IObject[] items)
+        private ObjectCollection(Token token, Type type, params IObject[] items)
         {
+            Token = token;
             Type = type;
             Collection = new List<IObject>(items);
         }
 
-        public static IObject Create(Type type, params IObject[] items)
+        public static IObject Create(Token token, Type type, params IObject[] items)
         {
-            return new ObjectCollection(type, items);
+            return new ObjectCollection(token, type, items);
         }
 
         public string AsString()
