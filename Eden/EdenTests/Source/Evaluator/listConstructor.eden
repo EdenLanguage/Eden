@@ -1,13 +1,14 @@
-﻿// Var Int size = 200i;
-// List Int primesg = (size);
-// List Float primesg = (size);
-// List String primesg = (size);
-// List Char primesg = (size);
+﻿Literal 200i As #SIZE;
 
-// List Int primesa = (200i);
-// List Int primesb = (200i);
-// List Int primesc = (200i);
-// List Int primescc = (200i);
-// List Char primesd = (200i);
-// List String primese = (200i);
-// List Float primesf = (200i);
+List Int primesa = (#SIZE);
+List Float primesb = (#SIZE);
+List String primesc = (#SIZE);
+List Char primesd = (#SIZE);
+
+List Int primese = (200i);
+List Int primesf = (200i);
+List Int primesg = (200i);
+List Int primesh = (200i);
+List Char primesi = (200i);
+List String primesj = (200i);
+List Float primesk = (200i);

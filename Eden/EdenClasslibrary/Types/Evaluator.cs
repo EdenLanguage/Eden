@@ -751,7 +751,7 @@ namespace EdenClasslibrary.Types
                 }
             }
 
-            return ObjectCollection.Create(listArgs.Type.Type, argsValues.ToArray());
+            return ObjectCollection.Create(listArgs.NodeToken, listArgs.Type.Type, argsValues.ToArray());
         }
 
         private IObject EvaluateIndexExpression(AbstractSyntaxTreeNode root, ParsingEnvironment env)
