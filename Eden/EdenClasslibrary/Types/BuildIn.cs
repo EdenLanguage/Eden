@@ -3,7 +3,6 @@ using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
-using System.Linq.Expressions;
 using System.Text;
 
 namespace EdenClasslibrary.Types
