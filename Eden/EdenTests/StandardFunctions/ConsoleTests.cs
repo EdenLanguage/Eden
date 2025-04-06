@@ -1,21 +1,21 @@
-﻿using EdenClasslibrary.Types.LanguageTypes;
+﻿using EdenTests.Utility;
 using EdenClasslibrary.Types;
-using EdenTests.Utility;
+using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 
-namespace EdenTests.ExampleCodeTests
+namespace EdenTests.StandardFunctions
 {
-    public class SpiningDonut : FileTester
+    public class ConsoleTests : FileTester
     {
+        string[][] DataSet =
+        [
+            [GetConsoleSourceFile("console1.eden"),"None"],
+        ];
+
         [Fact]
         public void Evaluate()
         {
-            string[][] data =
-            [
-                [GetExampleCodeSourcePath("donut.eden"),"None"],
-            ];
-
-            foreach (string[] test in data)
+            foreach (string[] test in DataSet)
             {
                 string input = test[0];
                 string expected = test[1];
@@ -36,12 +36,7 @@ namespace EdenTests.ExampleCodeTests
         [Fact]
         public void Parse()
         {
-            string[][] data =
-            [
-                [GetExampleCodeSourcePath("donut.eden"),"None"],
-            ];
-
-            foreach (string[] test in data)
+            foreach (string[] test in DataSet)
             {
                 string input = test[0];
                 string expected = test[1];

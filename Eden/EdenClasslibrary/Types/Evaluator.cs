@@ -678,7 +678,11 @@ namespace EdenClasslibrary.Types
                     {
                         IObject iterator = env.GetVariable(ind.Index.NodeToken, ind.Index.NodeToken.LiteralValue);
 
-                        if(iterator is not IntObject)
+                        if(iterator is IntObject IteratorAsInt)
+                        {
+                            index = IteratorAsInt.Value;
+                        }
+                        else
                         {
                             throw new Exception($"Indexing for '{ind.Index}' is not implemented!");
                         }

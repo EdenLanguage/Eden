@@ -43,6 +43,7 @@
     <Folder Include="Source\Loops\Invalid\" />
     <Folder Include="Source\Lexer\" />
     <Folder Include="Source\Errors\" />
+    <Folder Include="Source\Console\" />
   </ItemGroup>
 
 </Project>
