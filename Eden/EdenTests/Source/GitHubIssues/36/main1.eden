@@ -1,0 +1,3 @@
+Loop(Var Int i = 0i; i < 100i; i = i + 1i){
+    PrintLine(i);
+};
