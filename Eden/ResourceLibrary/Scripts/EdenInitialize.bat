@@ -1,36 +1,106 @@
 @echo off
+cd /d "%~dp0"
 
-:: DEFINE INSTALATION FOLDER!!!!!!!!
-set "EdenPath=E:\Repositories\Eden\Eden\EdenRuntime\bin\Debug\net8.0"
-set "EdenExe=%EdenPath%\Eden.exe"
-set "IconPath=E:\Repositories\Eden\Eden\EdenRuntime\Logo.ico"
-
-:: Ensure the Eden directory exists
-if not exist "%EdenPath%" (
-    echo Error: The directory %EdenPath% does not exist.
-    exit /b
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+	echo Script is not running with Admin rights!
+    goto :eof
 )
 
-:: Add Eden interpreter to the system PATH (if not already added)
-for /f "tokens=*" %%P in ('powershell -command "[System.Environment]::GetEnvironmentVariable('Path', 'Machine')"') do set CURRENT_PATH=%%P
-echo %CURRENT_PATH% | findstr /I /C:"%EdenPath%" >nul
-if errorlevel 1 (
-    setx PATH "%CURRENT_PATH%;%EdenPath%" /M
-    echo Eden added to PATH.
-) else (
-    echo Eden is already in PATH.
+:: Directory location.
+set "EdenRuntimeDirectory=%~dp0"
+set "RuntimePath=%EdenRuntimeDirectory%Eden.exe"
+set "IconPath=%EdenRuntimeDirectory%Logo.ico"
+
+IF NOT EXIST "%RuntimePath%" (
+    echo ERROR: Runtime file not found at "%RuntimePath%"
+    goto :eof
 )
 
-:: Set the file association
-reg add "HKEY_CLASSES_ROOT\.eden" /ve /t REG_SZ /d "EdenFile" /f
-reg add "HKEY_CLASSES_ROOT\EdenFile" /ve /t REG_SZ /d "Eden Script" /f
-reg add "HKEY_CLASSES_ROOT\EdenFile\shell\open\command" /ve /d "E:\Repositories\Eden\Eden\EdenRuntime\bin\Debug\net8.0\Eden.exe %%1\"
+IF NOT EXIST "%IconPath%" (
+    echo ERROR: Icon file not found at "%IconPath%"
+    goto :eof
+)
 
-:: Set the custom icon for Eden files
-reg add "HKEY_CLASSES_ROOT\EdenFile\DefaultIcon" /ve /t REG_SZ /d "%IconPath%" /f
+powershell.exe -ExecutionPolicy Bypass -File "CreateEnvVar.ps1" >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo The operation failed add enviroment variable.
+	goto :eof
+)
 
-call EdenCreateContextMenu.bat
+:: Set the file association silently and overwrite without prompt
+reg add "HKEY_CLASSES_ROOT\.eden" /ve /t REG_SZ /d "EdenFile" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\.eden
+	goto :eof
+)
 
-:: Refresh Explorer
-taskkill /f /im explorer.exe
-start explorer.exe
+reg add "HKEY_CLASSES_ROOT\.eden\ShellNew" /v "FileName" /t REG_SZ /d "%SystemRoot%\system32\notepad.exe,-470" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\.eden\ShellNew
+	goto :eof
+)
+
+reg add "HKEY_CLASSES_ROOT\EdenFile" /ve /t REG_SZ /d "Eden Script" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile
+	goto :eof
+)
+
+reg add "HKEY_CLASSES_ROOT\EdenFile\shell\open\command" /ve /t REG_SZ /d "\"%RuntimePath%\" \"%%1\"" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile\shell\open\command
+	goto :eof
+)
+
+:: Set the custom icon silently
+reg add "HKEY_CLASSES_ROOT\EdenFile\DefaultIcon" /ve /t REG_SZ /d "%IconPath%" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile\DefaultIcon
+	goto :eof
+)
+
+:: Add context menu entry (right-click background)
+reg add "HKEY_CLASSES_ROOT\Directory\Background\Shell\Create Eden File" /ve /d "Create new Eden script" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Create new Eden Script'
+	goto :eof
+)
+
+reg add "HKEY_CLASSES_ROOT\Directory\Background\Shell\Create Eden File" /v "Icon" /t REG_SZ /d "C:\Program Files (x86)\Eden\Logo.ico" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Add icon'
+	goto :eof
+)
+
+reg add "HKEY_CLASSES_ROOT\Directory\Background\Shell\Create Eden File\command" /ve /d "cmd.exe /c echo. > \"%%V\\NewFile.eden\" && start \"\" notepad \"%%V\\NewFile.eden\"" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Open with notepad'
+	goto :eof
+)
+
+:: Add context menu entry (right-click folder)
+reg add "HKEY_CLASSES_ROOT\Directory\Shell\Create Eden File" /ve /d "Create New .eden File" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Create new .eden file'
+	goto :eof
+)
+
+reg add "HKEY_CLASSES_ROOT\Directory\Shell\Create Eden File\command" /ve /d "cmd.exe /c echo. > \"%%1\\NewFile.eden\" && start \"\" notepad \"%%1\\NewFile.eden\"" /f >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Open new .eden file with notepad'
+	goto :eof
+)
+
+:: Refresh Explorer silently
+taskkill /f /im explorer.exe >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo The operation failed to kill 'explorer.exe'.
+)
+
+start explorer.exe >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo The operation failed to start 'explorer.exe'.
+)
+
+echo EdenRuntime has beed added to this machine.

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<ComponentRef Id="MainAppShortcut"></ComponentRef>
+		</ComponentGroup>
+
+		<DirectoryRef Id="INSTALLFOLDER" FileSource="..\EdenRuntime\bin\$(var.Configuration)\net8.0\win-$(var.Platform)\publish\">
+			
+			<Component Id="MainAppShortcut" Guid="{BDFAC53E-E69E-4C58-A3C8-AE19F95B48C5}">
+				<Shortcut Id="MainAppShortcut"
+						  Name="Eden"
+						  Target="[INSTALLFOLDER]Eden.exe"
+						  Directory="InstallProgramMenuFolder"
+						  WorkingDirectory="INSTALLFOLDER"
+						  Icon="EdenIcon.Icon"></Shortcut>
+
+				<RegistryValue Id="RegShortcutKey" Root="HKCU" Key="SOFTWARE\Eden" Name="Shortcut" Value="1" Type="integer" KeyPath="yes">
+
+				</RegistryValue>
+
+				<!-- Remove Shortcut -->
+				<RemoveFolder Id="RemoveStartMenu" Directory="InstallProgramMenuFolder" On="uninstall"/>
+			</Component>
+		</DirectoryRef>
+
+	</Fragment>
+
+</Wix>
