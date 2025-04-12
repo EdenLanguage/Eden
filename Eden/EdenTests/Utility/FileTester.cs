@@ -61,6 +61,18 @@ namespace EdenTests.Utility
             return Path.Combine(GetValidLoopsSourceDir(), name);
         }
 
+        #region GitHub issues
+        public static string GetGitIssuesSourceDir(string issue)
+        {
+            return Path.Combine([GetTestFilesDirectory(), "GitHubIssues", issue]);
+        }
+
+        public static string GetGitIssuesSourcePath(string issue, string name)
+        {
+            return Path.Combine(GetGitIssuesSourceDir(issue), name);
+        }
+        #endregion
+
         #region Parser
         public static string GetVariableDeclarationCharSourceDir()
         {
