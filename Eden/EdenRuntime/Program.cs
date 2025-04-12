@@ -1,8 +1,6 @@
 ﻿using EdenClasslibrary.Types;
 using EdenClasslibrary.Types.ConfigTypes;
 
-string[] programArguments = Environment.GetCommandLineArgs();
-
 ArgumentParser configParser = new ArgumentParser(AppDomain.CurrentDomain.BaseDirectory, args);
 EdenRuntimeConfig runtimeConfig = configParser.ParseParameters();
 
