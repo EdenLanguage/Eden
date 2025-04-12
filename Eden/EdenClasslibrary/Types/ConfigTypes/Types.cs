@@ -45,11 +45,11 @@
             if (Parameters.Length != 0)
             {
                 string fileName = Parameters[0];
-                path = Path.Combine(RuntimeLocation, fileName);
+                path = Path.GetFullPath(fileName);
+                //  path = Path.Combine(RuntimeLocation, fileName);
                 bool fileExists = File.Exists(path);
-                if(fileExists == true)
+                if (fileExists == true)
                 {
-                //Console.WriteLine(path);
                     fileError = false;
 
                     if (Parameters.Contains("--generate-ast"))
