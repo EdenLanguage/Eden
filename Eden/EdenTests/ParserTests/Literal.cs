@@ -155,6 +155,11 @@ namespace EdenTests.ParserTests
                 string input = set[0];
                 string expected = set[1];
 
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    expected = set[1].Replace("\r", "");
+                }
+
                 Parser parser = new Parser();
                 Evaluator evaluator = new Evaluator(parser);
 
