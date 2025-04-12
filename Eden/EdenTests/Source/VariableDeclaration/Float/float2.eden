@@ -1,0 +1,5 @@
+Literal 10c As #CHARi;
+Literal 10c As #CHARii;
+
+Var Float variable = #CHARi * #CHARii;
+Return variable;

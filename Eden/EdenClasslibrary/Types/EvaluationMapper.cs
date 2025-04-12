@@ -104,7 +104,9 @@ namespace EdenClasslibrary.Types
             RegisterMethod(typeof(IntObject), TokenType.Assign, typeof(CharObject), Int_Assign_All_Func);
             RegisterMethod(typeof(IntObject), TokenType.Assign, typeof(FloatObject), Int_Assign_All_Func);
             
+            RegisterMethod(typeof(CharObject), TokenType.Assign, typeof(IntObject), Char_Assign_All_Func);
             RegisterMethod(typeof(CharObject), TokenType.Assign, typeof(CharObject), Char_Assign_All_Func);
+            RegisterMethod(typeof(CharObject), TokenType.Assign, typeof(FloatObject), Char_Assign_All_Func);
 
             RegisterMethod(typeof(FloatObject), TokenType.Assign, typeof(FloatObject), Float_Assign_All_Func);
             RegisterMethod(typeof(FloatObject), TokenType.Assign, typeof(IntObject), Float_Assign_All_Func);
@@ -239,6 +241,10 @@ namespace EdenClasslibrary.Types
             #endregion
 
             #region Register unary functions
+            //RegisterMethod(TokenType.Assign, typeof(IntObject), Cast_To_Int);
+            //RegisterMethod(TokenType.Assign, typeof(FloatObject), Cast_To_Int);
+            //RegisterMethod(TokenType.Assign, typeof(CharObject), Cast_To_Int);
+
             RegisterMethod(TokenType.Minus, typeof(IntObject), Unary_Minus_Numberic);
             RegisterMethod(TokenType.Minus, typeof(FloatObject), Unary_Minus_Numberic);
 
@@ -489,7 +495,7 @@ namespace EdenClasslibrary.Types
                 }
                 else if (right is FloatObject AsFloat)
                 {
-                    return FloatObject.Create(left.Token, AsFloat.Value);
+                    return IntObject.Create(left.Token, (int)AsFloat.Value);
                 }
                 else
                 {
@@ -1251,6 +1257,30 @@ namespace EdenClasslibrary.Types
         private IObject InvalidUnaryFuncCall(IObject type)
         {
             return ErrorSemanticalUndefUnaryOp.CreateErrorObject(TokenType.Illegal, type, _parser.Lexer.GetLine(type.Token));
+        }
+
+        private IObject Cast_To_Int(IObject type)
+        {
+            try
+            {
+                if (type is IntObject AsInt)
+                {
+                    return IntObject.Create(AsInt.Token, AsInt.Value);
+                }
+                else if (type is FloatObject AsFloat)
+                {
+                    return IntObject.Create(AsFloat.Token, (int)AsFloat.Value);
+                }
+                else if (type is CharObject AsChar)
+                {
+                    return IntObject.Create(AsChar.Token, (int)AsChar.Value);
+                }
+                else return ErrorRuntimeInvalidCastException.CreateErrorObject(typeof(IntObject), type, type.Token, _parser.Lexer.GetLine(type.Token));
+            }
+            catch (Exception exception)
+            {
+                return ErrorRuntimeUnaryOpFailed.CreateErrorObject(TokenType.Minus, type, _parser.Lexer.GetLine(type.Token));
+            }
         }
 
         private IObject Unary_Minus_Numberic(IObject type)

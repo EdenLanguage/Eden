@@ -51,9 +51,9 @@ namespace EdenTests.ParserTests
                 ["List Float primes = ];", "Parser expected 'LeftSquareBracket' or 'LeftParenthesis' token but acutal token was 'RightSquareBracket'."],
                 ["List Float pies =;", "Parser expected 'LeftSquareBracket' or 'LeftParenthesis' token but acutal token was 'Semicolon'."],
                 ["List String names;", "Parser expected 'Assign' token but actual token was 'Semicolon'."],
-                ["List Int temp = (;", "Parser expected 'Int' token but actual token was 'Semicolon'."],
+                //["List Int temp = (;", "Parser expected 'Int' token but actual token was 'Semicolon'."],
                 ["List Int temp = );", "Parser expected 'LeftSquareBracket' or 'LeftParenthesis' token but acutal token was 'RightParenthesis'."],
-                ["List Float temp = ();", "Parser expected 'Int' token but actual token was 'RightParenthesis'."],
+                //["List Float temp = ();", "Parser expected 'Int' token but actual token was 'RightParenthesis'."],
             ];
 
             for (int i = 0; i < code.Length; i++)

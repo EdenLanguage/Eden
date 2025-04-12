@@ -1,0 +1,5 @@
+Literal 10i As #One;
+Literal 3.14f As #Pi;
+
+Var Float variable = #One * #Pi;
+Return variable;

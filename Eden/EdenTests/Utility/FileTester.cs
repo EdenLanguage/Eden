@@ -61,11 +61,74 @@ namespace EdenTests.Utility
             return Path.Combine(GetValidLoopsSourceDir(), name);
         }
 
+        #region GitHub issues
+        public static string GetGitIssuesSourceDir(string issue)
+        {
+            return Path.Combine([GetTestFilesDirectory(), "GitHubIssues", issue]);
+        }
+
+        public static string GetGitIssuesSourcePath(string issue, string name)
+        {
+            return Path.Combine(GetGitIssuesSourceDir(issue), name);
+        }
+        #endregion
+
         #region Parser
+        public static string GetVariableDeclarationCharSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "VariableDeclaration", "Char"]);
+        }
+
+        public static string GetVariableDeclarationCharSourceFile(string name)
+        {
+            return Path.Combine(GetVariableDeclarationCharSourceDir(), name);
+        }
+
+        public static string GetVariableDeclarationFloatSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "VariableDeclaration", "Float"]);
+        }
+
+        public static string GetVariableDeclarationFloatSourceFile(string name)
+        {
+            return Path.Combine(GetVariableDeclarationFloatSourceDir(), name);
+        }
+
+        public static string GetVariableDeclarationIntSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "VariableDeclaration", "Int"]);
+        }
+
+        public static string GetVariableDeclarationIntSourceFile(string name)
+        {
+            return Path.Combine(GetVariableDeclarationIntSourceDir(), name);
+        }
+
+        public static string GetLiteralsSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "Literals"]);
+        }
+        
+        public static string GetLiteralsSourceFile(string name)
+        {
+            return Path.Combine(GetLiteralsSourceDir(), name);
+        }
+
+        public static string GetConsoleSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "Console"]);
+        }
+
+        public static string GetConsoleSourceFile(string name)
+        {
+            return Path.Combine(GetConsoleSourceDir(), name);
+        }
+
         public static string GetParserSourceDir()
         {
             return Path.Combine([GetTestFilesDirectory(), "Parser"]);
         }
+
         public static string GetParserSourceFile(string name)
         {
             return Path.Combine(GetParserSourceDir(), name);

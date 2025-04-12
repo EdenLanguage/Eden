@@ -1,6 +1,5 @@
 ﻿using EdenClasslibrary.Errors;
 using EdenClasslibrary.Errors.LexicalErrors;
-using EdenClasslibrary.Errors.RuntimeErrors;
 using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Errors.SyntacticalErrors;
 using EdenClasslibrary.Types.AbstractSyntaxTree;
@@ -8,7 +7,6 @@ using EdenClasslibrary.Types.AbstractSyntaxTree.Expressions;
 using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.Enums;
 using EdenClasslibrary.Types.Excpetions;
-using System.Data;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,6 +17,7 @@ namespace EdenClasslibrary.Types
     {
         #region Fields
         private readonly Lexer _lexer;
+        private readonly LiteralsTable _literalsTable;
         private Statement _program;
         private ErrorsManager _errorsManager;
         private readonly Dictionary<TokenType, Func<Expression>> _unaryMapping;
@@ -53,6 +52,7 @@ namespace EdenClasslibrary.Types
             _lexer.SetInput(string.Empty);
             _program = new FileStatement(Token.ProgramRootToken);
             _errorsManager = new ErrorsManager();
+            _literalsTable = new LiteralsTable();
 
             #region Pratt Parser mappings
             /*  These are mappings required for Pratt's parsing method.
@@ -94,6 +94,7 @@ namespace EdenClasslibrary.Types
 
             RegisterUnaryMapping(TokenType.If, ParseConditionalExpression);
             RegisterUnaryMapping(TokenType.Identifier, ParseIdentifierExpression);
+            RegisterUnaryMapping(TokenType.LiteralIdentifier, ParseLiteralIdentifierExpression);
             RegisterUnaryMapping(TokenType.Int, ParseIntExpression);
             RegisterUnaryMapping(TokenType.Null, ParseNullExpression);
             RegisterUnaryMapping(TokenType.Float, ParseFloatExpression);
@@ -139,7 +140,7 @@ namespace EdenClasslibrary.Types
         {
             ClearParser();
             _lexer.SetInput(code);
-            _program = ParseFileStatement();
+            _program = ParseTopLevelStatements();
             return _program;
         }
 
@@ -147,7 +148,7 @@ namespace EdenClasslibrary.Types
         {
             ClearParser();
             _lexer.LoadFile(path);
-            _program = ParseFileStatement();
+            _program = ParseTopLevelStatements();
             return _program;
         }
         #endregion
@@ -323,7 +324,7 @@ namespace EdenClasslibrary.Types
         }
 
         /// <summary>
-        /// Parse List constructor. Example <(> <Int> <)>  
+        /// Parse List constructor. Example <(> <Exp> <)>  
         /// </summary>
         /// <param name="variableTypeExp"></param>
         /// <returns></returns>
@@ -337,18 +338,19 @@ namespace EdenClasslibrary.Types
             arguments.Type = variableTypeExp;
             LoadNextToken();
 
-            ish = ValidateTokenForExpression(TokenType.Int);
+            ish = ValidateTokenForExpression([TokenType.Int, TokenType.LiteralIdentifier]);
             if (ish is InvalidExpression) return ish;
             Expression expression = ParseExpression(Precedence.Lowest);
-            if(expression is not IntExpression)
+            if(expression is InvalidExpression AsInvalidSizeExp)
             {
-                return InvalidExpression.Create(CurrentToken, ErrorSyntacticalUnexpectedToken.Create(TokenType.Int, CurrentToken, _lexer.GetLine(CurrentToken)));
+                return AsInvalidSizeExp;
             }
-            arguments.SetCapacity((expression as IntExpression).Value);
             LoadNextToken();
 
             ish = ValidateTokenForExpression(TokenType.RightParenthesis);
             if (ish is InvalidExpression) return ish;
+
+            arguments.SizeExpression = expression;
 
             return arguments;
         }
@@ -520,8 +522,26 @@ namespace EdenClasslibrary.Types
 
         private Expression ParseIdentifierExpression()
         {
-            IdentifierExpression id = new IdentifierExpression(CurrentToken);
-            return id;
+            Expression idExp= new IdentifierExpression(CurrentToken);
+            return idExp;
+        }
+
+        /// <summary>
+        /// Parse `Identifier` expression. If `Identifier` exists in `Literals Table` it is replaced with it's value.
+        /// </summary>
+        /// <returns></returns>
+        private Expression ParseLiteralIdentifierExpression()
+        {
+            Expression idExp = new LiteralIdentifier(CurrentToken);
+
+            string literalName = CurrentToken.LiteralValue;
+            bool literalExists = _literalsTable.LiteralExists(literalName);
+            if (literalExists == true)
+            {
+                idExp = _literalsTable.GetLiteral(literalName);
+            }
+
+            return idExp;
         }
 
         private Expression ParseFunctionExpression()
@@ -722,6 +742,52 @@ namespace EdenClasslibrary.Types
         #endregion
 
         #region Statements parsing methods
+        private Statement ParseTopLevelStatement()
+        {
+            Statement statement = null;
+            try
+            {
+                switch (CurrentToken.Keyword)
+                {
+                    case TokenType.Loop:
+                        statement = ParseLoopStatement();
+                        break;
+                    case TokenType.Sisyphus:
+                        statement = ParseSisyphusStatement();
+                        break;
+                    case TokenType.Var:
+                        statement = ParseVariableStatement();
+                        break;
+                    case TokenType.Return:
+                        statement = ParseReturnStatement();
+                        break;
+                    case TokenType.List:
+                        statement = ParseListStatement();
+                        break;
+                    case TokenType.Literal:
+                        statement = ParseLiteralStatement();
+                        break;
+                    case TokenType.Skip:
+                    case TokenType.Quit:
+                        //  This is illegal at top level
+                        statement = InvalidStatement.Create(CurrentToken, ErrorSemanticalStatementNotDefinedInTopLvl.Create(CurrentToken, _lexer.GetLine(CurrentToken)));   
+                        break;
+                    default:
+                        statement = ParseExpressionStatement();
+                        break;
+                }
+            }
+            catch (CurrentTokenIsIllegal)
+            {
+                statement = InvalidStatement.Create(CurrentToken, ErrorLexicalIllegalToken.Create(CurrentToken, _lexer.GetLine(CurrentToken)));
+            }
+            catch (NextTokenIsIllegal)
+            {
+                statement = InvalidStatement.Create(NextToken, ErrorLexicalIllegalToken.Create(NextToken, _lexer.GetLine(NextToken)));
+            }
+            return statement;
+        }
+
         private Statement ParseStatement()
         {
             Statement statement = null;
@@ -749,6 +815,10 @@ namespace EdenClasslibrary.Types
                         break;
                     case TokenType.List:
                         statement = ParseListStatement();
+                        break;
+                    case TokenType.Literal:
+                        //  Literal statements are only possible at top level.
+                        statement = InvalidStatement.Create(CurrentToken, ErrorSemanticalStatementOnlyAvailableAtTopLvl.Create(CurrentToken, _lexer.GetLine(CurrentToken)));
                         break;
                     default:
                         statement = ParseExpressionStatement();
@@ -793,6 +863,17 @@ namespace EdenClasslibrary.Types
             return statement;
         }
 
+        private Statement ValidateExpressionForLiteralStatement(Expression expression)
+        {
+            Token token = _literalsTable.Check(expression);
+            if (token is not null)
+            {
+                //  Return error saying that literal can only be made of literal values of type Int, Char, Float and String or already defined Literals.
+                return InvalidStatement.Create(token, ErrorSemanticalLiteralEvaluation.Create(token, _lexer.GetLine(token)));
+            }
+            return ValidTokenStatement.Create(token);
+        }
+
         private Statement ValidateTokenForStatement(TokenType expected)
         {
             if(CurrentToken.Keyword != expected)
@@ -834,6 +915,15 @@ namespace EdenClasslibrary.Types
             if (CurrentToken.Keyword != expected)
             {
                 return InvalidExpression.Create(CurrentToken, ErrorSyntacticalUnexpectedToken.Create(expected, CurrentToken, _lexer.GetLine(CurrentToken)));
+            }
+            return ValidTokenExpression.Create(CurrentToken);
+        }
+
+        private Expression ValidateTokenForExpression(params TokenType[] expected)
+        {
+            if (!expected.Contains(CurrentToken.Keyword))
+            {
+                return InvalidExpression.Create(CurrentToken, ErrorSyntacticalUnexpectedTokens.Create(expected, CurrentToken, _lexer.GetLine(CurrentToken)));
             }
             return ValidTokenExpression.Create(CurrentToken);
         }
@@ -943,7 +1033,7 @@ namespace EdenClasslibrary.Types
 
                 if(statement is InvalidStatement AsInvalidStatement)
                 {
-                    return block;
+                    return AsInvalidStatement;
                 }
 
                 block.AddStatement(statement);
@@ -979,7 +1069,7 @@ namespace EdenClasslibrary.Types
             return block;
         }
 
-        private Statement ParseFileStatement()
+        private Statement ParseTopLevelStatements()
         {
             FileStatement file = new FileStatement(CurrentToken);
             BlockStatement programBlock = new BlockStatement(CurrentToken);
@@ -1000,14 +1090,26 @@ namespace EdenClasslibrary.Types
 
             while (!CurrentToken.IsType(TokenType.RightBracket) && !CurrentToken.IsType(TokenType.Eof))
             {
-                Statement statement = ParseStatement();
+                Statement statement = ParseTopLevelStatement();
                 
                 if (statement is InvalidStatement AsInvalidStatement)
                 {
                     return AsInvalidStatement;
                 
                 }
-                programBlock.AddStatement(statement);
+                else if(statement is LiteralStatement AsLiteralStatement)
+                {
+                    // If the parser managed to reach this point, it means that the given `LiteralStatement` was successfully parsed
+                    // and added to the `LiteralsTable`, meaning its value is already stored.
+                    // `LiteralStatement`s are not meant to be evaluated by the `Evaluator`, e.g., in a form like `Literal 10i As Size;`.
+                    // In fact, everywhere a literal is used, its name should be replaced by its value.
+                    // Therefore, we should skip adding the `LiteralStatement` to the program block's statements list.
+                    continue;
+                }
+                else
+                {
+                    programBlock.AddStatement(statement);
+                }
             }
 
             return file;
@@ -1061,6 +1163,10 @@ namespace EdenClasslibrary.Types
             ish = ValidateTokenForStatement(TokenType.LeftBracket);
             if (ish is InvalidStatement) return ish;
             Statement body = ParseLoopBlockStatement();
+            if(body is InvalidStatement asInvalidBlock)
+            {
+                return asInvalidBlock;
+            }
 
             ish = ValidateTokenForStatement(TokenType.RightBracket);
             if (ish is InvalidStatement) return ish;
@@ -1199,6 +1305,58 @@ namespace EdenClasslibrary.Types
             return list;
         }
 
+        private Statement ParseLiteralStatement()
+        {
+            Statement ish;
+
+            ish = ValidateTokenForStatement(TokenType.Literal);
+            if (ish is InvalidStatement) return ish;
+            LiteralStatement literalStatement = new LiteralStatement(CurrentToken);
+            LoadNextToken();
+
+            //  Expression is parsed but we have to make sure that it has only literal values and `Identifier` tokens were swapped with their value.
+            //  Otherwise we should return invalid statement error.
+            Expression expression = ParseExpression(Precedence.Lowest);
+
+            ish = ValidateExpressionForLiteralStatement(expression);
+            if (ish is InvalidStatement) return ish;
+            LoadNextToken();
+
+            ish = ValidateTokenForStatement(TokenType.As);
+            if (ish is InvalidStatement) return ish;
+            LoadNextToken();
+
+            ish = ValidateTokenForStatement(TokenType.LiteralIdentifier);
+            if (ish is InvalidStatement) return ish;
+            Expression name = ParseExpression(Precedence.Lowest);
+            if(name is InvalidExpression AsInvalidName)
+            {
+                return InvalidStatement.Create(AsInvalidName);
+            }
+            LoadNextToken();
+
+            ish = ValidateTokenForStatement(TokenType.Semicolon);
+            if (ish is InvalidStatement) return ish;
+            LoadNextToken();
+
+            literalStatement.Expression = expression;
+            literalStatement.Name = name;
+
+            string literalName = name.NodeToken.LiteralValue;
+            bool isLiteralDefined = _literalsTable.LiteralExists(literalName);
+            if(isLiteralDefined == true)
+            {
+                Token litNameToken = literalStatement.Name.NodeToken;
+                return InvalidStatement.Create(litNameToken, ErrorSemanticalLiteralAlreadyDefined.Create(litNameToken, _lexer.GetLine(litNameToken)));
+            }
+            else
+            {
+                _literalsTable.AddLiteral(literalStatement);
+            }
+
+            return literalStatement;
+        }
+
         /// <summary>
         /// Parse variable statement.
         /// </summary>
@@ -1224,6 +1382,7 @@ namespace EdenClasslibrary.Types
 
             ish = ValidateTokenForStatement(TokenType.Assign);
             if (ish is InvalidStatement) return ish;
+            Expression assignOperator = new EmptyExpression(CurrentToken);
             LoadNextToken();
             
             Expression expression = ParseExpression(Precedence.Lowest);
@@ -1235,6 +1394,7 @@ namespace EdenClasslibrary.Types
 
             variableStatement.Type = variableTypeExp;
             variableStatement.Identifier = identifierExp;
+            variableStatement.Operator = assignOperator;
             variableStatement.Expression = expression;
 
             return variableStatement;

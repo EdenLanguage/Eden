@@ -337,6 +337,39 @@ namespace EdenTests.EvaluatorTests
         }
 
         [Fact]
+        public void Constructor()
+        {
+            string[][] testset =
+            [
+                [GetEvaluatorSourceFile("listConstructor.eden"),"None"],
+            ];
+
+            foreach (string[] set in testset)
+            {
+                string input = set[0];
+                string expected = set[1];
+
+                Parser parser = new Parser();
+                Evaluator evaluator = new Evaluator(parser);
+
+                IObject result = evaluator.EvaluateFile(input);
+                string STR = result.ToString();
+
+                if (expected != STR)
+                {
+                    if (result is ErrorObject)
+                    {
+                        Assert.Fail(STR);
+                    }
+                    else
+                    {
+                        Assert.Equal(expected, STR);
+                    }
+                }
+            }
+        }
+
+        [Fact]
         public void AddMethod()
         {
             string declaration1 = "List Int primes = [1i,2i,3i,4i];";
@@ -417,105 +450,45 @@ namespace EdenTests.EvaluatorTests
         [Fact]
         public void Declaration()
         {
-            string[] code = new string[]
+            string[][] testSet = new string[][]
             {
-                "List Int primes = [2i, 3i, 5i, 7i, 9i];",
-                "List Float primes = [2i, 1.5f, \"John\"];",
-                "List String primes = [\"John\"];",
-                "List Float pies = [1.1f, 2.2f, 3.3f, 4.4f, 5.5f];",
-                "List String names = [\"Mark\", \"Adam\", \"Jordan\", \"David\", \"Isaac\"];",
-                "List Int temp = (0i);",
-                "List Int temp = (1i);",
-                "List Float temp = (10i);",
-                "List Int temp = [];",
-                "List Int temp = [1i];",
+                ["List Int primes = [2i, 3i, 5i, 7i, 9i];", "None"],
+                ["List Float primes = [2i, 1.5f, \"John\"];", "[Semantical error]\r\nCollection is of type 'Float' but provided value is of type 'Int'!\r\nFile: 'REPL', Line: '1', Column: '21'\r\n\r\nList Float primes = [2i, 1.5f, \"John\"];\r\n                    ^------------------"],
+                ["List Float pies = [1.1f, 2.2f, 3.3f, 4.4f, 5.5f];", "None"],
+                ["List String names = [\"Mark\", \"Adam\", \"Jordan\", \"David\", \"Isaac\"];", "None"],
+                ["List Int temp = (0i);", "None"],
+                ["List Int temp = (1i);", "None"],
+                ["List Float temp = (10i);", "None"],
+                ["List Int temp = [];", "None"],
+                ["List Int temp = [1i];", "None"],
             };
 
-            string[][] isOutcomeValid = new string[][]
+
+            for (int i = 0; i < testSet.Length; i++)
             {
-                ["true", "5", "IntObject", "true", "0"],
-                ["false", "3", "FloatObject", "true", "0"],
-                ["true", "1", "StringObject", "true", ""],
-                ["true", "5", "FloatObject", "true", "0"],
-                ["true", "5", "StringObject", "true", ""],
-                ["true", "0", "IntObject", "false", "0"],
-                ["true", "1", "IntObject", "false", "0"],
-                ["true", "10", "FloatObject", "false", "0"],
-                ["true", "0", "IntObject", "true", "0"],
-                ["true", "1", "IntObject", "true", "0"],
-            };
+                string input = testSet[i][0];
+                string expected = testSet[i][1];
 
-            string[] results = new string[] { };
-            string statement = string.Empty;
-
-            for (int i = 0; i < code.Length; i++)
-            {
-                statement = code[i];
-                results = isOutcomeValid[i];
-
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    expected = testSet[i][1].Replace("\r", "");
+                }
 
                 Parser parser = new Parser();
                 Evaluator evaluator = new Evaluator(parser);
 
-                IObject result = evaluator.Evaluate(statement);
-                if (results[0] == "false")
+                IObject result = evaluator.Evaluate(input);
+                string STR = result.ToString();
+
+                if(STR != expected)
                 {
-                    Assert.True(result is ErrorObject);
-                }
-                else
-                {
-                    Assert.True(result is not ErrorObject);
-
-                    //  Check type
-                    Assert.Equal(results[2], result.Type.Name);
-
-                    //  Check count
-                    Assert.Equal(results[1], (result as IObjectCollection).Collection.Count.ToString());
-
-                    //  Check collection's item's types
-                    IObjectCollection collection = result as IObjectCollection;
-
-                    if (results[3] == "true")
+                    if(result is ErrorObject asError)
                     {
-                        for(int j = 0; j < collection.Collection.Count; j++)
-                        {
-                            IObject item = collection.Collection[j];
-
-                            Assert.Equal(results[2], item.Type.Name);
-                        }
+                        Assert.Fail(STR);
                     }
                     else
                     {
-                        for (int j = 0; j < collection.Collection.Count; j++)
-                        {
-                            IObject item = collection.Collection[j];
-
-                            if(collection is ObjectCollection asIntColl)
-                            {
-                                Type actualItemType = collection.Type;
-
-                                if(actualItemType.Name == "IntObject")
-                                {
-                                    Assert.Equal(results[4], (item as IntObject).Value.ToString());
-                                }
-                                else if (actualItemType.Name == "StringObject")
-                                {
-                                    Assert.Equal(results[4], (item as StringObject).Value);
-                                }
-                                else if (actualItemType.Name == "FloatObject")
-                                {
-                                    Assert.Equal(results[4], (item as FloatObject).Value.ToString());
-                                }
-                                else
-                                {
-                                    Assert.Fail("TODO: Type not supported!");
-                                }
-                            }
-                            else
-                            {
-                                Assert.Fail("Not defined collection!");
-                            }
-                        }
+                        Assert.Equal(expected, STR);
                     }
                 }
             }

@@ -16,6 +16,10 @@ namespace EdenClasslibrary.Types
         public void Run()
         {
             IObject result = _runtime.EvaluateFile(_config.Path);
+            if(result is not NoneObject)
+            {
+                Console.WriteLine(result);
+            }
         }
     }
 }

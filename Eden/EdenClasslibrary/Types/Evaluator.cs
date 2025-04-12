@@ -8,8 +8,6 @@ using EdenClasslibrary.Types.AbstractSyntaxTree.Statements;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
-using System.Net.Http.Headers;
-using System.Reflection;
 
 namespace EdenClasslibrary.Types
 {
@@ -59,13 +57,13 @@ namespace EdenClasslibrary.Types
                 else throw new Exception();
             }
 
-            if (root is Expression)
+            if (root is Expression rootAsExpression)
             {
-                return EvaluateExpression(root as Expression, _parsingEnv);
+                return EvaluateExpression(rootAsExpression, _parsingEnv);
             }
-            else if (root is Statement)
+            else if (root is Statement rootAsStatement)
             {
-                return EvaluateStatement(root as Statement, _parsingEnv);
+                return EvaluateStatement(rootAsStatement, _parsingEnv);
             }
             else
             {
@@ -139,53 +137,57 @@ namespace EdenClasslibrary.Types
 
         private IObject EvaluateStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)
         {
-            if (root is FileStatement)
+            if (root is FileStatement rootAsFileStatement)
             {
-                return EvaluateFileStatement(root as FileStatement, env);
+                return EvaluateFileStatement(rootAsFileStatement, env);
             }
-            else if (root is BlockStatement)
+            else if (root is BlockStatement rootAsBlockStatement)
             {
-                return EvaluateBlockStatement(root as BlockStatement, env);
+                return EvaluateBlockStatement(rootAsBlockStatement, env);
             }
-            else if (root is ExpressionStatement)
+            else if (root is ExpressionStatement rootAsExpressionStatement)
             {
-                return EvaluateExpressionStatement(root as ExpressionStatement, env);
+                return EvaluateExpressionStatement(rootAsExpressionStatement, env);
             }
-            else if (root is ReturnStatement)
+            else if (root is ReturnStatement rootAsReturnStatement)
             {
-                return EvaluateReturnStatement(root as ReturnStatement, env);
+                return EvaluateReturnStatement(rootAsReturnStatement, env);
             }
-            else if (root is VariableDeclarationStatement)
+            else if (root is VariableDeclarationStatement rootAsVarDeclStatement)
             {
-                return EvaluateVariableDeclarationStatement(root as VariableDeclarationStatement, env);
+                return EvaluateVariableDeclarationStatement(rootAsVarDeclStatement, env);
             }
-            else if (root is ListDeclarationStatement)
+            else if (root is ListDeclarationStatement rootAsListDecStatement)
             {
-                return EvaluateListDeclarationStatement(root as ListDeclarationStatement, env);
+                return EvaluateListDeclarationStatement(rootAsListDecStatement, env);
             }
-            else if (root is LoopStatement)
+            else if (root is LoopStatement rootAsLoopStatement)
             {
-                return EvaluateLoopStatement(root as LoopStatement, env);
+                return EvaluateLoopStatement(rootAsLoopStatement, env);
             }
-            else if (root is SisyphusStatement)
+            else if (root is SisyphusStatement rootAsSisyphusStatement)
             {
-                return EvaluateSisyphusStatement(root as SisyphusStatement, env);
+                return EvaluateSisyphusStatement(rootAsSisyphusStatement, env);
             }
-            else if (root is SkipStatement)
+            else if (root is SkipStatement rootAsSkipStatement)
             {
-                return EvaluateSkipStatement(root as SkipStatement, env);
+                return EvaluateSkipStatement(rootAsSkipStatement, env);
             }
-            else if (root is QuitStatement)
+            else if (root is QuitStatement rootAsQuitStatement)
             {
-                return EvaluateQuitStatement(root as QuitStatement, env);
+                return EvaluateQuitStatement(rootAsQuitStatement, env);
             }
-            else if (root is NullExpression)
+            else if (root is NullExpression rootAsNullExpresion)
             {
-                return EvaluateQuitStatement(root as NullExpression, env);
+                return EvaluateQuitStatement(rootAsNullExpresion, env);
             }
-            else if (root is InvalidStatement)
+            else if (root is InvalidStatement rootAsInvalidStatement)
             {
-                return EvaluateInvalidStatement(root as InvalidStatement, env);
+                return EvaluateInvalidStatement(rootAsInvalidStatement, env);
+            }
+            else if (root is LiteralStatement rootAsLiteralStatement)
+            {
+                return EvaluateInvalidStatement(rootAsLiteralStatement, env);
             }
             else
             {
@@ -214,10 +216,11 @@ namespace EdenClasslibrary.Types
         private IObject EvaluateBlockStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)
         {
             BlockStatement block = root as BlockStatement;
-
-            IObject result = null;
-
-            foreach (Statement statement in block.Statements)
+            IObject result = NoneObject.Create(block.NodeToken);
+            
+            Statement[] blockStatements = block.Statements;
+            
+            foreach (Statement statement in blockStatements)
             {
                 result = EvaluateStatement(statement, env);
 
@@ -276,6 +279,7 @@ namespace EdenClasslibrary.Types
             //  Variable with this name should not exist before this declaration!
             IdentifierExpression identifier = varStatement.Identifier;
 
+            
             IObject rightSide = EvaluateExpression(varStatement.Expression, env);
 
             if (rightSide is ErrorObject asError)
@@ -290,6 +294,25 @@ namespace EdenClasslibrary.Types
             }
             else
             {
+                /*  TODO: FIX
+                 *  Okay so why is it done that way? Of course it shouldn't but i don't have a better idea how to call 'Assingment' operation in
+                 *  functions mapper. This func takes care about casting type value. I guess let it be for now and fix it later ...
+                 */
+                if(type.Type != rightSide.Type)
+                {
+                    IObject tmp = ObjectFactory.Create(rightSide.Token, type.Type);
+
+                    bool canCast = _evalFuncsMapper.CheckEvaluationFunc(tmp, varStatement.Operator.NodeToken, rightSide);
+
+                    if(canCast == true)
+                    {
+                        var func = _evalFuncsMapper.GetEvaluationFunc(tmp, varStatement.Operator.NodeToken, rightSide);
+
+                        rightSide = func(tmp, rightSide);
+                    }
+                }
+
+
                 IObject definedVariable = env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
                 if(definedVariable is ErrorObject varAsError)
                 {
@@ -316,7 +339,13 @@ namespace EdenClasslibrary.Types
                 return asError;
             }
 
-            return env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+            IObject definedVariable = env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
+            if(definedVariable is ErrorObject varDefError)
+            {
+                return varDefError;
+            }
+
+            return NoneObject.Create(list.NodeToken);
         }
 
         private IObject EvaluateQuitStatement(AbstractSyntaxTreeNode root, ParsingEnvironment env)
@@ -659,7 +688,25 @@ namespace EdenClasslibrary.Types
                     IndexExpression ind = binExp.Left as IndexExpression;
 
                     string varName = (ind.Object as IdentifierExpression).Name;
-                    int index = (ind.Index as IntExpression).Value;
+
+                    int index = 0;
+                    if(ind.Index is IntExpression asInt)
+                    {
+                        index = asInt.Value;
+                    }
+                    else
+                    {
+                        IObject iterator = env.GetVariable(ind.Index.NodeToken, ind.Index.NodeToken.LiteralValue);
+
+                        if(iterator is IntObject IteratorAsInt)
+                        {
+                            index = IteratorAsInt.Value;
+                        }
+                        else
+                        {
+                            throw new Exception($"Indexing for '{ind.Index}' is not implemented!");
+                        }
+                    }
 
                     env.UpdateVariable(varName, index, result);
                 }
@@ -688,6 +735,20 @@ namespace EdenClasslibrary.Types
         private IObject EvaluateListDeclarationExpression(AbstractSyntaxTreeNode root, ParsingEnvironment env)
         {
             ListArgumentsExpression listArgs = root as ListArgumentsExpression;
+            IObject listSize = NoneObject.Create(listArgs.NodeToken);
+
+            if(listArgs.SizeExpression != null)
+            {
+                listSize = EvaluateExpression(listArgs.SizeExpression, env);
+                if(listSize is ErrorObject SizeAsError)
+                {
+                    return SizeAsError;
+                }
+                else if(listSize is not IntObject)
+                {
+                    return ErrorRuntimeExpressionEvaluationFail.CreateErrorObject(typeof(IntObject), listSize.Type, listSize.Token, _parser.Lexer.GetLine(listSize.Token));
+                }
+            }
 
             List<IObject> argsValues = new List<IObject>();
             if (listArgs.Arguments.Count > 0)
@@ -704,22 +765,17 @@ namespace EdenClasslibrary.Types
                     argsValues.Add(value);
                 }
             }
-            else if (listArgs.Arguments.Capacity > 0)
+            else if (listSize is IntObject SizeAsInt)
             {
-                for (int i = 0; i < listArgs.Capacity; i++)
+                for (int i = 0; i < SizeAsInt.Value; i++)
                 {
                     IObject value = ObjectFactory.Create(listArgs.NodeToken, listArgs.Type.Type);
-
-                    if (value.Type != listArgs.Type.Type)
-                    {
-                        return ErrorSemanticalCollectionArgTypeMismatch.CreateErrorObject(listArgs.Type.Type, value.Type, listArgs.NodeToken, _parser.Lexer.GetLine(listArgs.NodeToken));
-                    }
 
                     argsValues.Add(value);
                 }
             }
 
-            return ObjectCollection.Create(listArgs.Type.Type, argsValues.ToArray());
+            return ObjectCollection.Create(listArgs.NodeToken, listArgs.Type.Type, argsValues.ToArray());
         }
 
         private IObject EvaluateIndexExpression(AbstractSyntaxTreeNode root, ParsingEnvironment env)

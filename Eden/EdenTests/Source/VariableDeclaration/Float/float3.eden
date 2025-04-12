@@ -1,0 +1,5 @@
+Literal 10i As #INT;
+Literal 10c As #CHAR;
+
+Var Float variable = #INT * #CHAR;
+Return variable;

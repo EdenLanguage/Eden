@@ -3,8 +3,8 @@ using EdenClasslibrary.Errors.SemanticalErrors;
 using EdenClasslibrary.Types.EnvironmentTypes;
 using EdenClasslibrary.Types.LanguageTypes;
 using EdenClasslibrary.Types.LanguageTypes.Collections;
-using System.Linq.Expressions;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace EdenClasslibrary.Types
 {
@@ -19,6 +19,8 @@ namespace EdenClasslibrary.Types
 
             RegisterFunc("PrintLine", FunctionPayload.Create(typeof(IObject), [ObjectSignature.Create("input", typeof(IObject))], null));
             RegisterFunc("Print", FunctionPayload.Create(typeof(IObject), [ObjectSignature.Create("input", typeof(IObject))], null));
+            RegisterFunc("ConsoleClear", FunctionPayload.Create(typeof(IObject), [], null));
+            RegisterFunc("ConsoleGoHome", FunctionPayload.Create(typeof(IObject), [], null));
 
             RegisterFunc("Inc", FunctionPayload.Create(typeof(IObject), [ObjectSignature.Create("input", typeof(IObject))], null));
             
@@ -88,6 +90,10 @@ namespace EdenClasslibrary.Types
                     return CosinusR(arguments);
                 case "CosinusD":
                     return CosinusD(arguments);
+                case "ConsoleClear":
+                    return ClearScreen(arguments);
+                case "ConsoleGoHome":
+                    return GoHomeScreen(arguments);
                 default:
                     return ErrorRuntimeFuncNotDefined.CreateErrorObject(arguments[0].Token, name);
             }
@@ -314,11 +320,25 @@ namespace EdenClasslibrary.Types
                     sb.Append(" ");
                 }
             }
-            string result = sb.ToString();
+
+            string raw = sb.ToString();
+            string result = Regex.Unescape(raw);
 
             Console.WriteLine(result);
 
             return NoneObject.Create(arguments[0].Token);
+        }
+
+        public IObject ClearScreen(IObject[] arguments)
+        {
+            Console.Clear();
+            return NoneObject.Create(null);
+        }
+
+        public IObject GoHomeScreen(IObject[] arguments)
+        {
+            Console.SetCursorPosition(0, 0);
+            return NoneObject.Create(null);
         }
 
         public IObject Print(IObject[] arguments)
@@ -333,7 +353,7 @@ namespace EdenClasslibrary.Types
                     sb.Append(" ");
                 }
             }
-            string result = sb.ToString();
+            string result = Regex.Unescape(sb.ToString());
 
             Console.Write(result);
 

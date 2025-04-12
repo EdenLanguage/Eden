@@ -12,8 +12,8 @@ namespace EdenTests.ErrorTests
             string[][] data =
             [
                 [GetErrorsSourceFile("error1.eden"),"[Syntactical error]\r\nToken 'int' is not variable type!\r\nFile: 'error1.eden', Line: '1', Column: '5'\r\n\r\nVar int zmienna = 10;\r\n    ^----------------"],
-                [GetErrorsSourceFile("error2.eden"),"[Syntactical error]\r\nParser expected 'RightBracket' token but actual token was 'Semicolon'.\r\nFile: 'error2.eden', Line: '2', Column: '42'\r\n\r\nLoop(Var Int j = 0i; j < 10i; j = j + 1i;){\r\n                                        ^--"],
-                [GetErrorsSourceFile("error3.eden"),"[Syntactical error]\r\nParser expected 'RightBracket' token but actual token was 'Quit'.\r\nFile: 'error3.eden', Line: '4', Column: '2'\r\n\r\nQuit;\r\n^----"],
+                [GetErrorsSourceFile("error2.eden"),"[Syntactical error]\r\nParser expected 'RightParenthesis' token but actual token was 'Semicolon'.\r\nFile: 'error2.eden', Line: '2', Column: '42'\r\n\r\nLoop(Var Int j = 0i; j < 10i; j = j + 1i;){\r\n                                        ^--"],
+                [GetErrorsSourceFile("error3.eden"),"[Syntactical error]\r\nParser expected 'Semicolon' token but actual token was 'Quit'.\r\nFile: 'error3.eden', Line: '4', Column: '2'\r\n\r\nQuit;\r\n^----"],
                 [GetErrorsSourceFile("error4.eden"),"[Syntactical error]\r\nParser expected 'LeftBracket' token but actual token was 'Return'.\r\nFile: 'error4.eden', Line: '2', Column: '2'\r\n\r\nReturn a*b;\r\n^----------"],
                 [GetErrorsSourceFile("error5.eden"),"[Runtime error]\r\nFunction 'Lengt()' is not defined!\r\nFile: 'error5.eden', Line: '1', Column: '1'\r\n\r\nLengt(\"abracadabra\");\r\n^--------------------"],
                 [GetErrorsSourceFile("error6.eden"),"[Syntactical error]\r\nToken 'int' is not variable type!\r\nFile: 'error6.eden', Line: '1', Column: '5'\r\n\r\nVar int pajacyk = 5i;\r\n    ^----------------"],
