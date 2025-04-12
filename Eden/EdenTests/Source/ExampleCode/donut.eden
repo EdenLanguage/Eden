@@ -1,13 +1,17 @@
-Literal 1i As #SCALE;
-Literal 8i As #WIDTH;
-Literal 4i As #HEIGHT;
+Literal 3.14f As #PI;
+Literal 0.07f As #ThetaStep;
+Literal 0.02f As #PhiStep;
+
+Literal 30i As #WIDTH;
+Literal 15i As #HEIGHT;
 Literal #WIDTH * #HEIGHT As #SIZE;
 
-Var Float A = 0f;
-Var Float B = 0f;
+Var Float A = 0.00f;
+Var Float B = 0.00f;
 
 List Char buffer = (#SIZE);
 List Float zbuffer = (#SIZE);
+Var String asciSymbols = ".,-~:;=!*#$@";
 
 Var Int Ro = 3i;
 Var Int Roo = 1i;
@@ -20,12 +24,27 @@ Function Int FillBuffer(Var Char symbol){
     };
 };
 
+Function Int FillZBuffer(Var Float digit){
+    Loop(Var Int i = 0i; i < #SIZE; i = i + 1i){
+        zbuffer[i] = digit;
+    };
+};
+
+Function Int ClearZBuffer(){
+    FillZBuffer(0.0f);
+};
+
 Function Int ClearBuffer(){
     FillBuffer(' ');
 };
 
+Function Int ClearBuffers(){
+    ClearBuffer();
+    ClearZBuffer();
+};
+
 Function Int PrintBuffer(){
-    PrintLine("\x1b[H"); // Move cursor to top-left
+    ConsoleGoHome();
     
     Var String tmp = "";
     
@@ -43,9 +62,58 @@ Function Int PrintBuffer(){
     };
 };
 
-// Sisyphus{
-//     FillBuffer('a');
-//     PrintBuffer();
-//     ClearBuffer();
-//     PrintBuffer();
-// };
+ConsoleClear();
+Sisyphus{
+    Var Float cosA = CosinusR(A);
+    Var Float sinA = SinusR(A);
+    Var Float cosB = CosinusR(B);
+    Var Float sinB = SinusR(B);  
+
+    ClearBuffers();
+
+    Loop(Var Float theta = 0f; theta < 2i * #PI; theta = theta + #ThetaStep){
+        Var Float cosTheta = CosinusR(theta);
+        Var Float sinTheta = SinusR(theta); 
+
+        Loop(Var Float phi = 0f; phi < 2i * #PI; phi = phi + #PhiStep){
+            Var Float cosPhi = CosinusR(phi);
+            Var Float sinPhi = SinusR(phi);   
+
+            Var Float circleX = Ro + Roo * cosTheta;
+            Var Float circleY = Roo * sinTheta;        
+
+            Var Float x = circleX * (cosB * cosPhi + sinA * sinB * sinPhi) - circleY * cosA * sinB;
+            Var Float y = circleX * (sinB * cosPhi - sinA * cosB * sinPhi) + circleY * cosA * cosB;
+            Var Float z = 5i + cosA * circleX * sinPhi + circleY * sinA;
+            Var Float ooz = 1i / z;
+
+            Var Int xp = (#WIDTH / 2i + Koo * ooz * x);
+            Var Int yp = (#HEIGHT / 2i - Koo / 2i * ooz * y);
+
+            Var Int idx = xp + yp * #WIDTH;
+            Var Float luminance = cosPhi * cosTheta * sinB - cosA * cosTheta * sinPhi - sinA * sinTheta + cosB * (cosA * sinTheta - cosTheta * sinA * sinPhi);
+        
+            If (idx >= 0i && idx < #SIZE && ooz > zbuffer[idx])
+            {
+                zbuffer[idx] = ooz;
+                Var Int lumIdx = luminance * 8i;
+                
+                If (lumIdx < 0i){
+                    lumIdx = 0i;
+                }
+                Else{
+                    If (lumIdx > 11i){
+                        lumIdx = 11i;
+                    };
+                };
+                
+                buffer[idx] = asciSymbols[lumIdx];
+            };
+        };
+    };
+    
+    ConsoleGoHome();
+    PrintBuffer();
+    A = A + 0.04f;
+    B = B + 0.08f;
+};

@@ -279,6 +279,7 @@ namespace EdenClasslibrary.Types
             //  Variable with this name should not exist before this declaration!
             IdentifierExpression identifier = varStatement.Identifier;
 
+            
             IObject rightSide = EvaluateExpression(varStatement.Expression, env);
 
             if (rightSide is ErrorObject asError)
@@ -293,6 +294,25 @@ namespace EdenClasslibrary.Types
             }
             else
             {
+                /*  TODO: FIX
+                 *  Okay so why is it done that way? Of course it shouldn't but i don't have a better idea how to call 'Assingment' operation in
+                 *  functions mapper. This func takes care about casting type value. I guess let it be for now and fix it later ...
+                 */
+                if(type.Type != rightSide.Type)
+                {
+                    IObject tmp = ObjectFactory.Create(rightSide.Token, type.Type);
+
+                    bool canCast = _evalFuncsMapper.CheckEvaluationFunc(tmp, varStatement.Operator.NodeToken, rightSide);
+
+                    if(canCast == true)
+                    {
+                        var func = _evalFuncsMapper.GetEvaluationFunc(tmp, varStatement.Operator.NodeToken, rightSide);
+
+                        rightSide = func(tmp, rightSide);
+                    }
+                }
+
+
                 IObject definedVariable = env.DefineVariable(identifier.Name, VariablePayload.Create(type.Type, rightSide));
                 if(definedVariable is ErrorObject varAsError)
                 {

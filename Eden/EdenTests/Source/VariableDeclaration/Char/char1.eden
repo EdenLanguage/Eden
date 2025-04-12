@@ -1,0 +1,5 @@
+Literal 30c As #One;
+Literal 3c As #Pi;
+
+Var Char variable = #One * #Pi;
+Return variable;

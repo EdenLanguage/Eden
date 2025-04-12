@@ -14,6 +14,7 @@ namespace EdenClasslibrary.Types.AbstractSyntaxTree
         public VariableTypeExpression Type { get; set; }
         public IdentifierExpression Identifier { get; set; }
         public Expression Expression { get; set; }
+        public Expression Operator { get; set; }
         public VariableDeclarationStatement(Token token) : base(token)
         {
         }

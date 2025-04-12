@@ -62,6 +62,36 @@ namespace EdenTests.Utility
         }
 
         #region Parser
+        public static string GetVariableDeclarationCharSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "VariableDeclaration", "Char"]);
+        }
+
+        public static string GetVariableDeclarationCharSourceFile(string name)
+        {
+            return Path.Combine(GetVariableDeclarationCharSourceDir(), name);
+        }
+
+        public static string GetVariableDeclarationFloatSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "VariableDeclaration", "Float"]);
+        }
+
+        public static string GetVariableDeclarationFloatSourceFile(string name)
+        {
+            return Path.Combine(GetVariableDeclarationFloatSourceDir(), name);
+        }
+
+        public static string GetVariableDeclarationIntSourceDir()
+        {
+            return Path.Combine([GetTestFilesDirectory(), "VariableDeclaration", "Int"]);
+        }
+
+        public static string GetVariableDeclarationIntSourceFile(string name)
+        {
+            return Path.Combine(GetVariableDeclarationIntSourceDir(), name);
+        }
+
         public static string GetLiteralsSourceDir()
         {
             return Path.Combine([GetTestFilesDirectory(), "Literals"]);

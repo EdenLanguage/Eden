@@ -1,0 +1,5 @@
+Literal 10i As #INT;
+Literal 10c As #CHAR;
+
+Var Int variable = #INT * #CHAR;
+Return variable;

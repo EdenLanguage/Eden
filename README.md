@@ -1,4 +1,6 @@
-<img src="./Eden/ResourceLibrary/Assets/EdenText.png" alt="Eden Logo" style="width: 100%;">
+# Eden - programing language
+
+<img src="./Eden/ResourceLibrary/Assets/Logo.png" alt="Eden Logo" style="width: 33%;">
 
 `Eden` is an `interpreted` programming language with a built-in REPL and an interpreter for files with the `.eden` extension. It is built entirely from scratch without relying on grammar generators like Bison or tokenizers like Lex. This deliberate choice was made to deepen the understanding of language construction and parsing techniques.
 
@@ -14,7 +16,7 @@ The parser generates an `Abstract Syntax Tree (AST)`, which serves as the founda
 - <a href="#custom-resources" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Resources**</a>  
 - <a href="#custom-milestones" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Milestones**</a>  
 - <a href="#custom-examples" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Examples**</a>  
-- <a href="#custom-console-output-example" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Console Output Example**</a>  
+- <a href="#custom-console-output-example" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Donut example**</a>  
 - <a href="#custom-currently-implemented" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Currently Implemented**</a>  
 - <a href="#custom-what-the-language-journey-looks-like" style="font-size: 1.2em; color: rgb(117, 198, 166);">**What the Language Journey Looks Like**</a>  
 - <a href="#custom-interaction-with-language" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Interaction with Language**</a>  
@@ -65,9 +67,6 @@ I believe simplicity allows for clarity, and by keeping things straightforward, 
 
 This section contains example programs written in the `Eden` language. Some of the function implementations may seem suboptimal, but this is because not all intended functionalities of the language have been fully implemented yet, and we must work with what is available.
 
-<div style="display: flex; justify-content: space-between; align-items: stretch;">
-<div style="width: 49.5%; height: 100%;">
-
 ```vb
 // Fibonacci n-th number.
 Function Int Fibonacci(Var Int index){
@@ -86,21 +85,7 @@ Function Int Fibonacci(Var Int index){
 
 Var Int fibonacciNumber = Fibonacci(10i);
 PrintLine(fibonacciNumber);
-
-
-
-
-
-
-
-
-
-
-
 ```
-
-</div> 
-<div style="width: 49.5%; height: 100%;">
 
 ``` vb
 // Is word a palindrome.
@@ -133,9 +118,6 @@ Var Bool isPali = IsPalindrome("abracadabra");
 PrintLine(isPali);
 ```
 
-</div> 
-</div>
-
 ``` vb
 // Is Number Prime?
 Function Bool IsPrime(Var Int n){
@@ -165,15 +147,136 @@ PrintLine(isPrime);
 ```
 
 ## [⬅️ Sections](#custom-sections)
-<h1 id="custom-console-output-example" style="color: rgb(117, 198, 166);">Console Output Example</h1>
+<h1 id="custom-console-output-example" style="color: rgb(117, 198, 166);">Donut example</h1>
 
-To demonstrate how `Eden` handles the console and to showcase its capabilities, a simple program was created that displays a rotating donut. This example tests several core features of the language, including loops, mathematical operations, string manipulation, and floating-point arithmetic. The program calculates and updates the 3D coordinates of the donut, rendering it in the console as it rotates. Key mathematical operations, such as sine and cosine, are used to simulate the rotation, while addition, multiplication, and modulo help manage the donut's movement and continuous spinning. This project serves as an example of how `Eden` can handle real-time, interactive console applications while performing complex mathematical operations, all within a straightforward program structure.
+To demonstrate how `Eden` handles the console and to showcase its capabilities, a simple program was created that displays a rotating donut. This example tests several core features of the language, including loops, mathematical operations, string manipulation, and floating-point arithmetic.
+
+Note: The video has been sped up, as the actual execution is quite time-consuming. This is due to the lack of any implemented optimizations. Currently, generating a single frame with the specified parameters takes approximately 6–8 seconds on Eden. Performance improvements will be addressed in future development, but for now, the focus is on producing working examples.
+
 ### Output
-<img src="./Eden/ResourceLibrary/Assets/SpiningDonut.gif" alt="Eden Logo" style="width: 100%;">
+<img src="./Eden/ResourceLibrary/Assets/DonutEden.gif" alt="Eden Logo" style="width: 100%;">
 
 ### Code
 ```vb
-// Code will be placed here.
+Literal 3.14f As #PI;
+Literal 0.07f As #ThetaStep;
+Literal 0.02f As #PhiStep;
+
+Literal 30i As #WIDTH;
+Literal 15i As #HEIGHT;
+Literal #WIDTH * #HEIGHT As #SIZE;
+
+Var Float A = 0.00f;
+Var Float B = 0.00f;
+
+List Char buffer = (#SIZE);
+List Float zbuffer = (#SIZE);
+Var String asciSymbols = ".,-~:;=!*#$@";
+
+Var Int Ro = 3i;
+Var Int Roo = 1i;
+Var Int Ko = 4i;
+Var Int Koo = #WIDTH * Ko * 3i / (8i * (Ro + Roo));
+
+Function Int FillBuffer(Var Char symbol){
+    Loop(Var Int i = 0i; i < #SIZE; i = i + 1i){
+        buffer[i] = symbol;
+    };
+};
+
+Function Int FillZBuffer(Var Float digit){
+    Loop(Var Int i = 0i; i < #SIZE; i = i + 1i){
+        zbuffer[i] = digit;
+    };
+};
+
+Function Int ClearZBuffer(){
+    FillZBuffer(0.0f);
+};
+
+Function Int ClearBuffer(){
+    FillBuffer(' ');
+};
+
+Function Int ClearBuffers(){
+    ClearBuffer();
+    ClearZBuffer();
+};
+
+Function Int PrintBuffer(){
+    ConsoleGoHome();
+    
+    Var String tmp = "";
+    
+    Loop (Var Int i = 0i; i < #SIZE; i = i + 1i) {
+        If (i != 0i && i % #WIDTH == 0i) {
+            PrintLine(tmp);
+            tmp = "";
+        };
+        
+        tmp = tmp + buffer[i];
+    };
+    
+    If (tmp != "") {
+        PrintLine(tmp);
+    };
+};
+
+ConsoleClear();
+Sisyphus{
+    Var Float cosA = CosinusR(A);
+    Var Float sinA = SinusR(A);
+    Var Float cosB = CosinusR(B);
+    Var Float sinB = SinusR(B);  
+
+    ClearBuffers();
+
+    Loop(Var Float theta = 0f; theta < 2i * #PI; theta = theta + #ThetaStep){
+        Var Float cosTheta = CosinusR(theta);
+        Var Float sinTheta = SinusR(theta); 
+
+        Loop(Var Float phi = 0f; phi < 2i * #PI; phi = phi + #PhiStep){
+            Var Float cosPhi = CosinusR(phi);
+            Var Float sinPhi = SinusR(phi);   
+
+            Var Float circleX = Ro + Roo * cosTheta;
+            Var Float circleY = Roo * sinTheta;        
+
+            Var Float x = circleX * (cosB * cosPhi + sinA * sinB * sinPhi) - circleY * cosA * sinB;
+            Var Float y = circleX * (sinB * cosPhi - sinA * cosB * sinPhi) + circleY * cosA * cosB;
+            Var Float z = 5i + cosA * circleX * sinPhi + circleY * sinA;
+            Var Float ooz = 1i / z;
+
+            Var Int xp = (#WIDTH / 2i + Koo * ooz * x);
+            Var Int yp = (#HEIGHT / 2i - Koo / 2i * ooz * y);
+
+            Var Int idx = xp + yp * #WIDTH;
+            Var Float luminance = cosPhi * cosTheta * sinB - cosA * cosTheta * sinPhi - sinA * sinTheta + cosB * (cosA * sinTheta - cosTheta * sinA * sinPhi);
+        
+            If (idx >= 0i && idx < #SIZE && ooz > zbuffer[idx])
+            {
+                zbuffer[idx] = ooz;
+                Var Int lumIdx = luminance * 8i;
+                
+                If (lumIdx < 0i){
+                    lumIdx = 0i;
+                }
+                Else{
+                    If (lumIdx > 11i){
+                        lumIdx = 11i;
+                    };
+                };
+                
+                buffer[idx] = asciSymbols[lumIdx];
+            };
+        };
+    };
+    
+    ConsoleGoHome();
+    PrintBuffer();
+    A = A + 0.04f;
+    B = B + 0.08f;
+};
 ```
 ### Resources:
 - [**Donut Math**](https://www.a1k0n.net/2011/07/20/donut-math.html) by Aik0n

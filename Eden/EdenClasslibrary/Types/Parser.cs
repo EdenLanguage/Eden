@@ -1382,6 +1382,7 @@ namespace EdenClasslibrary.Types
 
             ish = ValidateTokenForStatement(TokenType.Assign);
             if (ish is InvalidStatement) return ish;
+            Expression assignOperator = new EmptyExpression(CurrentToken);
             LoadNextToken();
             
             Expression expression = ParseExpression(Precedence.Lowest);
@@ -1393,6 +1394,7 @@ namespace EdenClasslibrary.Types
 
             variableStatement.Type = variableTypeExp;
             variableStatement.Identifier = identifierExp;
+            variableStatement.Operator = assignOperator;
             variableStatement.Expression = expression;
 
             return variableStatement;

@@ -1,0 +1,5 @@
+Literal 3.14f As #FLOATi;
+Literal 3.14f As #FLOATii;
+
+Var Float variable = #FLOATi * #FLOATii;
+Return variable;

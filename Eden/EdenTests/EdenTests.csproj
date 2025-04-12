@@ -44,6 +44,7 @@
     <Folder Include="Source\Lexer\" />
     <Folder Include="Source\Errors\" />
     <Folder Include="Source\Console\" />
+    <Folder Include="Source\VariableDeclaration\Float\" />
   </ItemGroup>
 
 </Project>
