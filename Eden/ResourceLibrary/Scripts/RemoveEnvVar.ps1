@@ -1,4 +1,4 @@
-$pathToRemove = "E:\Repositories\Eden\Eden\EdenRuntime\bin\Debug\net8.0"; 
+$pathToRemove = "C:\Program Files (x86)\Eden"; 
 $systemVariables = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine); 
 
 # Trim the path for any surrounding spaces

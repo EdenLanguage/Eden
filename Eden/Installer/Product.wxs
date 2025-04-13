@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<?if $(var.Platform)=x64?>
+	<?define ProductCode = "{9C800A1C-BF1B-4E95-B3D6-1C28E6563016}"?>
+	<?define ProductInstallerName = !(loc.Name_x64)?>
+	<?else?>
+	<?define ProductCode = "{50ED3D01-3CCE-4220-B5AD-3ED6CC2DFEDE}"?>
+	<?define ProductInstallerName = !(loc.Name_x86)?>
+	<?endif?>
+
+	<Product Id="$(var.ProductCode)"
+			 Name="$(var.ProductInstallerName)"
+			 Language="!(loc.Language)"
+			 Version="$(var.BuildVersion)"
+			 Manufacturer="!(loc.Manufacturer)"
+			 UpgradeCode="59FD2FAE-4EAD-498A-A75C-5DC3CBA7594B">
+
+		<Package InstallerVersion="200"
+				 Compressed="yes"
+				 InstallScope="perMachine"
+				 Manufacturer="!(loc.Manufacturer)"
+				 Description="!(loc.Description)"
+				 Keywords="!(loc.Keywords)"
+				 Comments="!(loc.Comments)"
+				 Languages="!(loc.Language)"/>
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Icon Id="EdenIcon.Icon" SourceFile="$(var.SolutionDir)\ResourceLibrary\Assets\Logo.ico"/>
+		<Property Id="ARPPRODUCTICON">EdenIcon.Icon</Property>
+		<Property Id="ARPURLINFOABOUT">https://github.com/EdenLanguage</Property>
+
+		<UIRef Id="WixUI_Minimal"/>
+		<WixVariable Id="WixUIDialogBmp" Value="$(var.SolutionDir)\Installer\Assets\Background.bmp"/>
+		<WixVariable Id="WixUIBannerBmp" Value="$(var.SolutionDir)\Installer\Assets\Banner.bmp"/>
+		<WixVariable Id="WixUILicenseRtf" Value="$(var.SolutionDir)\Installer\Assets\License.rtf"/>
+
+		<Feature Id="ProductFeature" Title="Eden Installer" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentGroupRef Id="PublishedComponents" />
+		</Feature>
+
+		<CustomAction Id="RunEdenSetupScript"
+					  Directory="INSTALLFOLDER"
+					  ExeCommand="cmd.exe /c &quot;[INSTALLFOLDER]EdenInitialize.bat&quot;"
+					  Execute="deferred"
+					  Return="check"
+					  Impersonate="no" />
+
+		<CustomAction Id="RunPreUninstallScript"
+				  Directory="INSTALLFOLDER"
+				  ExeCommand="cmd.exe /c &quot;[INSTALLFOLDER]EdenRemove.bat&quot;"
+				  Execute="deferred"
+				  Return="check"
+				  Impersonate="no" />
+
+		<InstallExecuteSequence>
+			<Custom Action="RunEdenSetupScript" Before="InstallFinalize">NOT Installed</Custom>
+			<Custom Action="RunPreUninstallScript" Before="RemoveFiles">REMOVE="ALL"</Custom>
+		</InstallExecuteSequence>
+
+	</Product>
+
+</Wix>

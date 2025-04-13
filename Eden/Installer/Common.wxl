@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+	<String Id="Manufacturer">Dariusz Krawczyk</String>
+	<String Id="Description">Eden</String>
+	<String Id="Name_x86">Eden (32bit)</String>
+	<String Id="Name_x64">Eden (64bit)</String>
+	<String Id="Name">Eden</String>
+	<String Id="Keywords">Interpreter, Language</String>
+	<String Id="Comments">Eden</String>
+	<String Id="Language">1033</String>
+
+	<String Id="InstallFolderName">Eden</String>
+	<String Id="YOURLOCID">Your localized string</String>
+</WixLocalization>
