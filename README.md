@@ -21,8 +21,6 @@ The parser generates an `Abstract Syntax Tree (AST)`, which serves as the founda
 - <a href="#custom-what-the-language-journey-looks-like" style="font-size: 1.2em; color: rgb(117, 198, 166);">**What the Language Journey Looks Like**</a>  
 - <a href="#custom-interaction-with-language" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Interaction with Language**</a>  
 - <a href="#custom-division-of-code" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Division of Code**</a>  
-- <a href="#custom-repository-information" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Repository Information**</a>
-- <a href="#custom-documentation" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Documentation**</a>
 
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-motivation" style="color: rgb(117, 198, 166);">Motivation</h1>
@@ -360,18 +358,3 @@ This section demonstrates how the Eden language interacts with the user, showcas
 - **ReplRunner**: allows for interactive execution of `Eden` directly from the console. It enables users to write and evaluate expressions in real-time within a loop, providing immediate feedback.
 
 - **ScriptRunner**: is responsible for executing `Eden` script files. It reads and processes `.eden` files, running them as standalone programs. The ScriptRunner comes with built-in configuration that makes it easy to execute scripts in a predefined environment, handling file input/output, error reporting, and more.
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-repository-information" style="color: rgb(117, 198, 166);">Information About the Repository</h1>
-
-Documentation for this project (as well as most of the projects I work on) is written as a collection of `.md` files, which are linked together in a structure that can be recreated using the free application [Obsidian](https://obsidian.md/).
-
-Obsidian is a powerful knowledge management tool that allows to organize markdown files in a way that lets easily navigate and link concepts. This way of organizing documentation makes it easy to maintain and expand as the project grows. You can download Obsidian and use it to view and interact with this project’s documentation structure.
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-documentation" style="color: rgb(117, 198, 166);">Documentation</h1>
-
-- linki do dokumentacji z obsydiana
-- zmienna
-- petle
-- itd
