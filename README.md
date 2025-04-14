@@ -10,17 +10,22 @@ Performance optimization was never a primary concern for `Eden`, as the focus is
 
 The parser generates an `Abstract Syntax Tree (AST)`, which serves as the foundation for evaluation. Eden’s evaluator follows a `tree-walking` approach, traversing the AST and executing expressions accordingly. At this stage, no AST optimization has been implemented, but future improvements may include enhancements to parsing efficiency and execution performance.
 
+---
+
 <h1 id="custom-sections" style="color: rgb(117, 198, 166);">Sections</h1>
 
 - <a href="#custom-motivation" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Motivation**</a>  
 - <a href="#custom-resources" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Resources**</a>  
 - <a href="#custom-milestones" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Milestones**</a>  
+- <a href="#custom-instalation" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Instalation**</a>
+- <a href="#custom-interaction-with-language" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Interaction with Language**</a>  
 - <a href="#custom-examples" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Examples**</a>  
 - <a href="#custom-console-output-example" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Donut example**</a>  
 - <a href="#custom-currently-implemented" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Currently Implemented**</a>  
 - <a href="#custom-what-the-language-journey-looks-like" style="font-size: 1.2em; color: rgb(117, 198, 166);">**What the Language Journey Looks Like**</a>  
-- <a href="#custom-interaction-with-language" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Interaction with Language**</a>  
 - <a href="#custom-division-of-code" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Division of Code**</a>  
+
+---
 
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-motivation" style="color: rgb(117, 198, 166);">Motivation</h1>
@@ -35,6 +40,8 @@ When creating `Eden`, my main goal was to make everything as explicit as possibl
 
 I believe simplicity allows for clarity, and by keeping things straightforward, I could not only make the language easier to understand for others, but also deepen my own understanding of language design.
 
+---
+
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-resources" style="color: rgb(117, 198, 166);">Resources</h1>
 
@@ -46,6 +53,8 @@ I believe simplicity allows for clarity, and by keeping things straightforward, 
 - **[Programming Languages: Application and Interpretation](http://papl.cs.brown.edu/2015/)** by Shriram Krishnamurthi and Joe Gibbs Politz  
 - **[How to Write a Pratt Parser | Writing a Custom Language Parser in Golang ](https://www.youtube.com/watch?v=1BanGrbOcjs&ab_channel=tylerlaceby)**  by Tyler Laceby
 - **[Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)** by Alex Kladov
+
+---
 
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-milestones" style="color: rgb(117, 198, 166);">Milestones</h1>
@@ -59,6 +68,46 @@ I believe simplicity allows for clarity, and by keeping things straightforward, 
     - Importing external files and evaluating them.
     - External libraries support.
     - Accepting input arguments.
+
+---
+
+## [⬅️ Sections](#custom-sections)
+<h1 id="custom-instalation" style="color: rgb(117, 198, 166);">Instalation</h1>
+Although `Eden` supports platforms such as `macOS` and `Linux`, the main development currently takes place on `Windows`. Because of this, a Windows installer is available for download and installation. After launching the `.msi` installer, it will handle everything and complete the setup automatically.
+
+<img src="./Eden/ResourceLibrary/Assets/InstallEden.gif" alt="Eden Logo" style="width: 100%;">
+
+---
+
+## [⬅️ Sections](#custom-sections)
+<h1 id="custom-interaction-with-language" style="color: rgb(117, 198, 166);">Interaction with interpreter</h1>
+
+This section demonstrates how the Eden language interacts with the user, showcasing various features and functionalities. The examples below show how you can use Eden interactively through a REPL or script execution.
+
+<table>
+    <tr>
+      <h2>Run Eden</h2>
+      <img src="./Eden/ResourceLibrary/Assets/RunEdenRuntime.gif" alt="Gif 1" style="width: 100%;">
+    </tr>
+    <tr>
+      <h2>Create new Eden script</h2>
+      <img src="./Eden/ResourceLibrary/Assets/CreateNewScript.gif" alt="Gif 1" style="width: 100%;">
+    </tr>
+    <tr>
+      <h2>Open new script</h2>
+      <img src="./Eden/ResourceLibrary/Assets/OpenNewScript.gif" alt="Gif 1" style="width: 100%;">
+    </tr>
+    <tr>
+      <h2>Run Eden script</h2>
+      <img src="./Eden/ResourceLibrary/Assets/RunEdenFile.gif" alt="Gif 1" style="width: 100%;">
+    </tr>
+    <tr>
+      <h2>Run Eden REPL</h2>
+      <img src="./Eden/ResourceLibrary/Assets/BasicREPL.gif" alt="Gif 1" style="width: 100%;">
+    </tr>
+</table>
+
+---
 
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-examples" style="color: rgb(117, 198, 166);">Examples</h1>
@@ -143,6 +192,8 @@ Function Bool IsPrime(Var Int n){
 Var Bool isPrime = IsPrime(5i);
 PrintLine(isPrime);
 ```
+
+---
 
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-console-output-example" style="color: rgb(117, 198, 166);">Donut example</h1>
@@ -283,6 +334,8 @@ Sisyphus{
 - [**Video: Spinning Donut in Console**](https://www.youtube.com/watch?v=DEqXNfs_HhY&ab_channel=LexFridman) by Lex Fridman
 - [**Video: 3D Donut Console Project**](https://www.youtube.com/watch?v=74FJ8TTMM5E&ab_channel=GreenCode) by GreenCode
 
+---
+
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-currently-implemented" style="color: rgb(117, 198, 166);">What is currently implemented</h1>
 
@@ -302,6 +355,8 @@ Sisyphus{
 - Conditional statements
 - Block-scoped variables (variables defined within the execution block)
 
+---
+
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-what-the-language-journey-looks-like" style="color: rgb(117, 198, 166);">The Language's Journey (Milestones)</h1>
 
@@ -316,29 +371,7 @@ Sisyphus{
 - Support for accepting external arguments from the program.
 - Implement external file imports for the Eden language.
 
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-interaction-with-language" style="color: rgb(117, 198, 166);">Interaction with interpreter</h1>
-
-This section demonstrates how the Eden language interacts with the user, showcasing various features and functionalities. The examples below show how you can use Eden interactively through a REPL or script execution.
-
-<table>
-    <tr>
-      <h2>Create new Eden script</h2>
-      <img src="./Eden/ResourceLibrary/Assets/CreateNewScript.gif" alt="Gif 1" style="width: 100%;">
-    </tr>
-    <tr>
-      <h2>Open new script</h2>
-      <img src="./Eden/ResourceLibrary/Assets/OpenNewScript.gif" alt="Gif 1" style="width: 100%;">
-    </tr>
-    <tr>
-      <h2>Run Eden script</h2>
-      <img src="./Eden/ResourceLibrary/Assets/RunEdenFile.gif" alt="Gif 1" style="width: 100%;">
-    </tr>
-    <tr>
-      <h2>Run Eden REPL</h2>
-      <img src="./Eden/ResourceLibrary/Assets/BasicREPL.gif" alt="Gif 1" style="width: 100%;">
-    </tr>
-</table>
+---
 
 ## [⬅️ Sections](#custom-sections)
 <h1 id="custom-division-of-code" style="color: rgb(117, 198, 166);">Crutial classes description</h1>
