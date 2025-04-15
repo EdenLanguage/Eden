@@ -75,6 +75,25 @@ I believe simplicity allows for clarity, and by keeping things straightforward, 
 <h1 id="custom-instalation" style="color: rgb(117, 198, 166);">Instalation</h1>
 Although `Eden` supports platforms such as `macOS` and `Linux`, the main development currently takes place on `Windows`. Because of this, a Windows installer is available for download and installation. After launching the `.msi` installer, it will handle everything and complete the setup automatically.
 
+The installer runs two scripts:
+
+- `EdenInitialize.bat` — executed during installation  
+- `EdenRemove.bat` — executed during uninstallation
+
+These scripts perform the following actions:
+
+- Add or remove entries in the Windows Registry to allow calling `Eden` from the command line  
+- Modify the system environment path variables  
+- Update the Windows context menu
+
+After installation, both scripts are located inside the installation folder.  
+**They must be run with administrator privileges.**
+
+> ⚠️ **DISCLAIMER:**  
+> You are running these scripts at your own risk. I do not take responsibility for any damage caused by this software.
+
+All source code is available in this repository and can be modified freely.
+
 <img src="./Eden/ResourceLibrary/Assets/InstallEden.gif" alt="Eden Logo" style="width: 100%;">
 
 ---
