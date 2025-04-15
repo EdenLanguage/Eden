@@ -1,17 +1,45 @@
-# The path to add to the system 'Path' environment variable
-$pathToAdd = "C:\Program Files (x86)\Eden"
+# === CONFIGURATION ===
+# Get the current script directory
+$pathToAdd = $PSScriptRoot
+$backupFile = "$env:SystemDrive\PathBackup_Eden_Add.txt"
 
-# Get the current system 'Path' environment variable
+Write-Output "Script path: '$pathToAdd'"
+
+# Check if Eden.exe exists in the same folder
+$edenExecutable = Join-Path $pathToAdd "Eden.exe"
+if (-not (Test-Path $edenExecutable)) {
+    Write-Output "ERROR: Eden.exe not found in '$pathToAdd'. Aborting."
+    exit 1
+}
+
+# === FETCH CURRENT SYSTEM PATH ===
 $currentPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
 
-# Check if the path is already in the 'Path' variable to avoid duplicates
-if ($currentPath -notcontains $pathToAdd) {
-    # Append the new path to the system 'Path' environment variable
-    $newPath = $currentPath + ";" + $pathToAdd
+# === BACKUP THE ORIGINAL PATH ===
+try {
+    Set-Content -Path $backupFile -Value $currentPath -Encoding UTF8
+    Write-Output "Original system PATH backed up to: $backupFile"
+} catch {
+    Write-Output "Failed to create backup: $_"
+	exit 1
+}
 
-    # Set the updated 'Path' variable back to the system
-    [System.Environment]::SetEnvironmentVariable("Path", $newPath, [System.EnvironmentVariableTarget]::Machine)
-    Write-Output "The path '$pathToAdd' has been added to the system 'Path' variable."
+# === CLEAN AND SPLIT PATHS ===
+$paths = $currentPath -split ";" | ForEach-Object { $_.Trim() }
+
+# === CHECK FOR DUPLICATE ===
+if ($paths -contains $pathToAdd) {
+    Write-Output "Path '$pathToAdd' is already in the system PATH. No changes made."
 } else {
-    Write-Output "The path '$pathToAdd' is already in the system 'Path' variable."
+    $newPaths = $paths + $pathToAdd
+    $newPath = ($newPaths -join ";").TrimEnd(";")
+
+    # === APPLY CHANGES ===
+    try {
+        [System.Environment]::SetEnvironmentVariable("Path", $newPath, [System.EnvironmentVariableTarget]::Machine)
+        Write-Output "Path '$pathToAdd' has been added to the system PATH."
+    } catch {
+        Write-Output "Failed to update system PATH: $_"
+		exit 1
+    }
 }

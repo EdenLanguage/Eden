@@ -1,9 +1,10 @@
-@echo off
+echo off
 cd /d "%~dp0"
 
+:: Check if the script is running with Administrator rights
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-	echo Script is not running with Admin rights!
+    echo ERROR: This script requires Administrator rights.
     goto :eof
 )
 
@@ -11,96 +12,111 @@ if %errorlevel% neq 0 (
 set "EdenRuntimeDirectory=%~dp0"
 set "RuntimePath=%EdenRuntimeDirectory%Eden.exe"
 set "IconPath=%EdenRuntimeDirectory%Logo.ico"
+set "SetEnvironmentVarScript=%EdenRuntimeDirectory%CreateEnvVar.ps1"
 
+:: Check if Eden runtime file exists
 IF NOT EXIST "%RuntimePath%" (
     echo ERROR: Runtime file not found at "%RuntimePath%"
     goto :eof
 )
 
+:: Check if Eden icon file exists
 IF NOT EXIST "%IconPath%" (
     echo ERROR: Icon file not found at "%IconPath%"
     goto :eof
 )
 
-powershell.exe -ExecutionPolicy Bypass -File "CreateEnvVar.ps1" >nul 2>&1
-if %ERRORLEVEL% neq 0 (
-    echo The operation failed add enviroment variable.
-	goto :eof
+:: Check if the PowerShell script exists
+IF NOT EXIST "%SetEnvironmentVarScript%" (
+    echo ERROR: File not found at "%SetEnvironmentVarScript%"
+    goto :eof
 )
 
-:: Set the file association silently and overwrite without prompt
+powershell.exe -ExecutionPolicy Bypass -File "CreateEnvVar.ps1"
+if %ERRORLEVEL% neq 0 (
+    echo ERROR: The operation failed to add environment variable.
+    goto :eof
+)
+
+:: Set file association for .eden files
 reg add "HKEY_CLASSES_ROOT\.eden" /ve /t REG_SZ /d "EdenFile" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\.eden
-	goto :eof
+    echo ERROR: Failed to append registry entry at HKCR\.eden
+    goto :eof
 )
 
+:: Set 'ShellNew' registry for right-click "Create Eden File"
 reg add "HKEY_CLASSES_ROOT\.eden\ShellNew" /v "FileName" /t REG_SZ /d "%SystemRoot%\system32\notepad.exe,-470" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\.eden\ShellNew
-	goto :eof
+    echo ERROR: Failed to append registry entry at HKCR\.eden\ShellNew
+    goto :eof
 )
 
+:: Set EdenFile registry to specify the type
 reg add "HKEY_CLASSES_ROOT\EdenFile" /ve /t REG_SZ /d "Eden Script" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile
-	goto :eof
+    echo ERROR: Failed to append registry entry at HKCR\EdenFile
+    goto :eof
 )
 
+:: Configure command for opening .eden files
 reg add "HKEY_CLASSES_ROOT\EdenFile\shell\open\command" /ve /t REG_SZ /d "\"%RuntimePath%\" \"%%1\"" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile\shell\open\command
-	goto :eof
+    echo ERROR: Failed to append registry entry at HKCR\EdenFile\shell\open\command
+    goto :eof
 )
 
-:: Set the custom icon silently
+:: Set the custom icon for EdenFile
 reg add "HKEY_CLASSES_ROOT\EdenFile\DefaultIcon" /ve /t REG_SZ /d "%IconPath%" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile\DefaultIcon
-	goto :eof
+    echo ERROR: Failed to append registry entry at HKCR\EdenFile\DefaultIcon
+    goto :eof
 )
 
 :: Add context menu entry (right-click background)
 reg add "HKEY_CLASSES_ROOT\Directory\Background\Shell\Create Eden File" /ve /d "Create new Eden script" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Create new Eden Script'
-	goto :eof
+    echo ERROR: Failed to append registry entry at HKCR\Directory\Background\Shell\Create Eden File
+    goto :eof
 )
 
-reg add "HKEY_CLASSES_ROOT\Directory\Background\Shell\Create Eden File" /v "Icon" /t REG_SZ /d "C:\Program Files (x86)\Eden\Logo.ico" /f >nul 2>&1
+:: Set icon for context menu item
+reg add "HKEY_CLASSES_ROOT\Directory\Background\Shell\Create Eden File" /v "Icon" /t REG_SZ /d "%IconPath%" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Add icon'
-	goto :eof
+    echo ERROR: Failed to append icon registry entry at HKCR\Directory\Background\Shell\Create Eden File
+    goto :eof
 )
 
+:: Set command for context menu (background right-click)
 reg add "HKEY_CLASSES_ROOT\Directory\Background\Shell\Create Eden File\command" /ve /d "cmd.exe /c echo. > \"%%V\\NewFile.eden\" && start \"\" notepad \"%%V\\NewFile.eden\"" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Open with notepad'
-	goto :eof
+    echo ERROR: Failed to append command registry entry at HKCR\Directory\Background\Shell\Create Eden File
+    goto :eof
 )
 
 :: Add context menu entry (right-click folder)
 reg add "HKEY_CLASSES_ROOT\Directory\Shell\Create Eden File" /ve /d "Create New .eden File" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Create new .eden file'
-	goto :eof
+    echo ERROR: Failed to append registry entry at HKCR\Directory\Shell\Create Eden File
+    goto :eof
 )
 
+:: Set command for context menu (folder right-click)
 reg add "HKEY_CLASSES_ROOT\Directory\Shell\Create Eden File\command" /ve /d "cmd.exe /c echo. > \"%%1\\NewFile.eden\" && start \"\" notepad \"%%1\\NewFile.eden\"" /f >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-	echo Failed to append registry entry at HKCR\EdenFile\Directory\Shell ... 'Open new .eden file with notepad'
-	goto :eof
+    echo ERROR: Failed to append command registry entry at HKCR\Directory\Shell\Create Eden File
+    goto :eof
 )
 
-:: Refresh Explorer silently
+:: Refresh Explorer to apply changes
 taskkill /f /im explorer.exe >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-    echo The operation failed to kill 'explorer.exe'.
+    echo ERROR: Failed to kill 'explorer.exe'. It may need to be manually restarted.
 )
 
 start explorer.exe >nul 2>&1
 if %ERRORLEVEL% neq 0 (
-    echo The operation failed to start 'explorer.exe'.
+    echo ERROR: Failed to start 'explorer.exe'. It may need to be manually restarted.
 )
 
-echo EdenRuntime has beed added to this machine.
+echo EdenRuntime has been successfully added to this machine.

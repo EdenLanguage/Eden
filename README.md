@@ -17,6 +17,7 @@ The parser generates an `Abstract Syntax Tree (AST)`, which serves as the founda
 - <a href="#custom-motivation" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Motivation**</a>  
 - <a href="#custom-resources" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Resources**</a>  
 - <a href="#custom-milestones" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Milestones**</a>  
+- <a href="#custom-local-build" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Local build**</a>
 - <a href="#custom-instalation" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Instalation**</a>
 - <a href="#custom-interaction-with-language" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Interaction with Language**</a>  
 - <a href="#custom-examples" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Examples**</a>  
@@ -72,29 +73,191 @@ I believe simplicity allows for clarity, and by keeping things straightforward, 
 ---
 
 ## [⬅️ Sections](#custom-sections)
+<h1 id="custom-local-build" style="color: rgb(117, 198, 166);">Local build</h1>
+
+To build `Eden`, follow these steps:
+
+### 1. Clone the Repository
+Download the repository to your local machine.
+
+### 2. Install Visual Studio
+Ensure that you have **Visual Studio** installed on your system. The solution includes all necessary dependencies, which are contained inside solution (`.sln`).
+
+You can download Visual Studio from [here](https://visualstudio.microsoft.com/).
+
+### 3. Open the Solution
+Open the solution file (`.sln`) located in the repository with Visual Studio.
+
+### 4. Build the Installer Project
+In Visual Studio, build the **Installer** project by selecting `Build` from the top menu, then choosing **Build Solution** (or press `Ctrl+Shift+B`).
+
+### 5. Find the Generated `.msi` File
+After the build process completes successfully, the generated `.msi` file will be placed in the **`Installs`** folder inside the **Installer** project directory.
+
+---
+
+## [⬅️ Sections](#custom-sections)
 <h1 id="custom-instalation" style="color: rgb(117, 198, 166);">Instalation</h1>
 Although `Eden` supports platforms such as `macOS` and `Linux`, the main development currently takes place on `Windows`. Because of this, a Windows installer is available for download and installation. After launching the `.msi` installer, it will handle everything and complete the setup automatically.
 
-The installer runs two scripts:
-
-- `EdenInitialize.bat` — executed during installation  
-- `EdenRemove.bat` — executed during uninstallation
-
-These scripts perform the following actions:
-
-- Add or remove entries in the Windows Registry to allow calling `Eden` from the command line  
-- Modify the system environment path variables  
-- Update the Windows context menu
-
-After installation, both scripts are located inside the installation folder.  
-**They must be run with administrator privileges.**
-
-> ⚠️ **DISCLAIMER:**  
-> You are running these scripts at your own risk. I do not take responsibility for any damage caused by this software.
-
-All source code is available in this repository and can be modified freely.
-
 <img src="./Eden/ResourceLibrary/Assets/InstallEden.gif" alt="Eden Logo" style="width: 100%;">
+
+---
+
+This project includes **four key scripts** that together handle the installation and uninstallation of the Eden runtime. They are run during instalation process. Below is a detailed explanation of what each script does, how it works, and why it's needed.
+
+All scripts are located in installation folder of `Eden`.
+
+## `EdenInitialize.bat`
+
+**Purpose:**  
+This batch script sets up the Eden environment by:
+
+- Validating admin privileges
+- Registering file types and context menu entries in the Windows Registry
+- Executing a PowerShell script to add Eden to the system `PATH` environment variable
+- Refreshing Windows Explorer to apply changes immediately
+
+#### What It Does
+
+1. **Admin Check**  
+   Uses `net session` to ensure it's being run as Administrator. If not, the script exits immediately.
+
+2. **Setup Variables**  
+   Locates `Eden.exe` and `Logo.ico` in the current directory (`%~dp0`). If they don’t exist, the script stops.
+
+3. **Add Environment Variable**  
+   Executes `CreateEnvVar.ps1` to append Eden’s installation directory to the system `PATH`.
+
+4. **Register File Type `.eden`**  
+   Adds entries under `HKEY_CLASSES_ROOT`:
+   - Associates `.eden` extension with `EdenFile`
+   - Adds default icon and Notepad as the default handler
+   - Enables right-click "New Eden File" in:
+     - Background of directories
+     - Folder context menus
+
+5. **Explorer Refresh**  
+   Restarts Windows Explorer to apply environment and registry changes without requiring a reboot.
+
+---
+
+## `CreateEnvVar.ps1`
+
+**Purpose:**  
+Adds Eden’s installation directory to the system `PATH` environment variable, allowing `Eden.exe` to be run from any command prompt.
+
+####  What It Does
+
+1. **Current Path Detection**  
+   Automatically determines the folder the script is running from using:
+2. **Validation**
+    Checks if Eden.exe exists in this directory. If not, the script exits with exit 1.
+3. **Path Check & Update**
+    - Retrieves the current system PATH
+    - Splits it to verify Eden’s path isn’t already included
+    - If not present, it appends Eden’s path and updates the system variable
+    - Writes a success or error message to the console
+
+4. **Exit Codes** 
+    Returns 0 on success, 1 on error — used by the batch script for error handling.
+
+---
+
+## `EdenRemove.bat`
+
+**Purpose:**  
+This batch script handles the **complete uninstallation** of the Eden runtime configuration from the system.
+
+#### What It Does
+
+1. **Check for Admin Rights**
+   - Uses `net session` to verify the script is running with Administrator privileges.
+   - If not elevated, it prints an error and exits.
+
+2. **Locate Removal Script**
+   - Sets the current script directory as `EdenRuntimeDirectory`.
+   - Locates `RemoveEnvVar.ps1` in the same directory.
+   - Exits if the script is missing.
+
+3. **Registry Cleanup**
+   - Removes file extension association for `.eden` under:
+     - `HKEY_CLASSES_ROOT\.eden`
+     - `HKEY_CLASSES_ROOT\EdenFile`
+   - Deletes context menu entries for:
+     - Background of folders: `Directory\Background\Shell\Create Eden File`
+     - Folders themselves: `Directory\Shell\Create Eden File`
+
+4. **Remove PATH Entry**
+   - Executes `RemoveEnvVar.ps1` to delete Eden’s directory from the system PATH environment variable.
+
+5. **Explorer Refresh**
+   - Silently restarts `explorer.exe` to apply registry and environment changes immediately.
+
+6. **Final Output**
+   - Prints confirmation that Eden has been removed from the machine.
+
+---
+
+## `RemoveEnvVar.ps1`
+
+**Purpose:**  
+This PowerShell script **removes Eden’s directory from the system PATH** environment variable.
+
+#### What It Does
+
+1. **Determine Script Directory**
+   - Gets the folder the script is running from:
+2. **Build Target Path**
+   - Constructs the full path to remove: `"$scriptDir"`
+3. **Get and Sanitize PATH**
+   - Retrieves the system PATH using:
+   - Splits the PATH string by `;`
+   - Filters out the Eden path if it exists
+
+4. **Update PATH**
+   - Joins the filtered list and writes it back to the system:
+5. **Console Output**
+   - Informs whether the Eden path was found and removed or not found at all.
+
+---
+
+## Environment Variable Backup
+
+Before modifying the system `PATH`, both `Add` and `Remove` scripts create a backup:
+
+- `C:\PathBackup_Eden_Add.txt` – before adding Eden
+- `C:\PathBackup_Eden_Remove.txt` – before removing Eden
+
+### How to Restore
+
+1. Open the relevant `.txt` file from `C:\`.
+2. Copy its content.
+3. Go to **System Properties** → **Advanced** → **Environment Variables**.
+4. Under **System variables**, select `Path` → **Edit**.
+5. Replace the current value with the backup content.
+6. Apply changes and restart your terminal or computer.
+
+---
+
+## Important Notes
+
+- **Administrator Privileges Required**  
+  All Eden setup and removal scripts **must be run as Administrator** to properly modify system environment variables and Windows registry keys. If you don't run them with admin rights, they will exit without making changes.
+
+- **Use At Your Own Risk**  
+  These scripts interact with critical parts of your system (such as registry and environment variables). While they are designed to be safe and self-contained, misuse or modifications may lead to undesired behavior.  
+  > ⚠️ **DISCLAIMER:** You run these scripts at your own risk. The author is not responsible for any damage caused.
+- **Installation Folder Must Contain Eden.exe**  
+  The PowerShell script that adds Eden to the system PATH checks whether `Eden.exe` is present in the same folder. If not found, the script will exit with an error code and make no changes.
+
+- **Environment Variable Changes Are Immediate**  
+  Environment variable updates are made at the **Machine level**, and changes will take effect system-wide. `explorer.exe` is restarted automatically to ensure context menus and file associations refresh correctly.
+- **Uninstallation Cleans Up Everything**  
+  The uninstaller script (`EdenRemove.bat`) will remove:
+  - File associations for `.eden` files
+  - Right-click context menu entries
+  - Eden’s entry in the system PATH
 
 ---
 

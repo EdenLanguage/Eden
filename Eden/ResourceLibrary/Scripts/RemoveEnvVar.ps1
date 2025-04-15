@@ -1,15 +1,43 @@
-$pathToRemove = "C:\Program Files (x86)\Eden"; 
-$systemVariables = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine); 
+# === CONFIGURATION ===
+# Get the current script directory
+$pathToRemove = $PSScriptRoot
+$backupFile = "$env:SystemDrive\PathBackup_Eden_Remove.txt"
 
-# Trim the path for any surrounding spaces
-$systemVariables = $systemVariables.Trim()
+Write-Output "Script path: '$pathToRemove'"
 
-# Match the exact path including possible leading/trailing spaces or semicolons
-if ($systemVariables -match "(\b" + [Regex]::Escape($pathToRemove) + "\b)(;|$)") { 
-    $newPath = ($systemVariables -split ";" | Where-Object { $_.Trim() -ne $pathToRemove }) -join ";"; 
-    [System.Environment]::SetEnvironmentVariable("Path", $newPath, [System.EnvironmentVariableTarget]::Machine); 
-    Write-Output "The path '$pathToRemove' has been removed from the system environment variables."; 
-} else { 
-    Write-Output "The path '$pathToRemove' was not found in the system environment variables.";
+# Check if Eden.exe exists in the same folder
+$edenExecutable = Join-Path $pathToRemove "Eden.exe"
+if (-not (Test-Path $edenExecutable)) {
+    Write-Output "ERROR: Eden.exe not found in '$pathToRemove'. Aborting."
+    exit 1
 }
-[System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+
+# === FETCH CURRENT PATH ===
+$currentPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+
+# === BACKUP THE ORIGINAL PATH ===
+try {
+    Set-Content -Path $backupFile -Value $currentPath -Encoding UTF8
+    Write-Output "Original system PATH backed up to: $backupFile"
+} catch {
+    Write-Output "Failed to create backup: $_"
+	exit 1
+}
+
+# === PROCESS PATHS ===
+$paths = $currentPath -split ";" | ForEach-Object { $_.Trim() }
+$newPaths = $paths | Where-Object { $_ -ne $pathToRemove }
+$newPath = ($newPaths -join ";").TrimEnd(";")
+
+# === APPLY CHANGES IF NEEDED ===
+if ($paths.Count -ne $newPaths.Count) {
+    try {
+        [System.Environment]::SetEnvironmentVariable("Path", $newPath, [System.EnvironmentVariableTarget]::Machine)
+        Write-Output "Path '$pathToRemove' has been removed from the system PATH."
+    } catch {
+        Write-Output "Failed to update the system PATH: $_"
+		exit 1
+    }
+} else {
+    Write-Output "Path '$pathToRemove' was not found in the system PATH. No changes made."
+}
