@@ -1,301 +1,69 @@
-# Eden - programing language
+# Eden - interpreted programing language
 
-<img src="./Eden/ResourceLibrary/Assets/Logo.png" alt="Eden Logo" style="width: 33%;">
+<img src="./Eden/ResourceLibrary/Assets/Logo.png" alt="Eden Logo" style="width: 25%;">
 
-`Eden` is an `interpreted` programming language with a built-in REPL and an interpreter for files with the `.eden` extension. It is built entirely from scratch without relying on grammar generators like Bison or tokenizers like Lex. This deliberate choice was made to deepen the understanding of language construction and parsing techniques.
+`Eden` is an interpreted programming language `built entirely from scratch` — without grammar generators like Bison or tokenizers like Lex. This deliberate choice was made to gain a deeper understanding of `interpreter design` and `parsing techniques`. My goal was to keep every part of the language: parser, evaluator, and all supporting components — transparent and easy to follow. I believe that simplicity fosters clarity: by avoiding unnecessary complexity, I could make `Eden` easier for others to study while also strengthening my own knowledge of language design.
 
-The interpreter is written in `C#` and based on the `.NET` platform, chosen for its robust cross-platform capabilities, enabling easy migration across `Windows`, `macOS`, and `Linux`. Additionally, `C#` offers extensive tools for software testing, ensuring reliability and maintainability throughout development.
+The idea for `Eden` grew out of my studies in `Informatics` at university, where I explored the theory behind programming languages and interpreters. This project became my way of applying that theory in practice, transforming concepts from lectures into a fully functioning language.
 
-Performance optimization was never a primary concern for `Eden`, as the focus is on clarity, learning, and design flexibility. The language employs an `LL(1)` parser, a top-down approach that predicts the next token, making parsing more structured. The implementation uses `Pratt parsing`, which allows efficient expression evaluation while maintaining a simple and extensible syntax.
+`Eden’s` interpreter is written in `C#` on `.NET 8`, chosen for its excellent `testing capabilities` and `cross-platform support` — allowing `Eden` to run on `Windows`, `macOS`, and `Linux`.
 
-The parser generates an `Abstract Syntax Tree (AST)`, which serves as the foundation for evaluation. Eden’s evaluator follows a `tree-walking` approach, traversing the AST and executing expressions accordingly. At this stage, no AST optimization has been implemented, but future improvements may include enhancements to parsing efficiency and execution performance.
+Performance optimization was never the main priority; the focus has always been on clarity, learning, and design flexibility. `Eden` uses a custom `LL(1)` parser, combined with `Pratt parsing` for expression evaluation — critical for handling operator precedence.
 
----
+The parser produces an `Abstract Syntax Tree`, which the evaluator executes using a `tree-walking approach`. At this stage, no AST optimizations are in place; however, future versions may include improvements to both parsing efficiency and execution speed.
 
-<h1 id="custom-sections" style="color: rgb(117, 198, 166);">Sections</h1>
+<br>
 
-- <a href="#custom-motivation" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Motivation**</a>  
-- <a href="#custom-resources" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Resources**</a>  
-- <a href="#custom-milestones" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Milestones**</a>  
-- <a href="#custom-local-build" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Local build**</a>
-- <a href="#custom-instalation" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Instalation**</a>
-- <a href="#custom-interaction-with-language" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Interaction with Language**</a>  
-- <a href="#custom-examples" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Examples**</a>  
-- <a href="#custom-console-output-example" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Donut example**</a>  
-- <a href="#custom-currently-implemented" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Currently Implemented**</a>  
-- <a href="#custom-what-the-language-journey-looks-like" style="font-size: 1.2em; color: rgb(117, 198, 166);">**What the Language Journey Looks Like**</a>  
-- <a href="#custom-division-of-code" style="font-size: 1.2em; color: rgb(117, 198, 166);">**Division of Code**</a>  
+<h1 id="custom-sections">📖 Table Of Contents</h1>
 
----
+- <a href="#custom-interaction-with-language" style="font-size: 1.2em;">**Interact with Eden**</a>  
+- <a href="#custom-examples" style="font-size: 1.2em;">**Example - plain code**</a>  
+- <a href="#custom-console-output-example" style="font-size: 1.2em;">**Example - Spinning Donut**</a>  
+- <a href="#custom-currently-implemented" style="font-size: 1.2em;">**Language features**</a>
+- <a href="#custom-how-to-write" style="font-size: 1.2em;">**Write program with Eden?**</a>    
+- <a href="#custom-instalation" style="font-size: 1.2em;">**Instalation**</a>
+- <a href="#custom-resources" style="font-size: 1.2em;">**Resources**</a>  
 
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-motivation" style="color: rgb(117, 198, 166);">Motivation</h1>
+<br>
 
-`Eden` is a programming language that I created to deepen my understanding of how programming languages work, especially from a practical perspective. The theory I studied during my university years played a key role in this, and completing my specialization in `Computer Programming` would feel like a complete failure if I couldn’t even write a simple interpreter. his project was a way to apply the knowledge I gained during my studies and put into practice the concepts I had learned.
+## [⬅️ Table Of Contents](#custom-sections)
+<h1 id="custom-interaction-with-language">💡 Interact with Eden</h1>
 
-The name `"Eden"` comes from the Garden of Eden mentioned in the Bible, and it was intended to symbolize how enjoyable (at least, that’s what I hoped for) coding in this language could be. I wanted to create something as simple and pleasant to use as the `C` language, while also allowing for a higher level of abstraction through interpretative capabilities across various environments. 
+`Eden` is designed to be simple and intuitive — just like `Python`. You can interact with it in multiple ways: through a `REPL`, running scripts via the `command line`, or using the `Visual Studio Code` extension.
 
-When creating `Eden`, my main goal was to make everything as explicit as possible in order to understand it better. I wanted to make sure every part of the language, from the parser to the evaluator, was transparent and easy to follow. By doing so, I could learn more deeply about the inner workings of programming languages. This approach is why I was particularly guided by this quote:
-> ***"An idiot admires complexity, a genius admires simplicity."***  
->  _— Terry A. Davis_  
-
-I believe simplicity allows for clarity, and by keeping things straightforward, I could not only make the language easier to understand for others, but also deepen my own understanding of language design.
-
----
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-resources" style="color: rgb(117, 198, 166);">Resources</h1>
-
-- **[Top Down Operator Precedence](https://tdop.github.io/)** by Vaughan R. Pratt  
-- **[Writing an Interpreter in Go](https://interpreterbook.com/)** by Thorsten Ball  
-- **[Let’s Build a Compiler!](http://compilers.iecc.com/crenshaw/)** by Jack W. Crenshaw  
-- **[Top Down Operator Precedence](http://javascript.crockford.com/tdop/tdop.html)** by Douglas Crockford  
-- **[Pratt Parsers: Expression Parsing Made Easy](http://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/)** by Bob Nystrom  
-- **[Programming Languages: Application and Interpretation](http://papl.cs.brown.edu/2015/)** by Shriram Krishnamurthi and Joe Gibbs Politz  
-- **[How to Write a Pratt Parser | Writing a Custom Language Parser in Golang ](https://www.youtube.com/watch?v=1BanGrbOcjs&ab_channel=tylerlaceby)**  by Tyler Laceby
-- **[Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)** by Alex Kladov
-
----
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-milestones" style="color: rgb(117, 198, 166);">Milestones</h1>
-
--  **Release 1.0.0**
-    - Basic implementation of the language.
-    - Windows installer for the interpreter.
-    - Formal grammar definition for the language. When creating the parser, I didn't use grammar generators but wrote the grammar manually. The grammar definition would also help in creating syntax highlighting add-ons for development environments like VSCode.
-
-- **Release 1.1.0**
-    - Importing external files and evaluating them.
-    - External libraries support.
-    - Accepting input arguments.
-
----
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-local-build" style="color: rgb(117, 198, 166);">Local build</h1>
-
-To build `Eden`, follow these steps:
-
-### 1. Clone the Repository
-Download the repository to your local machine.
-
-### 2. Install Visual Studio
-Ensure that you have **Visual Studio** installed on your system. The solution includes all necessary dependencies, which are contained inside solution (`.sln`).
-
-You can download Visual Studio from [here](https://visualstudio.microsoft.com/).
-
-### 3. Open the Solution
-Open the solution file (`.sln`) located in the repository with Visual Studio.
-
-### 4. Build the Installer Project
-In Visual Studio, build the **Installer** project by selecting `Build` from the top menu, then choosing **Build Solution** (or press `Ctrl+Shift+B`).
-
-### 5. Find the Generated `.msi` File
-After the build process completes successfully, the generated `.msi` file will be placed in the **`Installs`** folder inside the **Installer** project directory.
-
----
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-instalation" style="color: rgb(117, 198, 166);">Instalation</h1>
-Although `Eden` supports platforms such as `macOS` and `Linux`, the main development currently takes place on `Windows`. Because of this, a Windows installer is available for download and installation. After launching the `.msi` installer, it will handle everything and complete the setup automatically.
-
-<img src="./Eden/ResourceLibrary/Assets/InstallEden.gif" alt="Eden Logo" style="width: 100%;">
-
----
-
-This project includes **four key scripts** that together handle the installation and uninstallation of the Eden runtime. They are run during instalation process. Below is a detailed explanation of what each script does, how it works, and why it's needed.
-
-All scripts are located in installation folder of `Eden`.
-
-## `EdenInitialize.bat`
-
-**Purpose:**  
-This batch script sets up the Eden environment by:
-
-- Validating admin privileges
-- Registering file types and context menu entries in the Windows Registry
-- Executing a PowerShell script to add Eden to the system `PATH` environment variable
-- Refreshing Windows Explorer to apply changes immediately
-
-#### What It Does
-
-1. **Admin Check**  
-   Uses `net session` to ensure it's being run as Administrator. If not, the script exits immediately.
-
-2. **Setup Variables**  
-   Locates `Eden.exe` and `Logo.ico` in the current directory (`%~dp0`). If they don’t exist, the script stops.
-
-3. **Add Environment Variable**  
-   Executes `CreateEnvVar.ps1` to append Eden’s installation directory to the system `PATH`.
-
-4. **Register File Type `.eden`**  
-   Adds entries under `HKEY_CLASSES_ROOT`:
-   - Associates `.eden` extension with `EdenFile`
-   - Adds default icon and Notepad as the default handler
-   - Enables right-click "New Eden File" in:
-     - Background of directories
-     - Folder context menus
-
-5. **Explorer Refresh**  
-   Restarts Windows Explorer to apply environment and registry changes without requiring a reboot.
-
----
-
-## `CreateEnvVar.ps1`
-
-**Purpose:**  
-Adds Eden’s installation directory to the system `PATH` environment variable, allowing `Eden.exe` to be run from any command prompt.
-
-####  What It Does
-
-1. **Current Path Detection**  
-   Automatically determines the folder the script is running from using:
-2. **Validation**
-    Checks if Eden.exe exists in this directory. If not, the script exits with exit 1.
-3. **Path Check & Update**
-    - Retrieves the current system PATH
-    - Splits it to verify Eden’s path isn’t already included
-    - If not present, it appends Eden’s path and updates the system variable
-    - Writes a success or error message to the console
-
-4. **Exit Codes** 
-    Returns 0 on success, 1 on error — used by the batch script for error handling.
-
----
-
-## `EdenRemove.bat`
-
-**Purpose:**  
-This batch script handles the **complete uninstallation** of the Eden runtime configuration from the system.
-
-#### What It Does
-
-1. **Check for Admin Rights**
-   - Uses `net session` to verify the script is running with Administrator privileges.
-   - If not elevated, it prints an error and exits.
-
-2. **Locate Removal Script**
-   - Sets the current script directory as `EdenRuntimeDirectory`.
-   - Locates `RemoveEnvVar.ps1` in the same directory.
-   - Exits if the script is missing.
-
-3. **Registry Cleanup**
-   - Removes file extension association for `.eden` under:
-     - `HKEY_CLASSES_ROOT\.eden`
-     - `HKEY_CLASSES_ROOT\EdenFile`
-   - Deletes context menu entries for:
-     - Background of folders: `Directory\Background\Shell\Create Eden File`
-     - Folders themselves: `Directory\Shell\Create Eden File`
-
-4. **Remove PATH Entry**
-   - Executes `RemoveEnvVar.ps1` to delete Eden’s directory from the system PATH environment variable.
-
-5. **Explorer Refresh**
-   - Silently restarts `explorer.exe` to apply registry and environment changes immediately.
-
-6. **Final Output**
-   - Prints confirmation that Eden has been removed from the machine.
-
----
-
-## `RemoveEnvVar.ps1`
-
-**Purpose:**  
-This PowerShell script **removes Eden’s directory from the system PATH** environment variable.
-
-#### What It Does
-
-1. **Determine Script Directory**
-   - Gets the folder the script is running from:
-2. **Build Target Path**
-   - Constructs the full path to remove: `"$scriptDir"`
-3. **Get and Sanitize PATH**
-   - Retrieves the system PATH using:
-   - Splits the PATH string by `;`
-   - Filters out the Eden path if it exists
-
-4. **Update PATH**
-   - Joins the filtered list and writes it back to the system:
-5. **Console Output**
-   - Informs whether the Eden path was found and removed or not found at all.
-
----
-
-## Environment Variable Backup
-
-Before modifying the system `PATH`, both `Add` and `Remove` scripts create a backup:
-
-- `C:\PathBackup_Eden_Add.txt` – before adding Eden
-- `C:\PathBackup_Eden_Remove.txt` – before removing Eden
-
-### How to Restore
-
-1. Open the relevant `.txt` file from `C:\`.
-2. Copy its content.
-3. Go to **System Properties** → **Advanced** → **Environment Variables**.
-4. Under **System variables**, select `Path` → **Edit**.
-5. Replace the current value with the backup content.
-6. Apply changes and restart your terminal or computer.
-
----
-
-## Important Notes
-
-- **Administrator Privileges Required**  
-  All Eden setup and removal scripts **must be run as Administrator** to properly modify system environment variables and Windows registry keys. If you don't run them with admin rights, they will exit without making changes.
-
-- **Use At Your Own Risk**  
-  These scripts interact with critical parts of your system (such as registry and environment variables). While they are designed to be safe and self-contained, misuse or modifications may lead to undesired behavior.  
-  > ⚠️ **DISCLAIMER:** You run these scripts at your own risk. The author is not responsible for any damage caused.
-- **Installation Folder Must Contain Eden.exe**  
-  The PowerShell script that adds Eden to the system PATH checks whether `Eden.exe` is present in the same folder. If not found, the script will exit with an error code and make no changes.
-
-- **Environment Variable Changes Are Immediate**  
-  Environment variable updates are made at the **Machine level**, and changes will take effect system-wide. `explorer.exe` is restarted automatically to ensure context menus and file associations refresh correctly.
-- **Uninstallation Cleans Up Everything**  
-  The uninstaller script (`EdenRemove.bat`) will remove:
-  - File associations for `.eden` files
-  - Right-click context menu entries
-  - Eden’s entry in the system PATH
-
----
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-interaction-with-language" style="color: rgb(117, 198, 166);">Interaction with interpreter</h1>
-
-This section demonstrates how the Eden language interacts with the user, showcasing various features and functionalities. The examples below show how you can use Eden interactively through a REPL or script execution.
+Let’s take a closer look at each method:
 
 <table>
     <tr>
-      <h2>Run Eden</h2>
-      <img src="./Eden/ResourceLibrary/Assets/RunEdenRuntime.gif" alt="Gif 1" style="width: 100%;">
+        <h2>▶️ REPL - Read-Eval-Print Loop</h2>
+        <p>You can launch Eden in REPL (Read-Eval-Print Loop) mode, which opens an interactive console. This is ideal for evaluating expressions or experimenting with code—just like Python!</P>
+        <img src="./Eden/ResourceLibrary/Assets/REPL.gif" alt="Gif 1" style="width: 100%;">
     </tr>
     <tr>
-      <h2>Create new Eden script</h2>
-      <img src="./Eden/ResourceLibrary/Assets/CreateNewScript.gif" alt="Gif 1" style="width: 100%;">
+        <h2>💻 Visual Studio Code</h2>
+        <p>For a more complete development experience, Eden includes a custom Visual Studio Code extension. It provides syntax highlighting, and you can run .eden files directly from within the editor.</p>
+        <img src="./Eden/ResourceLibrary/Assets/FromVIsual.gif" alt="Gif 1" style="width: 100%;">
     </tr>
     <tr>
-      <h2>Open new script</h2>
-      <img src="./Eden/ResourceLibrary/Assets/OpenNewScript.gif" alt="Gif 1" style="width: 100%;">
+        <h2>🖥️ Command Line</h2>
+        <p>You can write .eden files and execute them using the command line. This is great for running full scripts or automating tasks.</p>
+        <img src="./Eden/ResourceLibrary/Assets/FromConsole.gif" alt="Gif 1" style="width: 100%;">
     </tr>
     <tr>
-      <h2>Run Eden script</h2>
-      <img src="./Eden/ResourceLibrary/Assets/RunEdenFile.gif" alt="Gif 1" style="width: 100%;">
-    </tr>
-    <tr>
-      <h2>Run Eden REPL</h2>
-      <img src="./Eden/ResourceLibrary/Assets/BasicREPL.gif" alt="Gif 1" style="width: 100%;">
+        <h2>📄 Create Eden Scripts</h2>
+        <p>Eden also supports easy creation of new scripts.</p>
+        <img src="./Eden/ResourceLibrary/Assets/CreateFile.gif" alt="Gif 1" style="width: 100%;">
     </tr>
 </table>
 
----
+<br>
 
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-examples" style="color: rgb(117, 198, 166);">Examples</h1>
+## [⬅️ Table Of Contents](#custom-sections)
+<h1 id="custom-examples">💻 Examples - plain code</h1>
 
-This section contains example programs written in the `Eden` language. Some of the function implementations may seem suboptimal, but this is because not all intended functionalities of the language have been fully implemented yet, and we must work with what is available.
+This section showcases example programs written in the `Eden` language. Some implementations may appear suboptimal due to the fact that `Eden` is still under development, and not all intended features have been fully implemented yet. These examples demonstrate what can be achieved with the current functionality.
 
+### Fibonacci n-th number
 ```vb
 // Fibonacci n-th number.
 Function Int Fibonacci(Var Int index){
@@ -316,7 +84,10 @@ Var Int fibonacciNumber = Fibonacci(10i);
 PrintLine(fibonacciNumber);
 ```
 
+### Is word a palindrome?
 ``` vb
+Var String input = "abracadabra";
+
 // Is word a palindrome.
 Function Bool IsPalindrome(Var String input){
 
@@ -343,11 +114,20 @@ Function Bool IsPalindrome(Var String input){
     Return True;
 };
 
-Var Bool isPali = IsPalindrome("abracadabra"); 
-PrintLine(isPali);
+Var Bool isPali = IsPalindrome(input); 
+
+If(isPali == True){
+    PrintLine("Result: " + input + " is a palindrome!");
+}
+Else{
+    PrintLine("Result: " + input + " is NOT a palindrome!");
+};
 ```
 
+### Is number a prime?
 ``` vb
+Var Int number = 5i;
+
 // Is Number Prime?
 Function Bool IsPrime(Var Int n){
     If(n <= 1i){
@@ -371,205 +151,401 @@ Function Bool IsPrime(Var Int n){
     Return True;
 };
 
-Var Bool isPrime = IsPrime(5i);
-PrintLine(isPrime);
-```
+Var Bool isPrime = IsPrime(number);
 
----
-
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-console-output-example" style="color: rgb(117, 198, 166);">Donut example</h1>
-
-To demonstrate how `Eden` handles the console and to showcase its capabilities, a simple program was created that displays a rotating donut. This example tests several core features of the language, including loops, mathematical operations, string manipulation, and floating-point arithmetic.
-
-Note: The video has been sped up, as the actual execution is quite time-consuming. This is due to the lack of any implemented optimizations. Currently, generating a single frame with the specified parameters takes approximately 6–8 seconds on Eden. Performance improvements will be addressed in future development, but for now, the focus is on producing working examples.
-
-### Output
-<img src="./Eden/ResourceLibrary/Assets/DonutEden.gif" alt="Eden Logo" style="width: 100%;">
-
-### Code
-```vb
-Literal 3.14f As #PI;
-Literal 0.07f As #ThetaStep;
-Literal 0.02f As #PhiStep;
-
-Literal 30i As #WIDTH;
-Literal 15i As #HEIGHT;
-Literal #WIDTH * #HEIGHT As #SIZE;
-
-Var Float A = 0.00f;
-Var Float B = 0.00f;
-
-List Char buffer = (#SIZE);
-List Float zbuffer = (#SIZE);
-Var String asciSymbols = ".,-~:;=!*#$@";
-
-Var Int Ro = 3i;
-Var Int Roo = 1i;
-Var Int Ko = 4i;
-Var Int Koo = #WIDTH * Ko * 3i / (8i * (Ro + Roo));
-
-Function Int FillBuffer(Var Char symbol){
-    Loop(Var Int i = 0i; i < #SIZE; i = i + 1i){
-        buffer[i] = symbol;
-    };
-};
-
-Function Int FillZBuffer(Var Float digit){
-    Loop(Var Int i = 0i; i < #SIZE; i = i + 1i){
-        zbuffer[i] = digit;
-    };
-};
-
-Function Int ClearZBuffer(){
-    FillZBuffer(0.0f);
-};
-
-Function Int ClearBuffer(){
-    FillBuffer(' ');
-};
-
-Function Int ClearBuffers(){
-    ClearBuffer();
-    ClearZBuffer();
-};
-
-Function Int PrintBuffer(){
-    ConsoleGoHome();
-    
-    Var String tmp = "";
-    
-    Loop (Var Int i = 0i; i < #SIZE; i = i + 1i) {
-        If (i != 0i && i % #WIDTH == 0i) {
-            PrintLine(tmp);
-            tmp = "";
-        };
-        
-        tmp = tmp + buffer[i];
-    };
-    
-    If (tmp != "") {
-        PrintLine(tmp);
-    };
-};
-
-ConsoleClear();
-Sisyphus{
-    Var Float cosA = CosinusR(A);
-    Var Float sinA = SinusR(A);
-    Var Float cosB = CosinusR(B);
-    Var Float sinB = SinusR(B);  
-
-    ClearBuffers();
-
-    Loop(Var Float theta = 0f; theta < 2i * #PI; theta = theta + #ThetaStep){
-        Var Float cosTheta = CosinusR(theta);
-        Var Float sinTheta = SinusR(theta); 
-
-        Loop(Var Float phi = 0f; phi < 2i * #PI; phi = phi + #PhiStep){
-            Var Float cosPhi = CosinusR(phi);
-            Var Float sinPhi = SinusR(phi);   
-
-            Var Float circleX = Ro + Roo * cosTheta;
-            Var Float circleY = Roo * sinTheta;        
-
-            Var Float x = circleX * (cosB * cosPhi + sinA * sinB * sinPhi) - circleY * cosA * sinB;
-            Var Float y = circleX * (sinB * cosPhi - sinA * cosB * sinPhi) + circleY * cosA * cosB;
-            Var Float z = 5i + cosA * circleX * sinPhi + circleY * sinA;
-            Var Float ooz = 1i / z;
-
-            Var Int xp = (#WIDTH / 2i + Koo * ooz * x);
-            Var Int yp = (#HEIGHT / 2i - Koo / 2i * ooz * y);
-
-            Var Int idx = xp + yp * #WIDTH;
-            Var Float luminance = cosPhi * cosTheta * sinB - cosA * cosTheta * sinPhi - sinA * sinTheta + cosB * (cosA * sinTheta - cosTheta * sinA * sinPhi);
-        
-            If (idx >= 0i && idx < #SIZE && ooz > zbuffer[idx])
-            {
-                zbuffer[idx] = ooz;
-                Var Int lumIdx = luminance * 8i;
-                
-                If (lumIdx < 0i){
-                    lumIdx = 0i;
-                }
-                Else{
-                    If (lumIdx > 11i){
-                        lumIdx = 11i;
-                    };
-                };
-                
-                buffer[idx] = asciSymbols[lumIdx];
-            };
-        };
-    };
-    
-    ConsoleGoHome();
-    PrintBuffer();
-    A = A + 0.04f;
-    B = B + 0.08f;
+If(isPrime == True){
+    PrintLine("Result: " + number + " is prime!");
+}
+Else{
+    PrintLine("Result: " + number + " is NOT prime!");
 };
 ```
-### Resources:
-- [**Donut Math**](https://www.a1k0n.net/2011/07/20/donut-math.html) by Aik0n
-- [**3D Donut in C**](https://github.com/akhileshthite/3d-donut) by akhileshthite 
-- [**Video: How to Create a Spinning Donut**](https://www.youtube.com/watch?v=LqQ-ezbyiW4&ab_channel=GiovanniCode) by GiovanniCode
-- [**Video: Spinning Donut in Console**](https://www.youtube.com/watch?v=DEqXNfs_HhY&ab_channel=LexFridman) by Lex Fridman
-- [**Video: 3D Donut Console Project**](https://www.youtube.com/watch?v=74FJ8TTMM5E&ab_channel=GreenCode) by GreenCode
 
----
+<br>
 
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-currently-implemented" style="color: rgb(117, 198, 166);">What is currently implemented</h1>
+## [⬅️ Table Of Contents](#custom-sections)
+<h1 id="custom-console-output-example">🍩 Example - Spinning Donut</h1>
 
-### Data Types:
+To demonstrate how `Eden` interacts with the console and to showcase its core capabilities, a simple program was created that renders a rotating donut. This example exercises several key language features, including `loops`, `mathematical operations`, `string manipulation`, and `floating-point arithmetic`.
+
+> 👉 `Hint`: You can explore the full Spinning Donut implementation in Eden in this [Github repository](https://github.com/EdenLanguage/SpinningDonut)!
+
+<img src="./Eden/ResourceLibrary/Assets/SpinningDonut.gif" alt="Eden Logo" style="width: 100%;">
+
+> ⚠️ `Note`: The video demonstration has been sped up. Actual execution is relatively slow — each frame takes approximately 6–8 seconds to generate. This is due to the absence of optimizations in the current version of Eden. Performance enhancements are planned for future development; for now, the focus remains on functional, demonstrative examples.
+
+<br>
+
+## [⬅️ Table Of Contents](#custom-sections)
+<h1 id="custom-currently-implemented">📌 Language features</h1>
+
+`Eden` is still in early development, and while performance optimizations are not the focus right now, core functionality is already in place. Optimizing would take considerable time that's better spent building out the language's core features first.
+
+Despite this, `Eden` is fully capable of running simple computational programs — in fact, the [Spinning Donut]() demo was built entirely using `Eden`!
+
+### 🧬 Built-in Data Types
 - `Char`
 - `Int`
 - `Float`
 - `String`
-- `List of (Char, Int, Float, String)`
-### Features Implemented:
-- Variable definition
+- `List` of `Char`, `Int`, `Float`, or `String`
+
+### ⚙️ Core Features
+- Variable definitions
 - Logical and arithmetic operators
-- Basic methods for displaying output on the screen
-- Function definition and invocation
+- Basic output methods (e.g., printing to the screen)
+- Function definitions and function calls
 - Built-in functions
-- Loops
+- Loops (iteration)
 - Conditional statements
-- Block-scoped variables (variables defined within the execution block)
+- Block-scoped variables (variables limited to their execution block)
 
----
+> ❗ `Info`: All of this information is located in [documentation](https://github.com/EdenLanguage/Eden-documentation)! 
 
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-what-the-language-journey-looks-like" style="color: rgb(117, 198, 166);">The Language's Journey (Milestones)</h1>
+<br>
 
-- Create a `Visual Studio Code` extension that sets up a development environment, with the primary goal of enabling syntax highlighting.
-- Implement the `If-Else` statement, as currently only the `If` statement with `{}` is implemented.
-- Add a `None` type (similar to the `void` type in C++).
-- Support for user-defined types (custom types).
-- Basic standard libraries (functions like `sleep`, etc.).
-- Significant improvements to semantic analysis.
-- Abstract Syntax Tree (AST) optimizer.
-- Generation of bytecode.
-- Support for accepting external arguments from the program.
-- Implement external file imports for the Eden language.
+## [⬅️ Table Of Contents](#custom-sections)
+<h1 id="custom-how-to-write">📝 Write program with Eden</h1>
 
----
+All the essential information for writing programs in `Eden` can be found in the official [documentation](https://github.com/EdenLanguage/Eden-documentation). However, here’s a quick overview of the core concepts to get you started. 
 
-## [⬅️ Sections](#custom-sections)
-<h1 id="custom-division-of-code" style="color: rgb(117, 198, 166);">Crutial classes description</h1>
+`Eden` evaluates code from top to bottom, so make sure to define your variables and functions before using them. Declarations must always come before usage. `Eden` also supports scoping: functions declared in the outermost (global) scope are accessible within inner scopes, such as inside functions or loops.
 
-- **Lexer**: or `lexical analyzer` processes the raw source code and converts it into `tokens`. Each token contains detailed information about its type (e.g., `identifier`, `operator`, `keyword`) and its position within the input file. This step is essential for breaking down the code into manageable pieces that can be further analyzed and processed by the parser.
+<br>
 
-- **Parser**: takes the tokens generated by the `lexer` and uses them to build the `Abstract Syntax Tree`. AST is a hierarchical structure representing the program's syntax. The tree is divided into expressions (which produce values) and statements (which perform actions but do not return values). Statements end with a semicolon (`;`), marking the completion of their execution. Parser makes sure that the syntax is valid and that the program follows the correct structure.
+## 🔸 Bool
+`Eden` supports logical operations and flag. You can set it up with this syntax.
+```vb
+Var Bool flag = True;  // Declares a boolean variable with value True.
+```
+Whenever logical operation is executed, just like `100i != 50i`, it retuns boolean value that can be assigned.
+```vb
+Var Bool equal = (100i != 50i);  // '!=' operator results in a Bool value, which is 'True'
+```
 
-- **Evaluator**: traverses the AST and evaluates each statement or expression, based on the logic of the language. Through a technique called `tree-walking`, the evaluator computes the values produced by expressions and executes the side effects of statements (like assignments or function calls). The evaluator provides the final outcome or result of the program execution.
+<br>
 
-- **Environment**: manages the scope of variables and functions within the program. Each block of code (such as loops, functions, and conditionals) has its own isolated scope. This ensures that variables defined within a block do not interfere with other blocks. The environment is key for managing variable lookups and ensuring that the program can execute in an organized manner with proper access to variables and functions.
+## 🔸 Int
+Represents 32-bit signed `integer` in Two’s complement. It has range: `-2,147,483,648 to 2,147,483,647`. It can store both positive and negative values. The Eden Lexer uses the `i` suffix to identify integer literals. This suffix is required. Example: `100i` or `123123i`.
 
-- **BuildIn**: This refers to a set of core, built-in functions and methods provided by the language. These functions are available by default without the need for the programmer to define them. Examples include functions or methods like `Print()` or `Length()`.
+The `i` suffix explicitly marks the value as an `Int` type. This rule applies to other types as well—for example:
+- `c` for `Char`
+- `f` for `Float`
 
-- **Runtime**: is the heart of the language's execution environment. It ties together all the components, including the `lexer`, `parser`, `evaluator`, `environment`, and `built-in` functions. The runtime allows the language to be executed in a structured way.
+Variables are declared using the `Var` keyword, followed by the type and variable name:
+```vb
+Var Int counter = 10i;  // Declares an Int with the value 10
+```
+<br>
 
-- **ReplRunner**: allows for interactive execution of `Eden` directly from the console. It enables users to write and evaluate expressions in real-time within a loop, providing immediate feedback.
+## 🔸 Char
+The `Char` type in `Eden` represents a single character and can store values in the range `0–255`.
+It is commonly used to hold `letters`, `digits`, `punctuation`, or `special symbols`.
 
-- **ScriptRunner**: is responsible for executing `Eden` script files. It reads and processes `.eden` files, running them as standalone programs. The ScriptRunner comes with built-in configuration that makes it easy to execute scripts in a predefined environment, handling file input/output, error reporting, and more.
+A Char can be defined in two ways:
+- Using a numeric ASCII value (with the c suffix):
+```vb
+Var Char x = 0c;   // Null character (ASCII 0)
+```
+- Using a character literal (enclosed in single quotes):
+```vb
+Var Char x = '1';  // Character '1' (ASCII 49)
+```
+### 💡 Example:
+```vb
+Var Char letter = 'A';   // ASCII 65  
+Var Char hash   = 35c;   // ASCII 35 ('#')
+```
+
+<br>
+
+## 🔸 Float
+The `Float` type in `Eden` represents `floating-point` numbers and supports decimal values.
+`Float` literals are identified by the `f` suffix, which ensures the value is treated as a `floating-point` number rather than an integer.
+
+```vb
+Var Float variable = 3.14f;      // Float with value 3.14
+Var Float pi       = 3.14159f;   // Float with value 3.14159
+```
+
+⚙️ Platform Dependency
+The precision and behavior of floating-point calculations in `Eden` are platform-dependent.
+This is because floating-point operations rely on the native `C` libraries of the underlying system, which can behave differently depending on:
+- Operating system
+- CPU architecture
+- Compiler/runtime implementation
+
+As a result, precision and calculation results may vary across platforms.
+
+<br>
+
+## 🔸 String
+The String type in `Eden` represents a sequence of `characters`. Strings are declared using the `Var` keyword, followed by the `String` type and a quoted value:
+
+```vb
+Var String name = "Jaroslaw";
+```
+
+Accessing Characters
+You can retrieve individual characters from a string using the indexer operator `[]`.
+Indexes are zero-based, meaning index 0 refers to the first character.
+
+```vb
+Var String name   = "Jaroslaw";
+Var Char first    = name[0];  // 'J'
+Var Char fourth   = name[3];  // 'o'
+```
+
+Currently, String supports the `Length()` method, which returns the number of characters in the string.
+
+```vb
+Var String name = "Jaroslaw";
+Length(name);  // 8
+```
+You can append a `Char` to a String using the `+` operator:
+
+```vb
+Var String name = "Jaroslaw";
+name = name + '1';  // "Jaroslaw1"
+```
+
+<br>
+
+## 🔸 List
+`Eden` provides a built-in `List` collection, implemented internally as a `linked list`.
+Lists store elements of a specific type (e.g., `Int`, `String`, `Bool`) and include utility methods for easy manipulation.
+
+Declaring a List
+```vb
+List <Type> <Identifier> = [<Elements>];
+```
+### 💡 Example:
+```vb
+List Int indexes  = [];                       // Empty list of integers
+List Int indexes2 = [1i];                     // One integer element (1)
+List String names = ["Mark"];                 // List of strings
+List Bool flags   = [True, False, True];      // List of booleans
+List Int lengths  = (10);                     // 10 elements, all default values for Int
+```
+### List Methods
+```vb
+Add(Item)	    // Adds an item to the list. Item must match the list’s type. Returns nothing.
+Clear()	        // Removes all elements from the list. Returns nothing.
+RemoveAt(Index)	// Removes the element at the given index. Returns nothing.
+Length()        // Returns the number of elements as an Int.
+```
+### 💡 Example:
+```vb
+List Int numbers = [10i, 20i, 30i];   
+numbers.Add(40i);                  // Adds 40 to the list   
+numbers.RemoveAt(1i);              // Removes element at index 1 (20i)  
+Var Int size = numbers.Length();   // 3 elements left  
+numbers.Clear();                   // List is now empty  
+```
+
+<br>
+
+## 🔸 Operators
+
+| Operator | Name | Description | Example |
+|----------|----------------|-------------|---------|
+| `==` | Equal | Returns `Bool` indicating if two values are equal | `5i == 5i   // True` |
+| `!=` | Not Equal | Returns `Bool` indicating if two values are not equal | `5i != 3i   // True` |
+| `<`  | Less Than | Checks if left value is smaller than right value | `3i < 5i    // True` |
+| `>`  | Greater Than | Checks if left value is greater than right value | `7i > 4i    // True` |
+| `<=` | Less Than or Equal | True if left value is smaller or equal | `5i <= 5i   // True` |
+| `>=` | Greater Than or Equal | True if left value is greater or equal | `6i >= 2i   // True` |
+| `%`  | Modulo | Returns remainder of division | `10i % 3i   // 1` |
+| `&&` | Logical AND | Returns `True` if both expressions are `True` | `True && False // False` |
+| `\|\|` | Logical OR | Returns `True` if either expression is `True` | `True \|\| False // True` |
+| `?`  | Is Default | Returns `True` if expression equals type’s default value | `?5i // False` (default for `Int` is `0`) |
+| `!`  | Negation | For booleans, flips the value; for numbers, negates the value | `!True // False`<br>`!5i // -5i` |
+| `~`  | Bitwise NOT | Flips all bits of the value | `~10i // -11` (two’s complement, 32-bit `Int`) |
+
+> ⚠️ `Note`: `~` currently works only for 32-bit signed `Int`. Future support is planned for other numeric types such as `UInt`, where `~10u` would equal `4294967285`.
+
+<br>
+
+## 🔀 Conditionals
+`Eden` supports branching using the If statement. While `ElseIf` is not yet implemented, you can mimic it by nesting `If` statements inside an `Else` block. A Switch statement is planned for future updates.
+
+The syntax for an `If` statement is:
+```vb
+If (<Truthful expression>) {
+    <Block>
+};
+```
+For an If-Else statement, the syntax is:
+```vb
+If (<Truthful expression>) {
+    <Block>
+}
+Else {
+    <Block>
+};
+```
+The condition expression must be `truthful`, meaning it evaluates to a `logical` value. For example, an `Int` value of `0i` is treated as `False`, while any non-zero value like `1i` is treated as `True`.
+
+### 💡 Example:
+```vb
+If (True) {
+    // Executes if condition is true
+};
+```
+
+### 💡 Example:
+```vb
+If (True) {
+    // Executes if condition is true
+}
+Else {
+    // Executes if condition is false
+};
+```
+
+<br>
+
+## 🔄 Loop
+The basic Loop statement executes a block multiple times, based on three arguments:
+
+- Variable definition – Declares and initializes the loop index variable.
+- Condition – Determines when the loop stops executing.
+- Operation – Updates the loop index after each iteration.
+
+### 💡 Example:
+```vb
+Loop(Var Int i = 0i; i < 100i; i = i + 1i) {
+    Loop(Var Int j = 0i; j < 100i; j = j + 1i) {
+        If(i * j >= 10i) {
+            Quit;
+        };
+    };
+};
+```
+
+<br>
+
+## ♾️ Sisyphus - Infinite Loop  
+`Sisyphus` executes the code inside its body endlessly, unless interrupted with `Quit`.
+
+### 💡 Example:
+```vb
+Sisyphus {
+    If(True) {
+        Quit;
+    };
+};
+```
+
+### Loop Control Keywords
+| Keyword | Description                                                                                                                                                        |
+| ------- | ------------------------------------------------------------------------------------------ | 
+| `Skip`  | Skips the current iteration and jumps to the end of the loop, starting the next iteration.
+| `Quit`  | Exits the currently running loop immediately.
+
+<br>
+
+## 🧩 Functions
+A function in `Eden` is defined using this structure:
+```plaintext
+Function <ReturnType> <FunctionName>(<ArgumentDeclarations>) {
+    <Statements>
+    Return <Expression>;
+};
+```
+### 💡 Example:
+```vb
+Function Int Add(Var Int A, Var Int B) {
+    Return A + B;
+};
+```
+Currently, the interpreter does not enforce that every logical branch in a function contains a `Return` statement.
+
+### 💡 Example:
+```vb
+Function Int GetPi(Var Int i) {
+    If (i > 10) {
+        Return 10;
+    };
+    // No return statement here, which may cause undefined behavior
+};
+
+// In the example above, if the condition `i > 10i` is false, the function will fail to return a value.
+```
+
+> ⚠️ `Note`: Ensuring all execution paths return a value is the programmer’s responsibility for now. Validation of complete return coverage will be added in a future update.
+
+### Functions Without Return Values
+- `Eden` currently does not support functions without return values explicitly.
+- If no `Return` statement is provided, the function implicitly returns None.
+- You must declare a return type, even if you do not return a value.
+
+This is a temporary limitation, and full support for void or no-return functions will be introduced later.
+
+### Variable Scope
+- Each function creates its own local variable context.
+- Variables declared inside a function are not accessible outside that function.
+- The only way to output a value is via the Return statement.
+
+### Argument Passing
+- `Eden` does not currently support argument modifiers like `In`, `Out`, or `Ref` (as in C#).
+- All arguments are `passed by reference` without special semantics.
+
+<br>
+
+## ⚒️ Built-in Functions
+Eden comes with a number of built-in functions to simplify development, including math functions, string/list operations, and console output helpers.
+```vb
+Length()        // Returns the length of a collection (e.g., String, List).
+Inc()           // Returns a value incremented by one.
+Print()         // Prints a value to the console.
+PrintLine()     // Prints a value to the console followed by a newline.
+Min()           // Returns the minimum value in a collection.
+Max()           // Returns the maximum value in a collection.
+SinusR()        // Returns the sine of a given angle, with the argument provided in radians.
+SinusD()        // Returns the sine of a given angle, with the argument provided in degrees.
+CosinusR()      // Returns the cosine of a given angle, with the argument provided in radians.
+CosinusD()      // Returns the cosine of a given angle, with the argument provided in degrees.
+```
+
+<br>
+
+## [⬅️ Table Of Contents](#custom-sections)
+<h1 id="custom-instalation">💿 Instalation</h1>
+
+Although `Eden` supports platforms such as `macOS` and `Linux`, the main development currently takes place on `Windows`. Because of this, a Windows installer is available for download and installation. After launching the `.msi` installer, it will handle everything and complete the setup automatically.
+
+<img src="./Eden/ResourceLibrary/Assets/Install.gif" alt="Eden Logo" style="width: 100%;">
+
+## 🔄 Backup & Restoration
+If something goes wrong during installation, Eden’s setup scripts automatically create backups of your system PATH variable before making changes:
+- Before adding Eden: C:\PathBackup_Eden_Add.txt
+- Before removing Eden: C:\PathBackup_Eden_Remove.txt
+
+## ♻️ Restoring the PATH from Backup
+1) Open the relevant .txt backup file in C:\.
+2) Copy its contents.
+3) Open System Properties → Advanced → Environment Variables.
+4) Under System variables, select Path → Edit.
+5) Replace the current value with the backup content.
+6) Apply changes and restart your terminal or computer.
+
+## ⚠️ Important Notes: 
+- Run as Administrator – All Eden setup/removal scripts must be executed with admin rights to modify system environment variables and Windows registry keys. Without admin privileges, they will exit without changes.
+- Critical System Changes – These scripts interact with sensitive areas (registry, PATH). They are designed to be safe, but misuse or modification may cause issues.
+- Executable Check – The PowerShell add-to-PATH script verifies that Eden.exe exists in the same folder. If not found, it exits without changes and returns an error code.
+- System-Wide Updates – PATH changes are applied at the Machine level. explorer.exe is restarted automatically to refresh context menus and file associations.
+
+<br>
+
+## [⬅️ Table Of Contents](#custom-sections)
+<h1 id="custom-resources" style="color: rgb(117, 198, 166);">Resources</h1>
+
+- **[Top Down Operator Precedence](https://tdop.github.io/)** by Vaughan R. Pratt  
+- **[Writing an Interpreter in Go](https://interpreterbook.com/)** by Thorsten Ball  
+- **[Let’s Build a Compiler!](http://compilers.iecc.com/crenshaw/)** by Jack W. Crenshaw  
+- **[Top Down Operator Precedence](http://javascript.crockford.com/tdop/tdop.html)** by Douglas Crockford  
+- **[Pratt Parsers: Expression Parsing Made Easy](http://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/)** by Bob Nystrom  
+- **[Programming Languages: Application and Interpretation](http://papl.cs.brown.edu/2015/)** by Shriram Krishnamurthi and Joe Gibbs Politz  
+- **[How to Write a Pratt Parser | Writing a Custom Language Parser in Golang ](https://www.youtube.com/watch?v=1BanGrbOcjs&ab_channel=tylerlaceby)**  by Tyler Laceby
+- **[Simple but Powerful Pratt Parsing](https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html)** by Alex Kladov
